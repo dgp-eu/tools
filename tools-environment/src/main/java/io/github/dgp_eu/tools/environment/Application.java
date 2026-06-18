@@ -27,7 +27,7 @@ public class Application {
      */
     public static void main( String[] args ) {
         CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-_Tools-Environment-");
+        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Environment-");
         ProjectClass.setPomFile("/tools-environment-pom.xml");
         CommonInteractiveClass.startMeUp();
         // execute appropriate Command with provided arguments

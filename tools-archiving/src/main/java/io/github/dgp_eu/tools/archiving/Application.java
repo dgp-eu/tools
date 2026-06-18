@@ -33,7 +33,7 @@ public final class Application {
      */
     static void main( final String[] args ) {
         CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DanielGP_Tools-Archiving-");
+        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Archiving-");
         ProjectClass.setPomFile("/tools-archiving-pom.xml");
         CommonInteractiveClass.startMeUp();
         // execute appropriate Command with provided arguments
