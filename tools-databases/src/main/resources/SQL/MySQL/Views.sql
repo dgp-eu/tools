@@ -1,0 +1,13 @@
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `VIEW_DEFINITION`
+    , `CHECK_OPTION`
+    , `DEFINER`
+    , `SECURITY_TYPE`
+    , `CHARACTER_SET_CLIENT`
+    , `COLLATION_CONNECTION`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`VIEWS`;

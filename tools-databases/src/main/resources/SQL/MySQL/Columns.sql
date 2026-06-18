@@ -1,0 +1,19 @@
+SELECT
+    `TABLE_CATALOG`
+     , `TABLE_SCHEMA`
+     , `TABLE_NAME`
+     , `COLUMN_NAME`
+     , `ORDINAL_POSITION`
+     , `COLUMN_DEFAULT`
+     , `IS_NULLABLE`
+     , `DATA_TYPE`
+     , `CHARACTER_SET_NAME`
+     , `COLLATION_NAME`
+     , `COLUMN_TYPE`
+     , `COLUMN_KEY`
+     , `EXTRA`
+     , `COLUMN_COMMENT`
+     , `GENERATION_EXPRESSION`
+     , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`SCHEMATA`;

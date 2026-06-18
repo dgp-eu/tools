@@ -1,0 +1,14 @@
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "TABLE_OWNER"
+    , "VIEW_DEFINITION"
+    , "IS_SECURE"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "LAST_DDL"
+    , "LAST_DDL_BY"
+    , "COMMENT"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS";

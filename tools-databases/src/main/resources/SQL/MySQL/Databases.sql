@@ -1,0 +1,9 @@
+SELECT
+      `CATALOG_NAME`
+    , `SCHEMA_NAME`
+    , `DEFAULT_CHARACTER_SET_NAME`
+    , `DEFAULT_COLLATION_NAME`
+    , `SQL_PATH`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`SCHEMATA`;
