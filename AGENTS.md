@@ -3,14 +3,14 @@
 ## Project Overview
 
 **tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
-- **tools-core**: Shared utility library (19+ classes) for file ops, JSON/XML, logging, timing, environment capture
+- **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
 - **tools-archiving**: CLI app for folder archiving using system executables (7-Zip, RAR, WinRAR)
-- **tools-databases**: CLI app and shared utility library for databases access and various operations
-- **tools-environment**: CLI app and shared utility library for environment capture
-- **tools-incubator**: CLI app and shared utility library for experimental features deemed not to be mature enough
+- **tools-databases**: CLI app and shared utility library for database access and operations
+- **tools-environment**: CLI app and shared utility library for system environment capture
+- **tools-incubator**: CLI app and shared utility library for experimental features not yet production-ready
 - **tools-json_split**: CLI app for splitting large JSON files using streaming parsing
-- **tools-utils**: CLI app for various operations on file system
-- **tools-web**: CLI app for splitting large JSON files using streaming parsing
+- **tools-utils**: CLI app for various file system operations
+- **tools-web**: CLI app providing web interface for system information and utilities (Undertow + JTE)
 
 All modules target **Java 26** and publish to Maven Central Repository.
 
@@ -39,11 +39,15 @@ tools (parent POM)
 ```
 
 **Critical Pattern**: All utilities exposed through public static classes with inner SubClasses:
-- `BasicStructuresClass.SortingSubClass`, `BasicStructuresClass.ConversionSubClass`
-- `FileOperationsClass.RetrievingSubClass`, `FileOperationsClass.WritingSubClass`
-- `JsonOperationsClass.ArraySubClass`, `JsonOperationsClass.ObjectSubClass`
+- `BasicStructuresClass`: StringConversionSubClass, StringTransformationSubClass, StringCleaningSubClass, StringEvaluationSubClass, ListAndMapSubClass, PropertiesReaderSubClass
+- `FileOperationsClass`: RetrievingSubClass, ContentReadingSubClass, ContentWritingSubClass, WritingSubClass, MovingSubClass, DeletingSubClass, MassChangeSubClass, StatisticsSubClass, RetrievingCompactOrRegularFileSubClass
+- `JsonOperationsClass`: ArraySubClass, ObjectSubClass
+- `RegularExpressionsClass`: ConversionSubClass, ValidationSubClass
+- `TimingClass`: ConversionSubClass, LocalizationSubClass
+- `UndertowClass`: ParametersSubClass, SessionSubClass, TemplateRenderingSubClass
+- `ProjectClass`: ApplicationSubClass, LoaderSubClass, ComponentsSubClass
 
-CLI apps (archiving, json_split) use **picocli** for command parsing; extend AbstractApplication base class.
+CLI apps (archiving, json_split, etc.) use **picocli** for command parsing; extend AbstractApplication base class.
 
 ## Build & Test Workflow
 
@@ -75,8 +79,9 @@ mvn central-publishing:publish
 
 | File | Purpose |
 |------|---------|
-| `pom.xml` (root) | Parent POM; declares 3 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo |
-| `tools-core/src/main/java/org/dgp-eu/tools/core/*` | Core utility classes (BasicStructure, FileOps, JsonOps, etc.) |
+| `pom.xml` (root) | Parent POM; declares 8 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
+| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*` | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc. |
+| `tools-core/src/main/resources/project.properties` | Windows-specific configuration (System32 paths, PowerShell location, web server defaults) |
 | `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java` | Example JUnit 6 tests |
 | `tools-archiving/src/main/java/org/dgp-eu/tools/archiving/Application.java` | Entry point; picocli @Command |
 | `tools-databases/src/main/java/org/dgp-eu/tools/databases/Application.java` | Entry point; picocli @Command |
@@ -84,7 +89,7 @@ mvn central-publishing:publish
 | `tools-incubator/src/main/java/org/dgp-eu/tools/incubator/Application.java` | Entry point; picocli @Command |
 | `tools-json_split/src/main/java/org/dgp-eu/tools/json_split/Application.java` | Entry point; picocli @Command |
 | `tools-utils/src/main/java/org/dgp-eu/tools/utils/Application.java` | Entry point; picocli @Command |
-| `tools-web/src/main/java/org/dgp-eu/tools/web/Application.java` | Entry point; picocli @Command |
+| `tools-web/src/main/java/org/dgp-eu/tools/web/Application.java` | Entry point; picocli @Command; Undertow web server integration |
 
 ## Project-Specific Conventions
 
@@ -126,10 +131,28 @@ This avoids creating separate files while maintaining logical grouping.
 - Log files stored in `logs/` (dgp_eu__tools-*.log pattern)
 - Not configured in this codebase (relies on default or external configuration)
 
+### Project Resources & Configuration
+- **tools-core/src/main/resources/project.properties**: Contains Windows-specific paths and web server defaults
+  - System32 path: `C:\Windows\System32`
+  - PowerShell executable: `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
+  - Web server binding IP: `0.0.0.0`
+  - Web server protocol: `http`
+- Agents should be aware of these defaults when extending tools-web or tools-core functionality
+
 ### Dependency Management
 - All dependency versions centralized in root `pom.xml` `<dependencyManagement>`
 - Child POMs use version-less `<dependency>` declarations
-- Critical versions: Jackson 3.2.0, JUnit Jupiter 6.1.0, Java 26
+- Critical versions: Jackson 3.2.0 (custom build), JUnit Jupiter 6.1.0, Java 26
+
+### Build Plugin Configuration
+- **takari-lifecycle-plugin**: Generates sources JAR automatically during package phase
+- **flatten-maven-plugin**: Resolves CI-friendly versions (uses resolveCiFriendliesOnly mode)
+- **maven-assembly-plugin**: Creates fat JAR (`*-jar-with-dependencies.jar`) for CLI applications
+- **maven-javadoc-plugin**: Generates Javadoc with doclint disabled
+- **maven-surefire-plugin**: Configured with JUnit Jupiter 6.1.0 and `--enable-native-access=ALL-UNNAMED` for FFM module access
+- **jacoco-maven-plugin**: Code coverage with bundle-level rules check
+- **central-publishing-maven-plugin**: Configured for auto-publish to Maven Central with waitUntil=published
+- **versions-maven-plugin**: Used for dependency updates and version management
 
 ### Module Publishing
 - GPG signing enabled via `-Pgpg` profile
@@ -158,18 +181,20 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 
 | Dependency | Version | Used For | Scope |
 |------------|---------|----------|-------|
-| Jackson (databind + dataformat-xml) | 3.2.0 | JSON/XML parsing and generation | compile |
-| SQLite JDBC | 3.53.2.0 | Database operations (sqlite-jdbc) | compile |
+| Jackson Core (tools.jackson.core:jackson-databind) | 3.2.0 | JSON parsing and generation (custom build) | compile |
+| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.0 | XML serialization/deserialization (custom build) | compile |
+| SQLite JDBC | 3.53.2.0 | Database operations (sqlite-jdbc) in tools-databases | compile |
 | Picocli | 4.7.7 | CLI command parsing and help | compile |
-| Undertow Core | 2.4.1 | Lightweight web server (Java Web UI) | compile |
+| Undertow Core | 2.4.1 | Lightweight web server (tools-web Java Web UI) | compile |
 | OSHI Core FFM | 7.3.1 | OS info capture (system memory, CPU, etc.) | compile |
-| JTE | 3.2.4 | Java Template Engine (web UI rendering) | compile |
-| Log4j SLF4J2 | 2.26.0 | Logging via SLF4J + Log4j backend | compile |
+| JTE | 3.2.4 | Java Template Engine (tools-web UI rendering) | compile |
+| Log4j Core | 2.26.0 | Logging implementation via SLF4J adapter | compile |
+| Log4j SLF4J2 Adapter | 2.26.0 | SLF4J 2.0 API binding to Log4j 2 Core | compile |
+| Maven Model | 3.9.16 | POM file parsing (tools-core features) | compile |
+| Plexus Interpolation | 1.29 | String interpolation utilities | compile |
 | JUnit Jupiter | 6.1.0 | Testing framework | test |
 | JaCoCo | 0.8.15 | Code coverage measurement | test |
 | JSpecify | 1.0.0 | Null-safety annotations | compile |
-| Maven Model | 3.9.16 | POM file parsing (tools-core features) | compile |
-| Plexus Interpolation | 1.29 | String interpolation utilities | compile |
 
 **Security Scanning**: OWASP Dependency-Check Maven plugin (v12.2.2) runs in verify phase; fails build if CVE CVSS >= 7.
 
