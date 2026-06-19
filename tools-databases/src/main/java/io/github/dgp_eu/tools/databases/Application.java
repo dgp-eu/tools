@@ -23,7 +23,7 @@ import picocli.CommandLine;
             GetInformationFromDatabase.class
     }
 )
-public class Application {
+public final class Application {
 
     /**
      * Constructor
@@ -40,6 +40,12 @@ public class Application {
         CommonInteractiveClass.setExitCode(iExitCode);
         CommonInteractiveClass.shutMeDown(args[0]);
     }
+
+    /** Constructor */
+    private Application() {
+        super();
+    }
+
 }
 
 
