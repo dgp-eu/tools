@@ -89,6 +89,7 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <takari-lifecycle-plugin.version>2.3.4</takari-lifecycle-plugin.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -392,7 +393,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/sonatype/central/central-publishing-maven-plugin -->
                 <!-- Description: This project is a maven plugin for publishing components in Maven Central, for more details on its usage see https://central.sonatype.org/publish/publish-portal-maven. -->
                 <plugin>
@@ -406,6 +406,17 @@
                         <waitUntil>published</waitUntil>
                     </configuration>
                 </plugin>
+                <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
+                <!-- Binaries: https://repo1.maven.org/maven2/org/codehaus/mojo/versions-maven-plugin -->
+                <!-- Description: The Versions Maven Plugin is used when you want to manage the versions of artifacts in a project's POM. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versions-maven-plugin.version}</version>
+                    <configuration>
+                        <ignoredVersions type="regex">(?i).*[-_.](alpha|b|beta|rc|cr|milestone|m|ea|preview|snapshot)-?[-_.0-9]*</ignoredVersions>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -417,6 +428,10 @@
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
