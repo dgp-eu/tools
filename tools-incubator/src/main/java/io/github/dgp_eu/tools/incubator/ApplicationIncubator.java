@@ -6,8 +6,7 @@ package io.github.dgp_eu.tools.incubator;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.logging.log4j.Level;
-
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
@@ -22,19 +21,22 @@ import picocli.CommandLine.Mixin;
                 ExperimentalFeature.class
         }
 )
-public class Application 
-{
+public class ApplicationIncubator {
+
+    /**
+     * Main
+     * @param args
+     */
     public static void main( String[] args ) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.setLogLevel(Level.DEBUG);
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Incubator-");
-        ProjectClass.setPomFile("/tools-incubator-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Incubator-", "/tools-incubator-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationIncubator()).execute(args), args[0]);
     }
+
+    /** Constructor */
+    private ApplicationIncubator() {
+        super();
+    }
+
 }
 
 /**

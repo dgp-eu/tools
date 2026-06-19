@@ -11,11 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.ShellingClass;
 import io.github.dgp_eu.tools.core.TimingClass;
 import picocli.CommandLine;
@@ -36,21 +35,15 @@ import picocli.CommandLine.Mixin;
             GetSubFoldersFromFolders.class
     }
 )
-public class Application {
+public class ApplicationUtils {
 
     /**
      * Application logic
      * @param args input arguments
      */
     public static void main( String[] args ) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Utils-");
-        ProjectClass.setPomFile("/tools-utils-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Utils-", "/tools-utils-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationUtils()).execute(args), args[0]);
     }
 
 }

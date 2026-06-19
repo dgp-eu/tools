@@ -3,10 +3,9 @@
  */ 
 package io.github.dgp_eu.tools.environment;
 
-import io.github.dgp_eu.tools.core.CommonInteractiveClass;
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
@@ -19,21 +18,20 @@ import picocli.CommandLine.Mixin;
             CaptureEnvironmentDetailsIntoJsonFile.class
     }
 )
-public class Application {
+public class ApplicationEnvironment {
 
     /**
      * Application logic
      * @param args input arguments
      */
     public static void main( String[] args ) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Environment-");
-        ProjectClass.setPomFile("/tools-environment-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Environment-", "/tools-environment-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationEnvironment()).execute(args), args[0]);
+    }
+
+    /** Constructor */
+    private ApplicationEnvironment() {
+        super();
     }
 
 }

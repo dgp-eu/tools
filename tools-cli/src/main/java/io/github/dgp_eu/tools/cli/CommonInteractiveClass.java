@@ -1,13 +1,17 @@
 /**
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.cli;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.apache.maven.model.Model;
 
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.core.TimingClass;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -35,7 +39,7 @@ public final class CommonInteractiveClass {
      * Shut Down sequence
      * @param inOperation main Operation executed
      */
-    public static void shutMeDown(final String inOperation) {
+    private static void shutMeDownLight(final String inOperation) {
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
         final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
@@ -46,15 +50,37 @@ public final class CommonInteractiveClass {
     }
 
     /**
+     * Shut Down sequence
+     * @param inExitCode input Exit code
+     * @param inOperation main Operation executed
+     */
+    public static void shutMeDownWithParameters(final int inExitCode, final String inOperation) {
+        setExitCode(inExitCode);
+        shutMeDownLight(inOperation);
+    }
+
+    /**
      * Starting sequence
      */
-    public static void startMeUp() {
+    private static void startMeUp() {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
         final String[] prjProperties = getProjectProperties();
         final String strFeedback = String.format("%s:%s v.%s => New Execution", prjProperties[0], prjProperties[1], prjProperties[2]);
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
+    }
+
+    /**
+     * Starting sequence with parameters
+     * @param inLogFile input log file
+     * @param inPomFile input Project Object Model file
+     */
+    public static void startMeUpWithParameters(final String inLogFile, final String inPomFile) {
+        CommonInteractiveClass.setStartDateTime();
+        LogExposureClass.ConfigurationSubClass.initiate(inLogFile);
+        ProjectClass.setPomFile(inPomFile);
+        startMeUp();
     }
 
     /**

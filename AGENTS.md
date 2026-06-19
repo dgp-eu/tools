@@ -5,6 +5,7 @@
 **tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
 - **tools-archiving**: CLI app for folder archiving using system executables (7-Zip, RAR, WinRAR)
+- **tools-cli**: CLI shared utility library for operations
 - **tools-databases**: CLI app and shared utility library for database access and operations
 - **tools-environment**: CLI app and shared utility library for system environment capture
 - **tools-incubator**: CLI app and shared utility library for experimental features not yet production-ready
@@ -22,18 +23,27 @@ tools (parent POM)
 │   └── No dependencies on other modules; contains all core utilities
 ├── tools-archiving (io.github.dgp-eu.tools.archiving)
 │   └── Depends on: tools-core
+│   └── Depends on: tools-cli
+├── tools-cli (io.github.dgp-eu.tools.cli)
+│   └── Depends on: tools-core
 ├── tools-databases (io.github.dgp-eu.tools.databases)
 │   └── Depends on: tools-core
+    └── Depends on: tools-cli
 ├── tools-environment (io.github.dgp-eu.tools.environment)
 │   └── Depends on: tools-core
+    └── Depends on: tools-cli
 ├── tools-incubator (io.github.dgp-eu.tools.incubator)
 │   └── Depends on: tools-core
+    └── Depends on: tools-cli
 └── tools-json_split (io.github.dgp-eu.tools.json_split)
     └── Depends on: tools-core
+    └── Depends on: tools-cli
 └── tools-utils (io.github.dgp-eu.tools.utils)
     └── Depends on: tools-core
+    └── Depends on: tools-cli
 └── tools-web (io.github.dgp-eu.tools.web)
     └── Depends on: tools-core
+    └── Depends on: tools-cli
     └── Depends on: tools-databases
     └── Depends on: tools-environment
 ```
@@ -84,6 +94,7 @@ mvn central-publishing:publish
 | `tools-core/src/main/resources/project.properties` | Windows-specific configuration (System32 paths, PowerShell location, web server defaults) |
 | `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java` | Example JUnit 6 tests |
 | `tools-archiving/src/main/java/org/dgp-eu/tools/archiving/Application.java` | Entry point; picocli @Command |
+| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java` | Entry point; picocli @Command |
 | `tools-databases/src/main/java/org/dgp-eu/tools/databases/Application.java` | Entry point; picocli @Command |
 | `tools-environment/src/main/java/org/dgp-eu/tools/environment/Application.java` | Entry point; picocli @Command |
 | `tools-incubator/src/main/java/org/dgp-eu/tools/incubator/Application.java` | Entry point; picocli @Command |

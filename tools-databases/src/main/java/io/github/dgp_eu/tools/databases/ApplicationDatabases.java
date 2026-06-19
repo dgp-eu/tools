@@ -8,10 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
 import picocli.CommandLine;
 
 /**
@@ -23,7 +22,7 @@ import picocli.CommandLine;
             GetInformationFromDatabase.class
     }
 )
-public final class Application {
+public final class ApplicationDatabases {
 
     /**
      * Constructor
@@ -31,18 +30,12 @@ public final class Application {
      * @param args command-line arguments
      */
     /* default */ static void main(final String... args) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Databases-");
-        ProjectClass.setPomFile("/tools-databases-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Databases-", "/tools-databases-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationDatabases()).execute(args), args[0]);
     }
 
     /** Constructor */
-    private Application() {
+    private ApplicationDatabases() {
         super();
     }
 

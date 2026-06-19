@@ -16,12 +16,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.github.dgp-eu</groupId>
-            <artifactId>tools-core</artifactId>
+            <artifactId>tools-cli</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

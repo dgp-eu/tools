@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Properties;
 
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
 
 import picocli.CommandLine;
@@ -23,12 +24,12 @@ import picocli.CommandLine.Mixin;
             JsonSplit.class
     }
 )
-public final class Application {
+public final class ApplicationJsonSplit {
 
     /**
      * Constructor empty
      */
-    private Application() {
+    private ApplicationJsonSplit() {
         super();
     }
 
@@ -38,14 +39,8 @@ public final class Application {
      * @param args command-line arguments
      */
     /* default */ static void main(final String... args) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-JsonSplit-");
-        ProjectClass.setPomFile("/tools-json-split-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-JsonSplit-", "/tools-json-split-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationJsonSplit()).execute(args), args[0]);
     }
 
 }

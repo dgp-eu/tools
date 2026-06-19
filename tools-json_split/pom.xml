@@ -18,12 +18,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.github.dgp-eu</groupId>
-            <artifactId>tools-core</artifactId>
+            <artifactId>tools-cli</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>
@@ -44,7 +45,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.github.dgp_eu.tools.json_split.Application</mainClass>
+                            <mainClass>io.github.dgp_eu.tools.json_split.ApplicationJsonSplit</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

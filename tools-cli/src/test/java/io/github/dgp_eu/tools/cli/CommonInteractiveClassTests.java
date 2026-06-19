@@ -1,19 +1,18 @@
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.cli;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing for CommonInteractiveClass
  */
 @DisplayName("CommonInteractiveClass testing")
 class CommonInteractiveClassTests {
-    /**
-     * String for Original not equal to Expected
-     */
+    /** String for Original not equal to Expected */
     private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
     @Test
@@ -68,8 +67,8 @@ class CommonInteractiveClassTests {
         /**
          * Constructor
          */
-        public TestExitCode() {
-            // intentionally blank
+        protected TestExitCode() {
+            super();
         }
 
     }
@@ -77,7 +76,7 @@ class CommonInteractiveClassTests {
     /**
      * Constructor
      */
-    public CommonInteractiveClassTests() {
-        // intentionally blank
+    protected CommonInteractiveClassTests() {
+        super();
     }
 }

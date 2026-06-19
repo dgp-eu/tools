@@ -3,6 +3,7 @@
  */
 package io.github.dgp_eu.tools.archiving;
 
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
@@ -18,12 +19,12 @@ import java.util.Properties;
             ArchiveFolders.class
     }
 )
-public final class Application {
+public final class ApplicationArchiving {
 
     /**
      * Constructor empty
      */
-    private Application() {
+    private ApplicationArchiving() {
         super();
     }
 
@@ -32,14 +33,8 @@ public final class Application {
      * @param args input arguments
      */
     static void main( final String[] args ) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Archiving-");
-        ProjectClass.setPomFile("/tools-archiving-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Archiving-", "/tools-archiving-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationArchiving()).execute(args), args[0]);
     }
 
 }

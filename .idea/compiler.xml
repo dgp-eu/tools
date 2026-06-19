@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="tools-databases" />
+        <module name="tools-cli" />
         <module name="tools-environment" />
         <module name="tools-archiving" />
         <module name="tools-json_split" />

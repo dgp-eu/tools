@@ -3,6 +3,7 @@
  */
 package io.github.dgp_eu.tools.web;
 
+import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
 import picocli.CommandLine;
@@ -17,7 +18,7 @@ import picocli.CommandLine.Mixin;
                 JavaJavaWebUserInterface.class
         }
 )
-public class Application {
+public class ApplicationWeb {
 
     /**
      * Constructor
@@ -25,14 +26,13 @@ public class Application {
      * @param args command-line arguments
      */
     /* default */ static void main(final String... args) {
-        CommonInteractiveClass.setStartDateTime();
-        LogExposureClass.ConfigurationSubClass.initiate("logs/DGP-EU_Tools-Web-");
-        ProjectClass.setPomFile("/tools-web-pom.xml");
-        CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with provided arguments
-        final int iExitCode = new CommandLine(new Application()).execute(args);
-        CommonInteractiveClass.setExitCode(iExitCode);
-        CommonInteractiveClass.shutMeDown(args[0]);
+        CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Web-", "/tools-web-pom.xml");
+        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationWeb()).execute(args), args[0]);
+    }
+
+    /** Constructor */
+    private ApplicationWeb() {
+        super();
     }
 
 }

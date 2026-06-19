@@ -11,21 +11,23 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>tools-archiving</artifactId>
-    <name>tools-archiving</name>
-    <description>Java wrapper classes to archive one or multiple folders (using external 7za binary
-        executable relevant to the host system)</description>
+    <artifactId>tools-cli</artifactId>
+    <name>tools-cli</name>
+    <description>Java wrapper classes to standardize Picocli boiler plate</description>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>io.github.dgp-eu</groupId>
-            <artifactId>tools-core</artifactId>
-            <version>${revision}</version>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.dgp-eu</groupId>
-            <artifactId>tools-cli</artifactId>
+            <artifactId>tools-core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>
@@ -42,17 +44,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>io.github.dgp_eu.tools.archiving.ApplicationArchiving</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -64,7 +55,7 @@
                         <configuration>
                             <target name="copy-and-rename-pom">
                                 <copy file="${basedir}/pom.xml"
-                                      tofile="${project.build.outputDirectory}/tools-archiving-pom.xml"/>
+                                      tofile="${project.build.outputDirectory}/tools-cli-pom.xml"/>
                             </target>
                         </configuration>
                     </execution>

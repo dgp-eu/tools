@@ -45,6 +45,7 @@
     <modules>
         <module>tools-core</module>
         <module>tools-archiving</module>
+        <module>tools-cli</module>
         <module>tools-databases</module>
         <module>tools-environment</module>
         <module>tools-incubator</module>
@@ -54,7 +55,7 @@
     </modules>
 
     <properties>
-        <revision>1.0.0</revision>
+        <revision>1.0.1-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
