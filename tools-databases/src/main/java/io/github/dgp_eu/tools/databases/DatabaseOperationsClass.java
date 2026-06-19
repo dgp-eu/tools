@@ -5,6 +5,7 @@ package io.github.dgp_eu.tools.databases;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -696,7 +697,7 @@ public final class DatabaseOperationsClass {
             } else {
                 final String strFeedback = String.format("Environment variable %s was found successfully!", strEnv);
                 LogExposureClass.LOGGER.debug(strFeedback);
-                final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
+                final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes(Charset.defaultCharset()));
                 final JsonNode ndMySQL = JsonOperationsClass.getJsonFileNodes(inputStream);
                 properties.put("ServerName", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerName"));
                 properties.put("Port", JsonOperationsClass.getJsonValue(ndMySQL, "/Port"));
@@ -877,10 +878,10 @@ public final class DatabaseOperationsClass {
             List<Properties> listReturn = new ArrayList<>();
             try (Connection objConnection = getSqLiteConnection(internalDatabase)) {
                 assert objConnection != null;
-                try (Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
+                try (Statement objStatement = ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
                     ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
                     assert rsCols != null;
-                    listReturn = DatabaseOperationsClass.ResultSettingSubClass.getResultSetColumnValues(rsCols);
+                    listReturn = ResultSettingSubClass.getResultSetColumnValues(rsCols);
                 }
             } catch(SQLException e){
                 final String strFeedback = String.format("%s connection has failed at %s: %s", BasicStructuresClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)), e.getLocalizedMessage());
@@ -913,7 +914,7 @@ public final class DatabaseOperationsClass {
              * @return String
              */
             public static String buildSqLiteFileInfoBox() {
-                final Path fileName = Path.of(DatabaseOperationsClass.SpecificSqLiteSubClass.getInternalDatabase());
+                final Path fileName = Path.of(internalDatabase);
                 return HtmlClass.buildFileInfoBox(fileName);
             }
 
@@ -922,7 +923,7 @@ public final class DatabaseOperationsClass {
              * @return StringBuilder
              */
             private static StringBuilder buildTableRecordCounting() {
-                final String strQueryCount = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTableRecordCounting");
+                final String strQueryCount = getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTableRecordCounting");
                 final StringBuilder strQueryRaw = new StringBuilder(1000);
                 final List<Properties> resultTables = getTablesAndTheirSequence();
                 resultTables.forEach(objProperty -> {
@@ -942,10 +943,10 @@ public final class DatabaseOperationsClass {
              * @return List<Properties>
              */
             private static List<Properties> getTablesAndTheirSequence() {
-                final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
+                final String queryTables = getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
                 final String strFeedback = String.format("Table list and their sequence query is: %s", queryTables);
                 LogExposureClass.LOGGER.debug(strFeedback);
-                return DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteResultSetValues("Table list and their sequence", queryTables);
+                return getSqLiteResultSetValues("Table list and their sequence", queryTables);
             }
 
             /**
@@ -954,9 +955,9 @@ public final class DatabaseOperationsClass {
              */
             public static String getTableStatisticsAsHtmlTable() {
                 final StringBuilder queryRecordCount = buildTableRecordCounting();
-                final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTables");
+                final String queryTableStats = getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTables");
                 final String strFinalQuery =  String.format(queryTableStats, queryRecordCount);
-                final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
+                final List<Properties> resultTableStats = getSqLiteResultSetValues("Table Statistics", strFinalQuery);
                 final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
                 final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
                         .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
@@ -1123,8 +1124,7 @@ public final class DatabaseOperationsClass {
         public static void performSnowflakePreDefinedAction(final String strAction, final Properties objProps) {
             try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString())) {
                 assert objConnection != null;
-                try (Statement objStatement =
-                        DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
+                try (Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
                     executeSnowflakeBootstrapQuery(objStatement);
                     getSnowflakePreDefinedInformation(objStatement, strAction, STR_VALUES);
                 }
