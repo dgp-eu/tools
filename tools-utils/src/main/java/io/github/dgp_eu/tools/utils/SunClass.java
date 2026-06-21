@@ -136,16 +136,16 @@ public final class SunClass {
      * @param sunset sun set time
      */
     private static void enhanceSunStatistics(final ZonedDateTime nowZ, final ZonedDateTime sunrise, final ZonedDateTime sunset) {
-        final Duration objDurationPrior;
-        final Duration objDurationNext;
-        String strSunSituation = "DOWN";
-        String strCrtSituation = "After sunset";
-        String strPriorEvent = "Sunset since %s";
-        String strNextEvent = "Sunrise in %s";
         final ZonedDateTime yesterdayZ = nowZ.minusDays(1);
         final ZonedDateTime sunsetPrior = calculateSunSetOrRise(yesterdayZ, false);
         final ZonedDateTime tomorrowZ = nowZ.plusDays(1);
         final ZonedDateTime sunriseNext = calculateSunSetOrRise(tomorrowZ, true);
+        String strSunSituation = "DOWN";
+        String strCrtSituation = "After sunset";
+        String strPriorEvent = "Sunset since %s";
+        String strNextEvent = "Sunrise in %s";
+        final Duration objDurationPrior;
+        final Duration objDurationNext;
         if (nowZ.isBefore(sunrise)) {
             strSunSituation = "DOWN";
             strCrtSituation = "Before sunrise";

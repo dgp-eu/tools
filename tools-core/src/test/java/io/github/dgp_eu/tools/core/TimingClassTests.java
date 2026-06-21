@@ -37,8 +37,8 @@ class TimingClassTests {
     void testGetFileLastModifiedTimeAsHumanReadableFormat() throws IOException {
         final Path tempFile = Files.createTempFile("test-file-", ".txt");
         final String handled = TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(tempFile);
-        assertTrue(BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(handled),
-                "Last Modified timestamp is not a timestamp with milliseconds");
+        assertTrue(BasicStructuresClass.StringEvaluationSubClass.isStringActuallyLongTimestampWithMilliseconds(handled),
+                "Last Modified timestamp is not a long timestamp with milliseconds");
     }
 
     @Test

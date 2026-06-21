@@ -26,7 +26,8 @@ public class ApplicationEnvironment {
      */
     public static void main( String[] args ) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Environment-", "/tools-environment-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationEnvironment()).execute(args), args[0]);
+        final int intEnvExitCode = new CommandLine(new ApplicationEnvironment()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intEnvExitCode, args[0]);
     }
 
     /** Constructor */

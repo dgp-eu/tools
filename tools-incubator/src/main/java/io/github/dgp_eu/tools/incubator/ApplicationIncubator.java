@@ -29,7 +29,8 @@ public class ApplicationIncubator {
      */
     public static void main( String[] args ) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Incubator-", "/tools-incubator-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationIncubator()).execute(args), args[0]);
+        final int intIncubExitCode = new CommandLine(new ApplicationIncubator()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intIncubExitCode, args[0]);
     }
 
     /** Constructor */

@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
@@ -40,7 +39,8 @@ public final class ApplicationJsonSplit {
      */
     /* default */ static void main(final String... args) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-JsonSplit-", "/tools-json-split-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationJsonSplit()).execute(args), args[0]);
+        final int intJsonExitCode = new CommandLine(new ApplicationJsonSplit()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intJsonExitCode, args[0]);
     }
 
 }

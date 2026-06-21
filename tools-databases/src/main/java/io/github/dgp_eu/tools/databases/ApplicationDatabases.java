@@ -31,7 +31,8 @@ public final class ApplicationDatabases {
      */
     /* default */ static void main(final String... args) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Databases-", "/tools-databases-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationDatabases()).execute(args), args[0]);
+        final int intDbExitCode = new CommandLine(new ApplicationDatabases()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intDbExitCode, args[0]);
     }
 
     /** Constructor */

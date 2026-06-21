@@ -136,7 +136,7 @@ public final class CommonInteractiveClass {
                 description = "Destination Folder where archives will be created (required, only one)",
                 arity = BasicStructuresClass.ARITY_ONLY_ONE,
                 required = true)
-        private static String strDestFolder;
+        private String strDestFolder;
 
         /**
          * Getter for strDestFolder
@@ -166,7 +166,7 @@ public final class CommonInteractiveClass {
                 description = "Folder Name in scope (required, one or more)",
                 arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
                 required = true)
-        private static String[] strFolderNames;
+        private String[] strFolderNames;
 
         /**
          * Getter for strFolderNames

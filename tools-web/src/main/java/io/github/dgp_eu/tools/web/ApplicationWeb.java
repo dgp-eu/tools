@@ -15,10 +15,10 @@ import picocli.CommandLine.Mixin;
 @CommandLine.Command(
         name = "top",
         subcommands = {
-                JavaJavaWebUserInterface.class
+                WebUserInterface.class
         }
 )
-public class ApplicationWeb {
+public final class ApplicationWeb {
 
     /**
      * Constructor
@@ -27,7 +27,8 @@ public class ApplicationWeb {
      */
     /* default */ static void main(final String... args) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Web-", "/tools-web-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationWeb()).execute(args), args[0]);
+        final int intWebExitCode = new CommandLine(new ApplicationWeb()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intWebExitCode, args[0]);
     }
 
     /** Constructor */
@@ -42,9 +43,9 @@ public class ApplicationWeb {
  * Supports web interface
  */
 @CommandLine.Command(
-        name = "JavaJavaWebUserInterface",
-        description = "Initiate JavaJava web user interface")
-class JavaJavaWebUserInterface implements Runnable {
+        name = "WebUserInterface",
+        description = "Initiate Web User Interface")
+class WebUserInterface implements Runnable {
 
     /**
      * String for Database
@@ -88,7 +89,7 @@ class JavaJavaWebUserInterface implements Runnable {
     /**
      * Constructor
      */
-    protected JavaJavaWebUserInterface() {
+    protected WebUserInterface() {
         // intentionally blank
     }
 }

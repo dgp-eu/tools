@@ -640,6 +640,17 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * Check if String is actually Long Time-stamp w. milliseconds
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Long Time-stamp w. milliseconds
+         */
+        public static boolean isStringActuallyLongTimestampWithMilliseconds(final String inputString) {
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString,
+                    RegularExpressionsClass.STR_LONG_TS_MSEC);
+        }
+
+        /**
          * Check if String is actually Numeric
          *
          * @param inputString string to evaluate

@@ -69,7 +69,7 @@ public final class TimingClass {
             final Instant instant = Instant.ofEpochMilli(modifTime);
             // Convert to LocalDateTime in system default zone
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
+            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS", Locale.US);
             lastModifTime = dateTime.format(fixedFormatter);
         } catch (IOException ei) {
             final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder", file.getParent(), file.getFileName());

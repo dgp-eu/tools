@@ -34,7 +34,8 @@ public final class ApplicationArchiving {
      */
     static void main( final String[] args ) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Archiving-", "/tools-archiving-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationArchiving()).execute(args), args[0]);
+        final int intArchExitCode = new CommandLine(new ApplicationArchiving()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intArchExitCode, args[0]);
     }
 
 }

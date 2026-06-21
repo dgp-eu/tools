@@ -12,10 +12,6 @@ import java.util.regex.Pattern;
  * Regular Expressions things
  */
 public final class RegularExpressionsClass {
-    /** Regular Expression for Prompt Parameters within SQL Query */
-    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
-    /** Version Patterns Map */
-    public static final String REGEXP_VERSION = "^[0-9\\.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
     /** Patterns Map */
     public static final Map<String, Map<String, String>> MAP_PATTERNS = Map.of(
             RegularExpressionsClass.STR_AGING_DATE, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
@@ -40,6 +36,12 @@ public final class RegularExpressionsClass {
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
             );
+    /** Version Patterns Map */
+    public static final String REGEXP_VERSION = "^[0-9\\.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
+    /** Regular Expression for Long Timestamp with Milliseconds  */
+    public static final String STR_LONG_TS_MSEC = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s(1|2)\\d{3}\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}";
 
     /**
      * Regex for Latitude: Sign, 2 digits (deg), 2 digits (min), 
@@ -237,6 +239,31 @@ public final class RegularExpressionsClass {
     public static final class ConversionSubClass {
 
         /**
+         * Convert aging Date/Time into human-readable String
+         * @param ageString input String
+         * @return String in human-readable format
+         */
+        public static String convertAgingDateOrTime(final Matcher matcher, final SequencedMap<String, String> seqMapDateTime, final String ageString) {
+            final List<String> resultDateOrTime = new ArrayList<>();
+            if (matcher.matches()) {
+                seqMapDateTime.forEach((strPlural, strSingular) -> {
+                    try {
+                        final int intValue = Integer.parseInt(matcher.group(strPlural));
+                        if (intValue != 0) {
+                            resultDateOrTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                        }
+                    } catch (NumberFormatException noFormatException) {
+                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA, strPlural, Arrays.toString(noFormatException.getStackTrace()));
+                        LogExposureClass.LOGGER.error(strFeedback);
+                    }
+                });
+            } else {
+                resultDateOrTime.add(ageString);
+            }
+            return resultDateOrTime.toString().replaceAll("[\\[\\]]", "");
+        }
+
+        /**
          * Convert aging Date into human-readable String
          * @param ageString input String
          * @return String in human-readable format
@@ -244,22 +271,11 @@ public final class RegularExpressionsClass {
         public static String convertAgingDateIntoHumanReadableString(final String ageString) {
             final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
             final Matcher matcher = agePattern.matcher(ageString);
-            final List<String> resultDate = new ArrayList<>(); 
-            if (matcher.matches()) {
-                final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
-                sequencedMapDate.put("years", "year");
-                sequencedMapDate.put("months", "month");
-                sequencedMapDate.put("days", "day");
-                sequencedMapDate.forEach((strPlural, strSingular) -> {
-                    final int intValue = Integer.parseInt(matcher.group(strPlural));
-                    if (intValue != 0) {
-                        resultDate.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
-                    }
-                });
-            } else {
-                resultDate.add(ageString);
-            }
-            return resultDate.toString().replaceAll("[\\[\\]]", "");
+            final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
+            sequencedMapDate.put("years", "year");
+            sequencedMapDate.put("months", "month");
+            sequencedMapDate.put("days", "day");
+            return convertAgingDateOrTime(matcher, sequencedMapDate, ageString);
         }
 
         /**
@@ -277,9 +293,14 @@ public final class RegularExpressionsClass {
                 sequencedMapTime.put("minutes", "minute");
                 sequencedMapTime.put("seconds", "second");
                 sequencedMapTime.forEach((strPlural, strSingular) -> {
-                    final int intValue = Integer.parseInt(matcher.group(strPlural));
-                    if (intValue != 0) {
-                        resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                    try {
+                        final int intValue = Integer.parseInt(matcher.group(strPlural));
+                        if (intValue != 0) {
+                            resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                        }
+                    } catch (NumberFormatException noFormatException) {
+                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA, strPlural, Arrays.toString(noFormatException.getStackTrace()));
+                        LogExposureClass.LOGGER.error(strFeedback);
                     }
                 });
             } else {
@@ -325,7 +346,9 @@ public final class RegularExpressionsClass {
             boolean bolReturn = false;
             if (inputString != null) {
                 String regularExpression = REGEXP_VERSION;
-                if (!"version".equalsIgnoreCase(mapIdentifier)) {
+                if (STR_LONG_TS_MSEC.equals(mapIdentifier)) {
+                    regularExpression = STR_LONG_TS_MSEC;
+                } else if (!"version".equalsIgnoreCase(mapIdentifier)) {
                     regularExpression = MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
                 }
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);

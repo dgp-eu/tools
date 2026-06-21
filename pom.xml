@@ -55,7 +55,7 @@
     </modules>
 
     <properties>
-        <revision>1.0.1-SNAPSHOT</revision>
+        <revision>1.0.1</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -151,7 +151,7 @@
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://maven.apache.org/download.cgi -->
-            <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/maven-core -->
+            <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/maven-model -->
             <!-- Description: Core classes of Apache Maven to manage the building process. -->
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -159,7 +159,7 @@
                 <version>${maven-model.version}</version>
                 <scope>compile</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation -->
+            <!-- Source: https://codehaus-plexus.github.io/plexus-interpolation/ -->
             <!-- Binaries: https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-interpolation -->
             <!-- Description: A collection of various utility classes to ease working with strings, files, command lines and more. -->
             <dependency>

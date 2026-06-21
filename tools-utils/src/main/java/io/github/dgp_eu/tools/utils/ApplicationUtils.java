@@ -41,9 +41,10 @@ public class ApplicationUtils {
      * Application logic
      * @param args input arguments
      */
-    public static void main( String[] args ) {
+    public static void main( final String[] args ) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Utils-", "/tools-utils-pom.xml");
-        CommonInteractiveClass.shutMeDownWithParameters(new CommandLine(new ApplicationUtils()).execute(args), args[0]);
+        final int intUtilsExitCode = new CommandLine(new ApplicationUtils()).execute(args);
+        CommonInteractiveClass.shutMeDownWithParameters(intUtilsExitCode, args[0]);
     }
 
 }
