@@ -107,6 +107,7 @@ Various Java classes to be re-used
 * [Log4j2 – Useful Log Format Pattern Layouts](https://howtodoinjava.com/log4j2/useful-conversion-pattern-examples/)
 * [Log4j2 XML Configuration: Log4j2.xml Example](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/)
 * [Programmatic Configuration with Log4j 2](https://www.baeldung.com/log4j2-programmatic-config)
+* [Log4j2 Levels](https://github.com/apache/logging-log4j2/blob/2.x/log4j-core/src/main/resources/Log4j-levels.xsd)
 
 
 ### Java Security
