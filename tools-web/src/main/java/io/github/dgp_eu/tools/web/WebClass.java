@@ -167,7 +167,7 @@ public final class WebClass {
      * @param inFolderNames list of Folders relevant for checksum exposure
      */
     public static void setFolderNamesForChecksumExposure(final String... inFolderNames) {
-        strFolderNames = inFolderNames;
+        strFolderNames = inFolderNames == null ? null : inFolderNames.clone();
     }
 
     /**
