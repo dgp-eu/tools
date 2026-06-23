@@ -456,7 +456,7 @@ public final class BasicStructuresClass {
          * @return String cleaned
          */
         public static String cleanStringAsDatabaseObject(final String strObject) {
-            return strObject.replaceAll("[^A-Za-z0-9_\\/\\.\\|\\(\\)]", "");
+            return strObject.replaceAll("[^A-Za-z0-9_\\/.|()]", "");
         }
 
         /**
@@ -465,7 +465,7 @@ public final class BasicStructuresClass {
          * @return String cleaned
          */
         public static String cleanStringFromUnwantedCharacters(final String strObject) {
-            return strObject.replaceAll("[^A-Za-z0-9 _\\-–\\/\\.\\(\\)\\:\\'\\`]", "");
+            return strObject.replaceAll("[^A-Za-z0-9 _\\-–\\/.():'`]", "");
         }
 
         /**
