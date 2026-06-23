@@ -30,7 +30,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public final class ProjectClass {
     /** constant for variable building */
-    private static String variablePattern = "${%s.version}";
+    private static final String PATTERN = "${%s.version}";
     /** holder of Managed Versions */
     private static Map<String, Object> managedVersions;
     /** holder of Plugin Management Versions */
@@ -475,7 +475,7 @@ public final class ProjectClass {
                 final String rawVersion = dependency.getVersion();
                 String strVersion;
                 if (rawVersion == null) {
-                    final String strVariable = String.format(variablePattern, dependency.getArtifactId());
+                    final String strVariable = String.format(PATTERN, dependency.getArtifactId());
                     strVersion = getProjectModelValueWithInterpolationIfNeeded(strVariable);
                 } else {
                     strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
@@ -495,7 +495,7 @@ public final class ProjectClass {
             final String[] strReturn = {strKey, ""};
             final String rawVersion = inPlugin.getVersion();
             if (rawVersion == null) {
-                final String strVariable = String.format(variablePattern, inPlugin.getArtifactId());
+                final String strVariable = String.format(PATTERN, inPlugin.getArtifactId());
                 strReturn[1] = getProjectModelValueWithInterpolationIfNeeded(strVariable);
             } else {
                 strReturn[1] = getProjectModelValueWithInterpolationIfNeeded(rawVersion);
