@@ -286,27 +286,11 @@ public final class RegularExpressionsClass {
         public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
             final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
             final Matcher matcher = agePattern.matcher(ageString);
-            final List<String> resultTime = new ArrayList<>(); 
-            if (matcher.matches()) {
-                final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
-                sequencedMapTime.put("hours", "hour");
-                sequencedMapTime.put("minutes", "minute");
-                sequencedMapTime.put("seconds", "second");
-                sequencedMapTime.forEach((strPlural, strSingular) -> {
-                    try {
-                        final int intValue = Integer.parseInt(matcher.group(strPlural));
-                        if (intValue != 0) {
-                            resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
-                        }
-                    } catch (NumberFormatException noFormatException) {
-                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA, strPlural, Arrays.toString(noFormatException.getStackTrace()));
-                        LogExposureClass.LOGGER.error(strFeedback);
-                    }
-                });
-            } else {
-                resultTime.add(ageString);
-            }
-            return resultTime.toString().replaceAll("[\\[\\]]", "");
+            final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
+            sequencedMapTime.put("hours", "hour");
+            sequencedMapTime.put("minutes", "minute");
+            sequencedMapTime.put("seconds", "second");
+            return convertAgingDateOrTime(matcher, sequencedMapTime, ageString);
         }
 
         /**
