@@ -198,7 +198,7 @@ public final class LogExposureClass {
         public static void initiate(final String inputFile) {
             logFile = inputFile;
             buildRollingFile("rest");
-            buildRollingFile("error");
+            buildRollingFile(BasicStructuresClass.STR_ERROR);
             final RootLoggerComponentBuilder rootLogger = BUILDER.newRootLogger(
                 logLevel
             )
@@ -217,12 +217,12 @@ public final class LogExposureClass {
             );
             final ComponentBuilder<?> policy = buildPolicies();
             final String rollingName = switch (strType) {
-                case "error" -> "rollingError";
+                case BasicStructuresClass.STR_ERROR -> "rollingError";
                 case "rest" -> "rollingRest";
                 default -> "rollingAll";
             };
             final FilterComponentBuilder levelRangeFilter = switch (strType) {
-                case "error" -> buildLevelRangeFilter(
+                case BasicStructuresClass.STR_ERROR -> buildLevelRangeFilter(
                             "FATAL",
                             "ERROR"
                     );

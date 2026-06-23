@@ -53,6 +53,8 @@ public final class BasicStructuresClass {
     public static final String STR_ENV = "Environment";
     /** String for internal Environment Details */
     public static final String STR_ENV_DTLS = "EnvironmentDetails";
+    /** Constant for error */
+    public static final String STR_ERROR = "error";
     /** String for internal Executing query successful */
     public static final String STR_EXEC_QRY_OK = "Executing %s query was successful!";
     /** Constant for File Hashing */
