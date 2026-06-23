@@ -5,7 +5,7 @@ package io.github.dgp_eu.tools.web;
 
 import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
-import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
+import io.github.dgp_eu.tools.databases.SpecificSqLiteSubClass;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
@@ -79,7 +79,7 @@ class WebUserInterface implements Runnable {
     @Override
     public void run() {
         UndertowClass.setWebPort(String.valueOf(portNumber));
-        DatabaseOperationsClass.SpecificSqLiteSubClass.setInternalDatabase(strDbReleases);
+        SpecificSqLiteSubClass.setInternalDatabase(strDbReleases);
         WebClass.SoftwareReleasesSubClass.setReleasesDatabase(strDbReleases);
         WebClass.setFolderNamesForChecksumExposure(optFolderNames.getFolderNames());
         UndertowClass.setRootHandler(WebClass.handleWebContent());

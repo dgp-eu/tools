@@ -121,11 +121,11 @@ class GetInformationFromDatabase implements Runnable {
         Properties properties = new Properties();
         switch (strDatabaseType) {
             case "MySQL":
-                properties = DatabaseOperationsClass.SpecificMySqlSubClass.getConnectionPropertiesForMySQL();
-                DatabaseOperationsClass.SpecificMySqlSubClass.performMySqlPreDefinedAction(strLclInfoType, properties);
+                properties = SpecificMySqlSubClass.getConnectionPropertiesForMySQL();
+                SpecificMySqlSubClass.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":
-                DatabaseOperationsClass.SpecificSnowflakeSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
+                SpecificSnowflakeSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
                 final String strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));

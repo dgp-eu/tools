@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.*;
+import org.apache.logging.log4j.Level;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
@@ -28,6 +29,7 @@ public class ApplicationIncubator {
      * @param args
      */
     public static void main( String[] args ) {
+        LogExposureClass.ConfigurationSubClass.setLogLevel(Level.DEBUG);
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Incubator-", "/tools-incubator-pom.xml");
         final int intIncubExitCode = new CommandLine(new ApplicationIncubator()).execute(args);
         CommonInteractiveClass.shutMeDownWithParameters(intIncubExitCode, args[0]);
