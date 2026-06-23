@@ -19,6 +19,7 @@ import io.github.dgp_eu.tools.core.JsonOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ConnectivitySubClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ResultSettingSubClass;
+import tools.jackson.databind.JsonNode;
 
 /**
  * MySQL methods
