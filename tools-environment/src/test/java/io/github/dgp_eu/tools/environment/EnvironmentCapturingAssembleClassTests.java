@@ -37,7 +37,7 @@ class EnvironmentCapturingAssembleClassTests {
     /**
      * Constructor
      */
-    public EnvironmentCapturingAssembleClassTests() {
+    EnvironmentCapturingAssembleClassTests() {
         // intentionally blank
     }
 

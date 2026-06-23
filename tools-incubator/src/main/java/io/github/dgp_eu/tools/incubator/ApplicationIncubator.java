@@ -22,13 +22,13 @@ import picocli.CommandLine.Mixin;
                 ExperimentalFeature.class
         }
 )
-public class ApplicationIncubator {
+public final class ApplicationIncubator {
 
     /**
      * Main
-     * @param args
+     * @param args input arguments
      */
-    public static void main( String[] args ) {
+    /* default */ static void main( final String[] args ) {
         LogExposureClass.ConfigurationSubClass.setLogLevel(Level.DEBUG);
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Incubator-", "/tools-incubator-pom.xml");
         final int intIncubExitCode = new CommandLine(new ApplicationIncubator()).execute(args);

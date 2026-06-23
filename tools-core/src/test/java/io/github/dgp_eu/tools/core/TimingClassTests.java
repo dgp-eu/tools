@@ -123,7 +123,7 @@ class TimingClassTests {
     /**
      * Constructor
      */
-    public TimingClassTests() {
+    TimingClassTests() {
         // intentionally blank
     }
 

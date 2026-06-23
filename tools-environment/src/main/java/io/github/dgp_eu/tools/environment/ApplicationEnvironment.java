@@ -18,13 +18,13 @@ import picocli.CommandLine.Mixin;
             CaptureEnvironmentDetailsIntoJsonFile.class
     }
 )
-public class ApplicationEnvironment {
+public final class ApplicationEnvironment {
 
     /**
      * Application logic
      * @param args input arguments
      */
-    public static void main( String[] args ) {
+    /* default */ static void main( final String[] args ) {
         CommonInteractiveClass.startMeUpWithParameters("logs/DGP-EU_Tools-Environment-", "/tools-environment-pom.xml");
         final int intEnvExitCode = new CommandLine(new ApplicationEnvironment()).execute(args);
         CommonInteractiveClass.shutMeDownWithParameters(intEnvExitCode, args[0]);

@@ -410,15 +410,15 @@ public final class HtmlClass {
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyLong(strValue)) {
                     cellStyle = CSS_TEXT_RIGHT;
                     strValue = String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoLong(strValue));
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
                     cellStyle = CSS_TEXT_RIGHT;
                     strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
                 } else if (strValue.length() >= LARGE_STRING) {
                     strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
                 }

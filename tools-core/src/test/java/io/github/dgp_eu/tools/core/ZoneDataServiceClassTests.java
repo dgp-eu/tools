@@ -154,7 +154,7 @@ class ZoneDataServiceClassTests {
         /**
          * Constructor
          */
-        public TestCoordinates() {
+        TestCoordinates() {
             // intentionally blank
         }
 
@@ -225,7 +225,7 @@ class ZoneDataServiceClassTests {
         /**
          * Constructor
          */
-        public TestSupportedZones() {
+        TestSupportedZones() {
             // intentionally blank
         }
 
@@ -234,7 +234,7 @@ class ZoneDataServiceClassTests {
     /**
      * Constructor
      */
-    public ZoneDataServiceClassTests() {
+    ZoneDataServiceClassTests() {
         // intentionally blank
     }
 }

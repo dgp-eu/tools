@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
 package io.github.dgp_eu.tools.databases;

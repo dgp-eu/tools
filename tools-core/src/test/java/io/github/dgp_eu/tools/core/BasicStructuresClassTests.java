@@ -141,7 +141,7 @@ class BasicStructuresClassTests {
         /**
          * Constructor
          */
-        public TestStringCleaningSubClass() {
+        TestStringCleaningSubClass() {
             // intentionally blank
         }
 
@@ -166,7 +166,7 @@ class BasicStructuresClassTests {
         /**
          * Constructor
          */
-        public TestStringEvaluationSubClass() {
+        TestStringEvaluationSubClass() {
             // intentionally blank
         }
 
@@ -198,7 +198,7 @@ class BasicStructuresClassTests {
         /**
          * Constructor
          */
-        public TestStringConversionSubClass() {
+        TestStringConversionSubClass() {
             // intentionally blank
         }
 
@@ -316,7 +316,7 @@ class BasicStructuresClassTests {
         /**
          * Constructor
          */
-        public TestListAndMapSubClass() {
+        TestListAndMapSubClass() {
             // intentionally blank
         }
 
@@ -413,7 +413,7 @@ class BasicStructuresClassTests {
         /**
          * Constructor
          */
-        public TestStringTransformationClass() {
+        TestStringTransformationClass() {
             // intentionally blank
         }
 
@@ -422,7 +422,7 @@ class BasicStructuresClassTests {
     /**
      * Constructor
      */
-    public BasicStructuresClassTests() {
+    BasicStructuresClassTests() {
         // intentionally blank
     }
 

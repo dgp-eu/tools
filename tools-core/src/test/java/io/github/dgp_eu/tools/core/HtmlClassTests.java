@@ -8,8 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,10 +46,10 @@ class HtmlClassTests {
     @Test
     @DisplayName("SelectInputSubClass.buildSelectInput produces select with selected option and correct attributes")
     void buildSelectInputGeneratesSelectWithSelectedOption() {
-        final java.util.SequencedMap<String, String> mapValues = new java.util.LinkedHashMap<>();
+        final SequencedMap<String, String> mapValues = new LinkedHashMap<>();
         mapValues.put("tz1", "Timezone One");
         mapValues.put("tz2", "Timezone Two");
-        final java.util.Properties props = new java.util.Properties();
+        final Properties props = new Properties();
         props.put("Label", "Time Zones");
         props.put("Name", "TZ");
         props.put("Id", "TZ");
@@ -84,7 +83,7 @@ class HtmlClassTests {
     @Test
     @DisplayName("HtmlClass.buildMenuString produces select with time zones")
     void buildMenuString() {
-        final java.util.SequencedMap<String, java.util.Map<String, String>> inMapMenu = Stream.of(
+        final SequencedMap<String, Map<String, String>> inMapMenu = Stream.of(
                 Map.entry("home", Map.of(
                         BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                         BasicStructuresClass.STR_MENU, "HomePage",
@@ -116,7 +115,7 @@ class HtmlClassTests {
     @Test
     @DisplayName("TableSubClass.getListOfSequencedMapIntoHtmlTable generates table rows, headers and tabs when New Tab feature is used")
     void testGetListOfSequencedMapIntoHtmlTableProducesTableAndTabs() {
-        final java.util.SequencedMap<Object, Object> rec1 = new java.util.LinkedHashMap<>();
+        final SequencedMap<Object, Object> rec1 = new LinkedHashMap<>();
         rec1.put("Category", "A");
         rec1.put("Name", "Item1");
         rec1.put("Quantity", "10");
@@ -126,18 +125,18 @@ class HtmlClassTests {
         rec1.put("Due", "2026-01-29 23:12:05");
         rec1.put("Comments", "");
         rec1.put("Obs.", "-");
-        final java.util.SequencedMap<Object, Object> rec2 = new java.util.LinkedHashMap<>();
+        final SequencedMap<Object, Object> rec2 = new LinkedHashMap<>();
         rec2.put("Category", "B");
         rec2.put("Name", "Item2");
         rec2.put("Quantity", "15");
-        rec1.put("Price", "0.9");
-        rec1.put("Overall", "");
-        rec1.put("When", "2026-06-01");
-        rec1.put("Due", "NULL");
-        rec1.put("Comments", "2026-06-26 23:59:59.555");
-        rec1.put("Obs.", "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.");
-        final java.util.List<java.util.SequencedMap<Object, Object>> records = java.util.List.of(rec1, rec2);
-        final java.util.Properties features = new java.util.Properties();
+        rec2.put("Price", "0.9");
+        rec2.put("Overall", "");
+        rec2.put("When", "2026-06-01");
+        rec2.put("Due", "NULL");
+        rec2.put("Comments", "2026-06-26 23:59:59.555");
+        rec2.put("Obs.", "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.");
+        final List<SequencedMap<Object, Object>> records = List.of(rec1, rec2);
+        final Properties features = new Properties();
         features.put(BasicStructuresClass.STR_NEW_TAB, "Category");
         features.put("Counter", "1");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
@@ -153,7 +152,7 @@ class HtmlClassTests {
     /**
      * Constructor
      */
-    public HtmlClassTests() {
+    HtmlClassTests() {
         // intentionally blank
     }
 

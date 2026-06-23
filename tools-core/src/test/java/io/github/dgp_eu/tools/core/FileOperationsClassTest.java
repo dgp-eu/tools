@@ -134,7 +134,7 @@ class FileOperationsClassTest {
     /**
      * Constructor
      */
-    public FileOperationsClassTest() {
+    FileOperationsClassTest() {
         // intentionally blank
     }
 

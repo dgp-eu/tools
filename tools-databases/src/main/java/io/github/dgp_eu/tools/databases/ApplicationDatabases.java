@@ -1,6 +1,6 @@
 /*
  * Copyright 2026 Daniel-Gheorghe Popiniuc
- */ 
+ */
 package io.github.dgp_eu.tools.databases;
 
 import java.util.Arrays;
@@ -121,11 +121,11 @@ class GetInformationFromDatabase implements Runnable {
         Properties properties = new Properties();
         switch (strDatabaseType) {
             case "MySQL":
-                properties = SpecificMySqlSubClass.getConnectionPropertiesForMySQL();
-                SpecificMySqlSubClass.performMySqlPreDefinedAction(strLclInfoType, properties);
+                properties = SpecificMySqlClass.getConnectionPropertiesForMySQL();
+                SpecificMySqlClass.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":
-                SpecificSnowflakeSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
+                SpecificSnowflakeClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
                 final String strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));

@@ -7,7 +7,7 @@ import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import io.github.dgp_eu.tools.core.*;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
-import io.github.dgp_eu.tools.databases.SpecificSqLiteSubClass;
+import io.github.dgp_eu.tools.databases.SpecificSqLiteClass;
 import io.github.dgp_eu.tools.environment.EnvironmentCapturingAssembleClass;
 import io.undertow.server.HttpHandler;
 
@@ -112,9 +112,9 @@ public final class WebClass {
                     + HtmlClass.buildFileInfoBox(Path.of(ProjectClass.getPomFile()));
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
             case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
-                    + SpecificSqLiteSubClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
-            case BasicStructuresClass.STR_TS            -> SpecificSqLiteSubClass.SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable()
-                    + SpecificSqLiteSubClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
+                    + SpecificSqLiteClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
+            case BasicStructuresClass.STR_TS            -> SpecificSqLiteClass.SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable()
+                    + SpecificSqLiteClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
             default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }
@@ -229,7 +229,7 @@ public final class WebClass {
          */
         private static List<Properties> getSoftwareReleasesFromDatabase() {
             List<Properties> resultReleases = new ArrayList<>();
-            try (Connection objConnection = SpecificSqLiteSubClass.getSqLiteConnection(releasesDatabase);
+            try (Connection objConnection = SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
                     Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
                 final Properties rsProperties = new Properties();
                 rsProperties.put("Purpose", STR_SOFT_RELEASES);

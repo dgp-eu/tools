@@ -59,7 +59,7 @@ class LogExposureClassTests {
     /**
      * Constructor
      */
-    public LogExposureClassTests() {
+    LogExposureClassTests() {
         // intentionally blank
     }
 

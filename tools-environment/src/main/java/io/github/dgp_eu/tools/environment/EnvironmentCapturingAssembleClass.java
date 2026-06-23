@@ -120,7 +120,7 @@ public final class EnvironmentCapturingAssembleClass {
     public static String getEnvironmentDetailsAsHtmlTable() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
-        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
+        final List<Properties> envDetails = packageCurrentEnvironmentDetailsIntoListOfProperties();
         final List<String> desiredOrder = List.of("Category", "Element", "Value");
         final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))

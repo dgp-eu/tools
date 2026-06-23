@@ -6,12 +6,11 @@ package io.github.dgp_eu.tools.cli;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import org.apache.maven.model.Model;
-
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.TimingClass;
+import org.apache.maven.model.Model;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -77,7 +76,7 @@ public final class CommonInteractiveClass {
      * @param inPomFile input Project Object Model file
      */
     public static void startMeUpWithParameters(final String inLogFile, final String inPomFile) {
-        CommonInteractiveClass.setStartDateTime();
+        setStartDateTime();
         LogExposureClass.ConfigurationSubClass.initiate(inLogFile);
         ProjectClass.setPomFile(inPomFile);
         startMeUp();

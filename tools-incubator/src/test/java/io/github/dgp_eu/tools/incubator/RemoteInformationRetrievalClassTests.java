@@ -29,7 +29,7 @@ class RemoteInformationRetrievalClassTests {
     /**
      * Constructor
      */
-    public RemoteInformationRetrievalClassTests() {
+    RemoteInformationRetrievalClassTests() {
         // intentionally blank
     }
 

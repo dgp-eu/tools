@@ -46,7 +46,7 @@ High precision at Fri, 25 Dec 2026 14:30:05.123.""";
     /**
      * Constructor
      */
-    public RegularExpressionsClassTests() {
+    RegularExpressionsClassTests() {
         // intentionally blank
     }
 
