@@ -78,7 +78,7 @@ public final class JsonOperationsClass {
         }
         final ObjectMapper objectMapper = new ObjectMapper();
         final JsonNode jsonRootNode = objectMapper.readTree(jsonFile);
-        final String strFeedback = String.format("JSON information has been loaded: %s", jsonFile.toString());
+        final String strFeedback = String.format("JSON information has been loaded from file %s", jsonFile.getFileName().toString());
         LogExposureClass.LOGGER.debug(strFeedback);
         return jsonRootNode;
     }
