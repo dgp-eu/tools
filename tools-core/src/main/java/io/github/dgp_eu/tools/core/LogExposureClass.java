@@ -169,7 +169,6 @@ public final class LogExposureClass {
 
     /**
      * Configuration management
-     * and https://github.com/apache/logging-log4j2/blob/2.x/log4j-core/src/main/resources/Log4j-levels.xsd
      */
     public static final class ConfigurationSubClass {
 
@@ -216,35 +215,26 @@ public final class LogExposureClass {
                 ".log",
                 "%d{yyyy-MM-dd-HH}-%i.log"
             );
-            final ComponentBuilder<?> policy = buildPolicies(BUILDER);
-            final String rollingName;
-            final FilterComponentBuilder levelRangeFilter;
-            switch (strType) {
-                case "error":
-                    rollingName = "rollingError";
-                    levelRangeFilter = buildLevelRangeFilter(
-                        BUILDER,
-                        "FATAL",
-                        "ERROR"
+            final ComponentBuilder<?> policy = buildPolicies();
+            final String rollingName = switch (strType) {
+                case "error" -> "rollingError";
+                case "rest" -> "rollingRest";
+                default -> "rollingAll";
+            };
+            final FilterComponentBuilder levelRangeFilter = switch (strType) {
+                case "error" -> buildLevelRangeFilter(
+                            "FATAL",
+                            "ERROR"
                     );
-                    break;
-                case "rest":
-                    rollingName = "rollingRest";
-                    levelRangeFilter = buildLevelRangeFilter(
-                        BUILDER,
-                        "WARN",
-                        "ALL"
+                case "rest" -> buildLevelRangeFilter(
+                            "WARN",
+                            "ALL"
                     );
-                    break;
-                default:
-                    rollingName = "rollingAll";
-                    levelRangeFilter = buildLevelRangeFilter(
-                        BUILDER,
-                        "FATAL",
-                        "ALL"
-                    ); // includes all levels
-                    break;
-            }
+                default -> buildLevelRangeFilter(
+                            "FATAL",
+                            "ALL"
+                    );
+            };
             final AppenderComponentBuilder rollingFile = BUILDER.newAppender(
                 rollingName,
                 "RollingFile"
@@ -259,17 +249,15 @@ public final class LogExposureClass {
 
         /**
          *
-         * @param builder input logger
          * @param minLevel starting Level
          * @param maxLevel ending Level
          * @return LevelRangeFilter
          */
         private static FilterComponentBuilder buildLevelRangeFilter(
-            final ConfigurationBuilder<BuiltConfiguration> builder,
             final String minLevel,
             final String maxLevel
         ) {
-            final FilterComponentBuilder flow = builder.newFilter(
+            final FilterComponentBuilder flow = BUILDER.newFilter(
                 "LevelRangeFilter",
                 Filter.Result.ACCEPT,
                 Filter.Result.DENY
@@ -281,21 +269,18 @@ public final class LogExposureClass {
 
         /**
          * Building Policies
-         * @param builder input logger
          * @return ComponentBuilder
          */
-        private static ComponentBuilder<?> buildPolicies(
-            final ConfigurationBuilder<BuiltConfiguration> builder
-        ) {
-            final ComponentBuilder<?> triggeringPolicy = builder.newComponent(
+        private static ComponentBuilder<?> buildPolicies() {
+            final ComponentBuilder<?> triggeringPolicy = BUILDER.newComponent(
                 "Policies"
             );
-            final ComponentBuilder<?> timeBasedPolicy = builder
+            final ComponentBuilder<?> timeBasedPolicy = BUILDER
                 .newComponent("TimeBasedTriggeringPolicy")
                 .addAttribute("interval", 1)
                 .addAttribute("modulate", true);
             triggeringPolicy.addComponent(timeBasedPolicy);
-            final ComponentBuilder<?> sizeBasedPolicy = builder
+            final ComponentBuilder<?> sizeBasedPolicy = BUILDER
                 .newComponent("SizeBasedTriggeringPolicy")
                 .addAttribute("size", "20M");
             triggeringPolicy.addComponent(sizeBasedPolicy);
@@ -309,5 +294,7 @@ public final class LogExposureClass {
         public static void setLogLevel(final Level inputLevel) {
             logLevel = inputLevel;
         }
+
     }
+
 }
