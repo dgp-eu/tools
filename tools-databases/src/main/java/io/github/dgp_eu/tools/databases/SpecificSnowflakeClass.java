@@ -124,6 +124,24 @@ public final class SpecificSnowflakeClass {
      */
     private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
         final Properties properties = new Properties();
+        properties.put("user", getUsernameForConnection());
+        properties.put("db", strDatabase);
+        final List<String> optionalProperties = List.of("Authenticator", "Role", "Schema", "Warehouse");
+        optionalProperties.forEach(strValue -> {
+            final String strCrtValue = propInstance.getOrDefault(strValue, "").toString();
+            if (!strCrtValue.isBlank()) {
+                properties.put(strValue.toLowerCase(Locale.US), strCrtValue.replace("\"", ""));
+            }
+        });
+        properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
+        return properties;
+    }
+
+    /**
+     * Logic to retrieve relevant user-name for Snowflake connection
+     * @return String with user-name
+     */
+    private static String getUsernameForConnection() {
         String currentUser = strUserName;
         if (strUserName == null) {
             currentUser = ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault());
@@ -131,14 +149,7 @@ public final class SpecificSnowflakeClass {
         if (currentUser.isEmpty()) {
             currentUser = "UNKNOWN_USER";
         }
-        properties.put("user", currentUser);
-        properties.put("db", strDatabase);
-        properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
-        properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
-        properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
-        properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
-        properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
-        return properties;
+        return currentUser;
     }
 
     /**
@@ -169,7 +180,8 @@ public final class SpecificSnowflakeClass {
             assert objConnection != null;
             try (Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
                 executeSnowflakeBootstrapQuery(objStatement);
-                getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES);
+                final List<Properties> predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES);
+                LogExposureClass.LOGGER.info(predefinedInfo.toString());
             }
         } catch(SQLException e) {
             final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));
