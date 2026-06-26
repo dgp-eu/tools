@@ -73,11 +73,11 @@
         <log4j-core.version>2.26.0</log4j-core.version>
         <log4j-slf4j2-impl.version>2.26.0</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.16</maven-model.version>
-        <oshi-core-ffm.version>7.3.1</oshi-core-ffm.version>
+        <oshi-core-ffm.version>7.3.2</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.2.0</sqlite-jdbc.version>
-        <undertow-core.version>2.4.1.Final</undertow-core.version>
+        <undertow-core.version>2.4.2.Final</undertow-core.version>
         <!-- Build Plugin versions -->
         <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
