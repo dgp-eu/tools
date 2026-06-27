@@ -22,11 +22,11 @@
     <link rel="stylesheet" href="/web/static/BootStrap/5.3.8/bootstrap.min.css">
     <script src="/web/static/BootStrap/5.3.8/bootstrap.bundle.min.js" defer></script>
     <!-- Fontawesome components -->
-    <link rel="stylesheet" href="/web/static/FontAwesome/7.2.0/fontawesome.min.css">
-    <script src="/web/static/FontAwesome/7.2.0/brands.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.2.0/fontawesome.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.2.0/regular.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.2.0/solid.min.js" defer></script>
+    <link rel="stylesheet" href="/web/static/FontAwesome/7.3.0/fontawesome.min.css">
+    <script src="/web/static/FontAwesome/7.3.0/brands.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.0/fontawesome.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.0/regular.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.0/solid.min.js" defer></script>
     <!-- Tabber components -->
     <script src="/web/static/Tabber/1.0.0/tabber.min.js" defer></script>
 </head>
