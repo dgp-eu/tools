@@ -994,8 +994,8 @@ public final class FileOperationsClass {
                         fileProperties.put(algo, computeSingleChecksum(file, algo));
                     }
                 });
-                executor.shutdown();
                 executor.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
+                executor.shutdown();
             } catch (InterruptedException ei) {
                 final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
