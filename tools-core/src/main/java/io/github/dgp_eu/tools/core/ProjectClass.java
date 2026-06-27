@@ -116,9 +116,11 @@ public final class ProjectClass {
                 if (Files.exists(Path.of(pomFile))) {
                     final BufferedReader bReader = Files.newBufferedReader(Path.of(pomReference), StandardCharsets.UTF_8);
                     model = reader.read(bReader);
+                    bReader.close();
                 } else {
                     final InputStream inputStream = ProjectClass.class.getResourceAsStream(pomReference);
                     model = reader.read(inputStream);
+                    inputStream.close();
                 }
             } catch (IOException | XmlPullParserException ex) {
                 LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
