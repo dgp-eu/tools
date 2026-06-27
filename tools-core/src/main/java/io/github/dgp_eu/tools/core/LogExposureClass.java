@@ -209,6 +209,10 @@ public final class LogExposureClass {
             Configurator.initialize(BUILDER.build());
         }
 
+        /**
+         * logic for rotating log file name
+         * @param strType type of the log
+         */
         private static void buildRollingFile(final String strType) {
             final String logFileName = logFile + strType + ".log";
             final String filePattern = logFileName.replace(
