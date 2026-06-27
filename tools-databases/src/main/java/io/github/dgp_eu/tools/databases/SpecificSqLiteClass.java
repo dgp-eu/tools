@@ -9,11 +9,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.SequencedMap;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.sqlite.Function;
 
@@ -108,6 +107,26 @@ public final class SpecificSqLiteClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return listReturn;
+    }
+
+    /**
+     * Implementation for speed optimization sequence
+     * @param objStatement Statement
+     */
+    public static void runSequenceSpeedOptimizationForWriting(final Statement objStatement) {
+        final SequencedMap<String, String> sequenceMap = Stream.of(
+                Map.entry("Busy Timeout", "PRAGMA busy_timeout = 3600;"),
+                Map.entry("No Journal", "PRAGMA journal_mode = OFF;"),
+                Map.entry("No Synchronous", "PRAGMA synchronous = 0;"),
+                Map.entry("Large Cache Size", "PRAGMA cache_size = 1000000;"),
+                Map.entry("Memory Operation", "PRAGMA temp_store = MEMORY;"),
+                Map.entry("Large Page Size", "PRAGMA page_size = 16384;")
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, _) -> e1, LinkedHashMap::new));
+        sequenceMap.forEach((strLabel, strQuery) -> {
+            final String strFeedback = String.format("Query labeled \"%s\" has following definition: \"%s\"", strLabel, strQuery);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            DatabaseOperationsClass.executeQueryWithoutResultSet(objStatement, strLabel, strQuery);
+        });
     }
 
     /**
