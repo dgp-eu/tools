@@ -150,7 +150,9 @@ public final class WebClass {
             UndertowClass.handleCommonThings(exchange);
             final String page = UndertowClass.ParametersSubClass.getPageParameter();
             switch(page) {
-                case BasicStructuresClass.STR_FILE_HASHING, BasicStructuresClass.STR_SOFTWARE_RLS, BasicStructuresClass.STR_TS:
+                case BasicStructuresClass.STR_FILE_HASHING,
+                        BasicStructuresClass.STR_SOFTWARE_RLS,
+                        BasicStructuresClass.STR_TS:
                     TimingClass.LocalizationSubClass.setInputTimeZone("UTC");
                     break;
                 default:
