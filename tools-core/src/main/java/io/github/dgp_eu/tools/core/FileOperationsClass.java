@@ -17,8 +17,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jspecify.annotations.NonNull;
 
 /**
  * File Operations
@@ -988,14 +993,14 @@ public final class FileOperationsClass {
          */
         private static Properties computeFileMultipleChecksumsIntoProperties(final Path file) {
             final Properties fileProperties = new Properties();
-            try(java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
+            try(ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
                 executor.submit(() -> {
                     for (final String algo : listAlgorithms) {
                         fileProperties.put(algo, computeSingleChecksum(file, algo));
                     }
                 });
-                executor.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
                 executor.shutdown();
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             } catch (InterruptedException ei) {
                 final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
