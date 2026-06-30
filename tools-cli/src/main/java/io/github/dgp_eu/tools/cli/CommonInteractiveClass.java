@@ -24,15 +24,15 @@ public final class CommonInteractiveClass {
     /** Start Date Time variable */
     private static LocalDateTime startDateTime;
     /** Picocli attribute for Commands */
-    private static final String PICOCLI_CMNDS = "%nCommands:%n%n";
+    public static final String PICOCLI_CMNDS = "%nCommands:%n%n";
     /** Picocli attribute for Description */
-    private static final String PICOCLI_DESCR = "%nDescription:%n%n";
+    public static final String PICOCLI_DESCR = "%nDescription:%n%n";
     /** Picocli attribute for Options */
-    private static final String PICOCLI_OPTNS = "%nOptions:%n%n";
+    public static final String PICOCLI_OPTNS = "%nOptions:%n%n";
     /** Picocli attribute for Parameters */
-    private static final String PICOCLI_PRMTRS = "%nParameters:%n%n";
+    public static final String PICOCLI_PRMTRS = "%nParameters:%n%n";
     /** Picocli attribute for Usage */
-    private static final String PICOCLI_USAGE = "%nUsage:%n%n";
+    public static final String PICOCLI_USAGE = "%nUsage:%n%n";
 
     /**
      * Shut Down sequence
@@ -223,7 +223,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-of", "--outFileName"},
                 description = "Destination file to write information into",
-                arity = "1",
+                arity = BasicStructuresClass.ARITY_ONLY_ONE,
                 required = true)
         private String strOutFileName;
 
@@ -233,6 +233,36 @@ public final class CommonInteractiveClass {
          */
         public String getOutFileName() {
             return strOutFileName;
+        }
+
+    }
+
+    /**
+     * Reusable port for Picocli logic
+     */
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
+    /* default */ public static class PortOptionMixinClass {
+
+        /**
+         * String for out FileName
+         */
+        @CommandLine.Option(
+                names = {"-p", "--port"},
+                description = "Port Number for web user interface",
+                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                required = true)
+        private long portNumber;
+
+        /**
+         * Getter for portNumber
+         * @return integer number for Port number (only 1, required)
+         */
+        public long getPortNumber() {
+            return portNumber;
         }
 
     }
