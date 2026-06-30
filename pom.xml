@@ -51,11 +51,12 @@
         <module>tools-incubator</module>
         <module>tools-json_split</module>
         <module>tools-utils</module>
+        <module>tools-undertow</module>
         <module>tools-web</module>
     </modules>
 
     <properties>
-        <revision>1.0.2</revision>
+        <revision>1.0.3-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -68,7 +69,7 @@
         <!-- Dependency versions -->
         <jackson.version>3.2.0</jackson.version>
         <jspecify.version>1.0.0</jspecify.version>
-        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit-jupiter.version>6.1.1</junit-jupiter.version>
         <jte.version>3.2.4</jte.version>
         <log4j-core.version>2.26.0</log4j-core.version>
         <log4j-slf4j2-impl.version>2.26.0</log4j-slf4j2-impl.version>

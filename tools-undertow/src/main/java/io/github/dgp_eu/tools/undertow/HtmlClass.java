@@ -1,7 +1,5 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
-package io.github.dgp_eu.tools.core;
+// Copyright 2026 Daniel-Gheorghe Popiniuc
+package io.github.dgp_eu.tools.undertow;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +20,14 @@ import java.util.Properties;
 import java.util.SequencedMap;
 
 import org.apache.maven.model.Model;
+
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.FileOperationsClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.core.RegularExpressionsClass;
+import io.github.dgp_eu.tools.core.TimingClass;
+import io.github.dgp_eu.tools.core.ZoneDataServiceClass;
 
 /**
  * HTML generating logic

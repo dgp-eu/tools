@@ -1,7 +1,11 @@
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.undertow;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.undertow.HtmlClass;
 
 import static org.junit.jupiter.api.Assertions.*;
 

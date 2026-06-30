@@ -9,6 +9,8 @@ import io.github.dgp_eu.tools.core.*;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
 import io.github.dgp_eu.tools.databases.SpecificSqLiteClass;
 import io.github.dgp_eu.tools.environment.EnvironmentCapturingAssembleClass;
+import io.github.dgp_eu.tools.undertow.HtmlClass;
+import io.github.dgp_eu.tools.undertow.UndertowClass;
 import io.undertow.server.HttpHandler;
 
 import java.nio.file.Path;
@@ -63,6 +65,21 @@ public final class WebClass {
      * Outputs file statistics into an HTML table
      * @return String
      */
+    public static String getEnvironmentDetailsAsHtmlTable() {
+        final Properties objFeatures = new Properties();
+        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
+        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
+        final List<String> desiredOrder = List.of("Category", "Element", "Value");
+        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+    }
+
+    /**
+     * Outputs file statistics into an HTML table
+     * @return String
+     */
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileOperationsClass.StatisticsSubClass.setChecksumAlgorithms(inAlgorithms);
@@ -107,14 +124,17 @@ public final class WebClass {
      */
     public static gg.jte.Content handleBodyContent() {
         final String page = UndertowClass.ParametersSubClass.getPageParameter();
+        final String strSqLiteInfoBox = HtmlClass.buildFileInfoBox(Path.of(SpecificSqLiteClass.getInternalDatabase()));
         return output -> output.writeContent(switch(page) {
-            case BasicStructuresClass.STR_ENV_DTLS      -> EnvironmentCapturingAssembleClass.getEnvironmentDetailsAsHtmlTable()
+            case BasicStructuresClass.STR_ENV_DTLS      -> HtmlClass.buildFileInfoBox(
+                    Path.of(SpecificSqLiteClass.getInternalDatabase()))
                     + HtmlClass.buildFileInfoBox(Path.of(ProjectClass.getPomFile()));
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
             case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
-                    + SpecificSqLiteClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
-            case BasicStructuresClass.STR_TS            -> SpecificSqLiteClass.SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable()
-                    + SpecificSqLiteClass.SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
+                    + strSqLiteInfoBox;
+            case BasicStructuresClass.STR_TS            -> HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(
+                    SpecificSqLiteClass.SqLiteStatisticsSubClass.getTableStatisticsIntoListForHtmlTable(), new Properties())
+                    + strSqLiteInfoBox;
             default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }

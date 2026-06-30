@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import org.sqlite.Function;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.HtmlClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ConnectivitySubClass;
@@ -149,15 +148,6 @@ public final class SpecificSqLiteClass {
     public static final class SqLiteStatisticsSubClass {
 
         /**
-         * Build Information Box
-         * @return String
-         */
-        public static String buildSqLiteFileInfoBox() {
-            final Path fileName = Path.of(internalDatabase);
-            return HtmlClass.buildFileInfoBox(fileName);
-        }
-
-        /**
          * read SQLite tables and their record count
          * @return StringBuilder
          */
@@ -192,16 +182,15 @@ public final class SpecificSqLiteClass {
          * Outputs table statistics into an HTML table
          * @return String
          */
-        public static String getTableStatisticsAsHtmlTable() {
+        public static List<SequencedMap<Object, Object>> getTableStatisticsIntoListForHtmlTable() {
             final StringBuilder queryRecordCount = buildTableRecordCounting();
             final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTables");
             final String strFinalQuery =  String.format(queryTableStats, queryRecordCount);
             final List<Properties> resultTableStats = getSqLiteResultSetValues("Table Statistics", strFinalQuery);
             final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
-            final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
+            return resultTableStats.stream()
                     .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                     .toList();
-            return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
         }
 
         /**

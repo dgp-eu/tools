@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.HtmlClass;
 import io.github.dgp_eu.tools.core.JsonOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
@@ -111,21 +110,6 @@ public final class EnvironmentCapturingAssembleClass {
             strComputer = strInsteadOfNull;
         }
         return strComputer;
-    }
-
-    /**
-     * Outputs file statistics into an HTML table
-     * @return String
-     */
-    public static String getEnvironmentDetailsAsHtmlTable() {
-        final Properties objFeatures = new Properties();
-        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
-        final List<Properties> envDetails = packageCurrentEnvironmentDetailsIntoListOfProperties();
-        final List<String> desiredOrder = List.of("Category", "Element", "Value");
-        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
-                .toList();
-        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
@@ -313,7 +297,7 @@ public final class EnvironmentCapturingAssembleClass {
         public static Map<String, Object> getDetailsAboutNetwork() {
             final NetworkParams networkParams = OshiUsageClass.SoftwareSubClass.getOshiNetworkParameters();
             return Map.of(
-                    "DNS Servers", String.join(", ", networkParams.getDnsServers()),
+                    //"DNS Servers", String.join(", ", networkParams.getDnsServers()),
                     "Domain Name", networkParams.getDomainName(),
                     "Host Name", networkParams.getHostName(),
                     "IPv4 Gateway", networkParams.getIpv4DefaultGateway(),
