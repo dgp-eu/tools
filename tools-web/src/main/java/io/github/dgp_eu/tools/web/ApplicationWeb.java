@@ -49,26 +49,18 @@ public final class ApplicationWeb {
 class WebUserInterface implements Runnable {
 
     /**
-     * String for Database
+     * adds the options defined in
+     * CommonInteractiveClass.LocalDatabaseFileMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-dbr", "--databaseReleases"},
-            description = "Database Name with Releases",
-            arity = BasicStructuresClass.ARITY_ONLY_ONE,
-            required = true
-    )
-    private static String strDbReleases;
+    @Mixin
+    private final CommonInteractiveClass.LocalDatabaseFileMixinClass optLocalDbFile = new CommonInteractiveClass.LocalDatabaseFileMixinClass();
 
     /**
-     * String for Database
+     * adds the options defined in
+     * CommonInteractiveClass.PortOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-p", "--port"},
-            description = "Port Number for web user interface",
-            arity = BasicStructuresClass.ARITY_ONLY_ONE,
-            required = true
-    )
-    private static long portNumber;
+    @Mixin
+    private final CommonInteractiveClass.PortOptionMixinClass optPortNumber = new CommonInteractiveClass.PortOptionMixinClass();
 
     /**
      * adds the options defined in
@@ -79,9 +71,9 @@ class WebUserInterface implements Runnable {
 
     @Override
     public void run() {
-        UndertowClass.setWebPort(String.valueOf(portNumber));
-        SpecificSqLiteClass.setInternalDatabase(strDbReleases);
-        WebClass.SoftwareReleasesSubClass.setReleasesDatabase(strDbReleases);
+        UndertowClass.setWebPort(String.valueOf(optPortNumber.getPortNumber()));
+        SpecificSqLiteClass.setInternalDatabase(optLocalDbFile.getLocalDbFile());
+        WebClass.SoftwareReleasesSubClass.setReleasesDatabase(optLocalDbFile.getLocalDbFile());
         WebClass.setFolderNamesForChecksumExposure(optFolderNames.getFolderNames());
         UndertowClass.setRootHandler(WebClass.handleWebContent());
         UndertowClass.runWebServer();

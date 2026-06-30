@@ -208,6 +208,36 @@ public final class CommonInteractiveClass {
     }
 
     /**
+     * Reusable local DB File Name
+     */
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
+    /* default */ public static class LocalDatabaseFileMixinClass {
+
+        /**
+         * String for out FileName
+         */
+        @CommandLine.Option(
+                names = {"-ldb", "--localDatabaseFile"},
+                description = "Local Database File",
+                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                required = true)
+        private String strLocalDbFile;
+
+        /**
+         * Getter for strCsvFileName
+         * @return array of CSV File Name (only 1, required)
+         */
+        public String getLocalDbFile() {
+            return strLocalDbFile;
+        }
+
+    }
+
+    /**
      * Reusable output File Name for Picocli logic
      */
     @Command(synopsisHeading      = PICOCLI_USAGE,
