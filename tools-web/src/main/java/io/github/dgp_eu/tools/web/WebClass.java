@@ -21,6 +21,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.NonNull;
+
 /**
  * Web interface class
  */
@@ -186,8 +188,8 @@ public final class WebClass {
      * Setter for strFolderNames
      * @param inFolderNames list of Folders relevant for checksum exposure
      */
-    public static void setFolderNamesForChecksumExposure(final String... inFolderNames) {
-        strFolderNames = inFolderNames == null ? null : inFolderNames.clone();
+    public static void setFolderNamesForChecksumExposure(@NonNull final String... inFolderNames) {
+        strFolderNames = inFolderNames;
     }
 
     /**

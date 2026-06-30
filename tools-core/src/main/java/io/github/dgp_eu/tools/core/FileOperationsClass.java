@@ -1122,7 +1122,7 @@ public final class FileOperationsClass {
          * Setter for checksum algorithms
          * @param inAlgorithms char
          */
-        public static void setChecksumAlgorithms(final String... inAlgorithms) {
+        public static void setChecksumAlgorithms(@NonNull final String... inAlgorithms) {
             listAlgorithms = inAlgorithms;
         }
 
