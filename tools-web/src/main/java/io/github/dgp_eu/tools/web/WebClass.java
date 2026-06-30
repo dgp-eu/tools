@@ -128,8 +128,7 @@ public final class WebClass {
         final String page = UndertowClass.ParametersSubClass.getPageParameter();
         final String strSqLiteInfoBox = HtmlClass.buildFileInfoBox(Path.of(SpecificSqLiteClass.getInternalDatabase()));
         return output -> output.writeContent(switch(page) {
-            case BasicStructuresClass.STR_ENV_DTLS      -> HtmlClass.buildFileInfoBox(
-                    Path.of(SpecificSqLiteClass.getInternalDatabase()))
+            case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable()
                     + HtmlClass.buildFileInfoBox(Path.of(ProjectClass.getPomFile()));
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
             case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
