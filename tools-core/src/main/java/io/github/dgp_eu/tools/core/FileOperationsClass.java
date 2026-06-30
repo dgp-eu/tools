@@ -27,7 +27,7 @@ public final class FileOperationsClass {
     /**
      * Localized String for File Finding error 
      */
-    public static final String I18N_FILE_FND_ERR = "Error encountered when attempting to get %s file(s) from %s folder";
+    public static final String FILE_FIND_ERR = "Error encountered when attempting to get %s file(s) from %s folder";
 
     /**
      * File Content Reading
@@ -760,7 +760,7 @@ public final class FileOperationsClass {
                     .filter(path -> path.toString().endsWith(strExtension))
                     .toList();
             } catch (IOException ei) {
-                final String strFeedbackErr = String.format(I18N_FILE_FND_ERR, strExtension, inFolderName);
+                final String strFeedbackErr = String.format(FILE_FIND_ERR, strExtension, inFolderName);
                 LogExposureClass.exposeInputOutputException(strFeedbackErr, Arrays.toString(ei.getStackTrace()));
             }
             return arrayFiles;
@@ -1020,7 +1020,7 @@ public final class FileOperationsClass {
                     }
                 }
             } catch (IOException ei) {
-                final String strFeedback = String.format(I18N_FILE_FND_ERR, "*", strFolderName);
+                final String strFeedback = String.format("I/O exception on processing %s folder...", strFolderName);
                 LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
             }
         }
@@ -1092,7 +1092,7 @@ public final class FileOperationsClass {
                 pathProps.put("SIZE_BYTES", stats.totalSize());
             } catch (IOException ei) {
                 final Path foderName = Path.of(strFolderName);
-                final String strFeedback = String.format(I18N_FILE_FND_ERR, foderName.getParent(), foderName.getFileName());
+                final String strFeedback = String.format(FILE_FIND_ERR, foderName.getParent(), foderName.getFileName());
                 LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
             }
             return pathProps;

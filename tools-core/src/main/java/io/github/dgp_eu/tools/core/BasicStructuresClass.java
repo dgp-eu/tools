@@ -420,7 +420,7 @@ public final class BasicStructuresClass {
                 }
             } catch (IOException ei) {
                 final Path ptPrjProps = Path.of(propertyFileName);
-                final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
+                final String strFeedback = String.format(FileOperationsClass.FILE_FIND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
                 LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
             }
             return svProperties;
