@@ -36,6 +36,11 @@
             <artifactId>tools-environment</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-undertow</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
     <build>
