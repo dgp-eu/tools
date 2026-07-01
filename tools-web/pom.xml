@@ -105,6 +105,14 @@
                 <extensions>true</extensions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.sqlite</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
 </project>
