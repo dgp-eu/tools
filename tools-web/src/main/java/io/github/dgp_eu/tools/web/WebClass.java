@@ -37,6 +37,8 @@ public final class WebClass {
     public static final String STR_SOFT_RELEASES = "Software Releases";
     /** Menu */
     private static final SequencedMap<String, Map<String, String>> MAP_MENU = buildMenu();
+    /** Intentionally empty table properties for views that require no extra options. */
+    private static final Properties EMPTY_TABLE_PROPERTIES = new Properties();
     /** Variable for Folders relevant for Checksum Exposure */
     private static String[] strFolderNames = new String[0];
 
@@ -101,7 +103,7 @@ public final class WebClass {
         final List<SequencedMap<Object, Object>> orderedList = foldersStatistics.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
+        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, EMPTY_TABLE_PROPERTIES);  
     }
 
     /**
@@ -145,7 +147,8 @@ public final class WebClass {
             case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
                     + strSqLiteInfoBox;
             case BasicStructuresClass.STR_TS            -> HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(
-                    SpecificSqLiteClass.SqLiteStatisticsSubClass.getTableStatisticsIntoListForHtmlTable(), new Properties())
+                    SpecificSqLiteClass.SqLiteStatisticsSubClass.getTableStatisticsIntoListForHtmlTable(),
+                    EMPTY_TABLE_PROPERTIES)
                     + strSqLiteInfoBox;
             default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
@@ -248,8 +251,12 @@ public final class WebClass {
                                     recordProperties.get("File Installed Id")));
                     newProperties.put("Profile",
                             recordProperties.get("Profile Name"));
+                    String latestReleaseAgingDays = String.valueOf(recordProperties.get("Latest release aging days"));
+                    if ("null".equals(latestReleaseAgingDays)) {
+                        latestReleaseAgingDays = "";
+                    }
                     newProperties.put(BasicStructuresClass.STR_ROW_STYLE,
-                            establishRowStyle(recordProperties.get("Latest release aging days").toString().replaceAll("\\.0$", "")));
+                            establishRowStyle(latestReleaseAgingDays.replaceAll("\\.0$", "")));
                     softwareReleases.add(newProperties);
                 });
             }
