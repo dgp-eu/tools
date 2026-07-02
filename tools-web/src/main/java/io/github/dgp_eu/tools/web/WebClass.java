@@ -18,8 +18,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
 
@@ -32,7 +30,7 @@ public final class WebClass {
     /** Menu */
     private static final SequencedMap<String, Map<String, String>> MAP_MENU = buildMenu();
     /** Variable for Folders relevant for Checksum Exposure */
-    private static String[] strFolderNames;
+    private static String[] strFolderNames = new String[0];
 
     /**
      * Menu builder
@@ -85,8 +83,9 @@ public final class WebClass {
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileOperationsClass.StatisticsSubClass.setChecksumAlgorithms(inAlgorithms);
+        final String[] folderNamesSnapshot = Arrays.copyOf(strFolderNames, strFolderNames.length);
         final List<Properties> foldersStatistics = new ArrayList<>();
-        for(final String crtFolderName: strFolderNames) {
+        for(final String crtFolderName: folderNamesSnapshot) {
             final List<Properties> crtFileStatistics = FileOperationsClass.StatisticsSubClass.getFileStatisticsIntoListOfProperties(crtFolderName);
             foldersStatistics.addAll(crtFileStatistics);
         }
@@ -110,14 +109,18 @@ public final class WebClass {
      * @return String software releases details
      */
     private static String getSoftwareReleasesIntoHtmlTable() {
-        final Properties objFeatures = new Properties();
-        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
+        String strReturn = "No software releases found.";
         final List<Properties> softwareReleases = SoftwareReleasesSubClass.consolidateSoftwareReleases();
-        final List<String> desiredOrder = List.of("Organization", "Product", "Version", "Date", "Files");
-        final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
-                .toList();
-        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+        if (!softwareReleases.isEmpty()) {
+            final List<String> desiredOrder = List.of("Organization", "Product", "Version", "Date", "Files");
+            final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
+                    .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
+                    .toList();
+            final Properties objFeatures = new Properties();
+            objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
+            strReturn = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+        }
+        return strReturn;
     }
 
     /**
@@ -197,10 +200,8 @@ public final class WebClass {
      * Handling Software releases logic
      */
     public static final class SoftwareReleasesSubClass {
-        /**
-         * Internal database name
-         */
-        private static String releasesDatabase;
+        /** Internal database name */
+        private static volatile String releasesDatabase;
 
         /**
          * expose Software Release details from internal DB
@@ -209,39 +210,41 @@ public final class WebClass {
         public static List<Properties> consolidateSoftwareReleases() {
             final List<Properties> softwareReleases = new ArrayList<>();
             final List<Properties> resultReleases = getSoftwareReleasesFromDatabase();
-            resultReleases.forEach( recordProperties -> {
-                final Properties newProperties = new Properties();
-                newProperties.put("Organization",
-                        String.format("%s<div style=\"text-align:right;\">[%s]</div>",
-                                recordProperties.get("OrganizationName"),
-                                recordProperties.get("OrganizationId")));
-                newProperties.put("Product",
-                        String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>",
-                                recordProperties.get("Releases"),
-                                recordProperties.get("ProductName"),
-                                recordProperties.get("ProductId"),
-                                recordProperties.get("BranchName"),
-                                recordProperties.get("BranchId")));
-                newProperties.put("Version",
-                        String.format("%s<div style=\"text-align:right;\">[%s]</div>",
-                                recordProperties.get("Latest release version"),
-                                recordProperties.get("VersionId")));
-                newProperties.put("Date",
-                        String.format("%s<br>==> %s",
-                                recordProperties.get("Latest release date"),
-                                recordProperties.get("Latest release aging full").toString()));
-                newProperties.put("Files",
-                        String.format("%s [%s]<br/>==> %s [%s]",
-                                recordProperties.get("File Kit Name"),
-                                recordProperties.get("File Kit Id"),
-                                recordProperties.get("File Installed Name"),
-                                recordProperties.get("File Installed Id")));
-                newProperties.put("Profile",
-                        recordProperties.get("Profile Name"));
-                newProperties.put(BasicStructuresClass.STR_ROW_STYLE,
-                        establishRowStyle(recordProperties.get("Latest release aging days").toString().replaceAll("\\.0$", "")));
-                softwareReleases.add(newProperties);
-            });
+            if (!resultReleases.isEmpty()) {
+                resultReleases.forEach(recordProperties -> {
+                    final Properties newProperties = new Properties();
+                    newProperties.put("Organization",
+                            String.format("%s<div style=\"text-align:right;\">[%s]</div>",
+                                    recordProperties.get("OrganizationName"),
+                                    recordProperties.get("OrganizationId")));
+                    newProperties.put("Product",
+                            String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>",
+                                    recordProperties.get("Releases"),
+                                    recordProperties.get("ProductName"),
+                                    recordProperties.get("ProductId"),
+                                    recordProperties.get("BranchName"),
+                                    recordProperties.get("BranchId")));
+                    newProperties.put("Version",
+                            String.format("%s<div style=\"text-align:right;\">[%s]</div>",
+                                    recordProperties.get("Latest release version"),
+                                    recordProperties.get("VersionId")));
+                    newProperties.put("Date",
+                            String.format("%s<br>==> %s",
+                                    recordProperties.get("Latest release date"),
+                                    recordProperties.get("Latest release aging full").toString()));
+                    newProperties.put("Files",
+                            String.format("%s [%s]<br/>==> %s [%s]",
+                                    recordProperties.get("File Kit Name"),
+                                    recordProperties.get("File Kit Id"),
+                                    recordProperties.get("File Installed Name"),
+                                    recordProperties.get("File Installed Id")));
+                    newProperties.put("Profile",
+                            recordProperties.get("Profile Name"));
+                    newProperties.put(BasicStructuresClass.STR_ROW_STYLE,
+                            establishRowStyle(recordProperties.get("Latest release aging days").toString().replaceAll("\\.0$", "")));
+                    softwareReleases.add(newProperties);
+                });
+            }
             return softwareReleases;
         }
 
@@ -272,16 +275,21 @@ public final class WebClass {
          */
         private static List<Properties> getSoftwareReleasesFromDatabase() {
             List<Properties> resultReleases = new ArrayList<>();
-            try (Connection objConnection = SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
-                    Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
-                final Properties rsProperties = new Properties();
-                rsProperties.put("Purpose", STR_SOFT_RELEASES);
-                rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
-                rsProperties.put("FetchType", "Values");
-                resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
-            } catch (SQLException e) {
-                final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
-                LogExposureClass.LOGGER.debug(strFeedbackErr);
+            if (releasesDatabase == null
+                    || releasesDatabase.isBlank()) {
+                LogExposureClass.LOGGER.debug("Software releases database is not set");
+            } else {
+                try (Connection objConnection = SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
+                     Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
+                    final Properties rsProperties = new Properties();
+                    rsProperties.put("Purpose", STR_SOFT_RELEASES);
+                    rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
+                    rsProperties.put("FetchType", "Values");
+                    resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
+                } catch (SQLException e) {
+                    final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
+                    LogExposureClass.LOGGER.debug(strFeedbackErr);
+                }
             }
             return resultReleases;
         }
