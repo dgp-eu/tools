@@ -49,7 +49,7 @@ public final class FileOperationsClass {
          */
         public static void extractImportStatementsFromJavaSourceFilesIntoCsvFile(final Path inJavaSources, final Path outCsvFile) {
             final String strImport = "import ";
-            final String dtNow = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+            final String dtNow = DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS, Locale.US)
                     .format(ZonedDateTime.now(ZoneId.systemDefault()));
             try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
                 writer.write("Path;File;Imported;Timestamp");
@@ -1136,8 +1136,8 @@ public final class FileOperationsClass {
          */
         private static String handleFileLastModifiedTimestamp(final Path file, final String dualContent) {
             final String lastModifTs = TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
-                    "yyyy-MM-dd HH:mm:ss.SSS");
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
+                    TimingClass.DATE_TIME_MS);
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS, Locale.US);
             final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(LocalDateTime.parse(lastModifTs, formatter), ZoneId.systemDefault());
             final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());

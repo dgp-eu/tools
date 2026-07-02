@@ -32,14 +32,27 @@ import org.jspecify.annotations.Nullable;
  * Time methods
  */
 public final class TimingClass {
-    /**
-     * String constant
-     */
+    /** constant for time-stamp SQL-style with seconds */
+    public static final String DATE_TIME = "yyyy-MM-dd HH:mm:ss";
+    /** constant for abbreviated time-stamp with seconds */
+    public static final String DATE_TIME_ABRV = "EEE, dd MMM yyyy HH:mm:ss";
+    /** constant for long time-stamp with seconds */
+    public static final String DATE_TIME_LONG = "EEEE, dd MMMM yyyy HH:mm:ss";
+    /** constant for time-stamp SQL-style with milliseconds */
+    public static final String DATE_TIME_MS = "yyyy-MM-dd HH:mm:ss.SSS";
+    /** constant for abbreviated time-stamp with milliseconds */
+    public static final String DATE_TIME_MS_ABRV = "EEE, dd MMM yyyy HH:mm:ss.SSS";
+    /** constant for long time-stamp with milliseconds */
+    public static final String DATE_TIME_MS_LONG = "EEEE, dd MMMM yyyy HH:mm:ss.SSS";
+    /** constant for long date */
+    public static final String ISO_DATE = "yyyy-MM-dd";
+    /** constant for abbreviated date */
+    public static final String ISO_DATE_ABRV = "EEE, dd MMM yyyy";
+    /** constant for long date */
+    public static final String ISO_DATE_LONG = "EEEE, dd MMMM yyyy";
+    /** String constant */
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-    /**
-     * Map with predefined time format patterns
-     * used for duration and time-stamp formatting.
-     */
+    /** Map with predefined time format patterns used for duration and time-stamp formatting. */
     private static final Map<String, String> TIME_FORMATS;
 
     static {

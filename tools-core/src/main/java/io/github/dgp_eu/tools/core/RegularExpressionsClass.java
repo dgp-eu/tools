@@ -18,22 +18,22 @@ public final class RegularExpressionsClass {
             RegularExpressionsClass.STR_AGING_TS, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
             RegularExpressionsClass.STR_AGING_TIME, Map.of(RegularExpressionsClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
             "decimal", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
-            BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
+            BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.ISO_DATE,
+                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.ISO_DATE_LONG,
+                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.ISO_DATE_ABRV,
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}\\d{1}))"),
             "long", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,18}-?"),
             RegularExpressionsClass.STR_MAVEN_PKG, Map.of(RegularExpressionsClass.STR_REG_EXP, "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+",
                     "URL", "https://repo1.maven.org/maven2/%s/%s/",
                     "HTMLlink", "<a href=\"%s\" target=\"_blank\">%s</a>"),
             "numeric", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
-            BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss",
+            BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.DATE_TIME,
+                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.DATE_TIME_LONG,
+                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_ABRV,
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}"),
-            BasicStructuresClass.STR_TS_MSEC, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss.SSS",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss.SSS",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
+            BasicStructuresClass.STR_TS_MSEC, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.DATE_TIME_MS,
+                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.DATE_TIME_MS_LONG,
+                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_MS_ABRV,
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
             );
     /** Version Patterns Map */
@@ -42,7 +42,6 @@ public final class RegularExpressionsClass {
     public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
     /** Regular Expression for Long Timestamp with Milliseconds  */
     public static final String STR_LONG_TS_MSEC = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s[1-2]\\d{3}\\s([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
-
     /**
      * Regex for Latitude: Sign, 2 digits (deg), 2 digits (min), 
      * optional 2 digits (sec)

@@ -86,10 +86,10 @@ public final class HtmlClass {
                 assert resourceUrl != null;
                 final long lastModified = resourceUrl.openConnection().getLastModified();
                 final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
-                final String[] strInOut = {"yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"};
+                final String[] strInOut = {TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV};
                 if (strLastModified.contains(".")) {
-                    strInOut[0] = "yyyy-MM-dd HH:mm:ss.SSS";
-                    strInOut[1] = "EEE, dd MMM yyyy HH:mm:ss.SSS";
+                    strInOut[0] = TimingClass.DATE_TIME_MS;
+                    strInOut[1] = TimingClass.DATE_TIME_MS_ABRV;
                 }
                 fileModified = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, strInOut[0], strInOut[1]));
                 fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksumFromInputStream(inStream, "SHA-256");
@@ -418,13 +418,13 @@ public final class HtmlClass {
                     strValue = String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoLong(strValue));
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
                     cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
+                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_ABRV);
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(strValue)) {
                     cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
+                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV);
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(strValue)) {
                     cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
+                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
                 } else if (strValue.length() >= LARGE_STRING) {
                     strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
                 }
