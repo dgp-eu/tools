@@ -1,25 +1,33 @@
-/*
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.web;
+
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SequencedMap;
+
+import org.jspecify.annotations.NonNull;
 
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
-import io.github.dgp_eu.tools.core.*;
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.FileOperationsClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.core.TimingClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
 import io.github.dgp_eu.tools.databases.SpecificSqLiteClass;
 import io.github.dgp_eu.tools.environment.EnvironmentCapturingAssembleClass;
 import io.github.dgp_eu.tools.undertow.HtmlClass;
 import io.github.dgp_eu.tools.undertow.UndertowClass;
 import io.undertow.server.HttpHandler;
-
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-
-import org.jspecify.annotations.NonNull;
 
 /**
  * Web interface class
@@ -193,7 +201,7 @@ public final class WebClass {
      * @param inFolderNames list of Folders relevant for checksum exposure
      */
     public static void setFolderNamesForChecksumExposure(@NonNull final String... inFolderNames) {
-        strFolderNames = inFolderNames;
+        strFolderNames = Arrays.copyOf(inFolderNames, inFolderNames.length);
     }
 
     /**
@@ -298,6 +306,7 @@ public final class WebClass {
          * Setter for releasesDatabase
          */
         public static void setReleasesDatabase(final String inDatabase) {
+            SpecificSqLiteClass.checkDatabaseFile(inDatabase);
             releasesDatabase = inDatabase;
         }
 

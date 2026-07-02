@@ -713,7 +713,8 @@ public final class FileOperationsClass {
          */
         public static long getFileSizeIfFileExistsAndIsReadable(final String strFileName) {
             final long fileSize;
-            if (strFileName == null) {
+            if (strFileName == null
+                    || strFileName.isBlank()) {
                 fileSize = -99;
             } else {
                 final File fileGiven = new File(strFileName);

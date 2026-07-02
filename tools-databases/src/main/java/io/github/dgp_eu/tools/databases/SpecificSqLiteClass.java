@@ -1,8 +1,10 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.databases;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 import org.sqlite.Function;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ConnectivitySubClass;
@@ -36,6 +39,48 @@ public final class SpecificSqLiteClass {
      */
     public static String getInternalDatabase() {
         return internalDatabase;
+    }
+
+    /**
+     * Checks for valid path, file existence and readability, readability, extension and format
+     * @param inDatabase input SQLite file as String
+     */
+    public static void checkDatabaseFile(final String inDatabase) {
+        final long fileSize = FileOperationsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(inDatabase);
+        if (fileSize > 0) {
+            final Path databasePath = Path.of(inDatabase).toAbsolutePath().normalize();
+            SpecificSqLiteClass.checkDatabaseFileExtension(databasePath);
+            SpecificSqLiteClass.checkDatabaseFileFormat(databasePath);
+        }
+    }
+
+    /**
+     * Checks if SQLite database has expected file extension
+     * @param inDatabase input SQLite file as Path
+     */
+    private static void checkDatabaseFileExtension(final Path inDatabase) {
+        final String fileName = inDatabase.getFileName().toString().toLowerCase(Locale.ROOT);
+        if (!fileName.endsWith(".db")
+                && !fileName.endsWith(".sqlite")) {
+            throw new IllegalArgumentException("Database file must have .db or .sqlite extension");
+        }
+    }
+
+    /**
+     * Checks if SQLite database is a valid SQLite Format 3
+     * @param inDatabase input SQLite file as Path
+     */
+    private static void checkDatabaseFileFormat(final Path databasePath) {
+        try (InputStream inputStream = Files.newInputStream(databasePath)) {
+            final byte[] header = inputStream.readNBytes(16);
+            final String headerStr = new String(header, StandardCharsets.US_ASCII);
+            if (!headerStr.startsWith("SQLite format 3")) {
+                throw new IllegalArgumentException("Database file is not a valid SQLite database");
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to read database file", e);
+	
+        }
     }
 
     /**
@@ -132,6 +177,7 @@ public final class SpecificSqLiteClass {
      * Setter for internalDatabase
      */
     public static void setInternalDatabase(final String inDatabase) {
+        checkDatabaseFile(inDatabase);
         internalDatabase = inDatabase;
     }
 
