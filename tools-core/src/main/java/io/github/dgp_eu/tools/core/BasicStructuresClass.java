@@ -83,6 +83,8 @@ public final class BasicStructuresClass {
     public static final String STR_MENU = "menu";
     /** Model string constant */
     public static final String STR_MODEL = "Model";
+    /** Millisecond string constant */
+    public static final String STR_MILLISECOND = "Millisecond";
     /** string constant */
     public static final String STR_MONITOR_NAME = "Monitor Name";
     /** Multiple constant */

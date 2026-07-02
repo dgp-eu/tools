@@ -212,14 +212,14 @@ public final class TimingClass {
                 case "HumanReadableTimeWithMilliseconds":
                     final String strMilliRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
-                    strFinalOne = "Millisecond";
+                    strFinalOne = BasicStructuresClass.STR_MILLISECOND;
                     break;
                 case "TimeClockClassic":
                     arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
                     break;
                 case "TimeClock":
                     arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO, BasicStructuresClass.STR_DOT_THREE};
-                    strFinalOne = "Millisecond";
+                    strFinalOne = BasicStructuresClass.STR_MILLISECOND;
                     break;
                 default:
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -291,12 +291,12 @@ public final class TimingClass {
          */
         private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
             return switch (strWhichPart) {
-                case "Day"         -> duration.toDaysPart();
-                case "Hour"        -> duration.toHoursPart();
-                case "Millisecond" -> duration.toMillisPart();
-                case "Minute"      -> duration.toMinutesPart();
-                case "Nanosecond"  -> duration.toNanosPart();
-                case BasicStructuresClass.STR_SECOND -> duration.toSecondsPart();
+                case "Day"                                -> duration.toDaysPart();
+                case "Hour"                               -> duration.toHoursPart();
+                case BasicStructuresClass.STR_MILLISECOND -> duration.toMillisPart();
+                case "Minute"                             -> duration.toMinutesPart();
+                case "Nanosecond"                         -> duration.toNanosPart();
+                case BasicStructuresClass.STR_SECOND      -> duration.toSecondsPart();
                 default -> {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     throw new UnsupportedOperationException(strFeedbackErr);
