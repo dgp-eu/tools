@@ -211,8 +211,6 @@ public final class WebClass {
      * Handling Software releases logic
      */
     public static final class SoftwareReleasesSubClass {
-        /** Internal database name */
-        private static volatile String releasesDatabase;
 
         /**
          * expose Software Release details from internal DB
@@ -290,31 +288,18 @@ public final class WebClass {
          */
         private static List<Properties> getSoftwareReleasesFromDatabase() {
             List<Properties> resultReleases = new ArrayList<>();
-            if (releasesDatabase == null
-                    || releasesDatabase.isBlank()) {
-                LogExposureClass.LOGGER.debug("Software releases database is not set");
-            } else {
-                try (Connection objConnection = SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
-                     Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
-                    final Properties rsProperties = new Properties();
-                    rsProperties.put("Purpose", STR_SOFT_RELEASES);
-                    rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
-                    rsProperties.put("FetchType", "Values");
-                    resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
-                } catch (SQLException e) {
-                    final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
-                    LogExposureClass.LOGGER.debug(strFeedbackErr);
-                }
+            try (Connection objConnection = SpecificSqLiteClass.getSqLiteConnection();
+                 Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
+                final Properties rsProperties = new Properties();
+                rsProperties.put("Purpose", STR_SOFT_RELEASES);
+                rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
+                rsProperties.put("FetchType", "Values");
+                resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
+            } catch (SQLException e) {
+                final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
             return resultReleases;
-        }
-
-        /**
-         * Setter for releasesDatabase
-         */
-        public static void setReleasesDatabase(final String inDatabase) {
-            SpecificSqLiteClass.checkDatabaseFile(inDatabase);
-            releasesDatabase = inDatabase;
         }
 
         // Private constructor to prevent instantiation

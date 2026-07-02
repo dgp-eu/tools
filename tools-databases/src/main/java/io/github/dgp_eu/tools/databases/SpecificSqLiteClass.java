@@ -85,26 +85,18 @@ public final class SpecificSqLiteClass {
 
     /**
      * Initiates a SQLite connection
-     * @return Connection
-     */
-    public static Connection getSqLiteConnection() {
-        return getSqLiteConnection(internalDatabase);
-    }
-
-    /**
-     * Initiates a SQLite connection
      * 
      * @param strSqLiteFile file with SQLite database
      * @return Connection
      */
-    public static Connection getSqLiteConnection(final String strSqLiteFile) {
-        final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
-        final String strFeedbackAtmpt = String.format("Will attempt to create a %s connection to database %s using %s as connection string", BasicStructuresClass.STR_SQLITE, strSqLiteFile, strConnection);
+    public static Connection getSqLiteConnection() {
+        final String strConnection = "jdbc:sqlite:" + internalDatabase.replace("\\", "/");
+        final String strFeedbackAtmpt = String.format("Will attempt to create a %s connection to database %s using %s as connection string", BasicStructuresClass.STR_SQLITE, internalDatabase, strConnection);
         LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
-            final String strFeedbackOk = String.format("%s connection to database %s was successfully established!", BasicStructuresClass.STR_SQLITE, strSqLiteFile);
+            final String strFeedbackOk = String.format("%s connection to database %s was successfully established!", BasicStructuresClass.STR_SQLITE, internalDatabase);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
@@ -139,7 +131,7 @@ public final class SpecificSqLiteClass {
     public static List<Properties> getSqLiteResultSetValues(final String strQueryPurpose, final String strQuery) {
         final Properties objProperties = new Properties();
         List<Properties> listReturn = new ArrayList<>();
-        try (Connection objConnection = getSqLiteConnection(internalDatabase)) {
+        try (Connection objConnection = getSqLiteConnection()) {
             assert objConnection != null;
             try (Statement objStatement = ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
                 ResultSet rsCols = DatabaseOperationsClass.executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {

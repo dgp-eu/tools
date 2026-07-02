@@ -72,7 +72,6 @@ class WebUserInterface implements Runnable {
     public void run() {
         UndertowClass.setWebPort(String.valueOf(optPortNumber.getPortNumber()));
         SpecificSqLiteClass.setInternalDatabase(optLocalDbFile.getLocalDbFile());
-        WebClass.SoftwareReleasesSubClass.setReleasesDatabase(optLocalDbFile.getLocalDbFile());
         WebClass.setFolderNamesForChecksumExposure(optFolderNames.getFolderNames());
         UndertowClass.setRootHandler(WebClass.handleWebContent());
         UndertowClass.runWebServer();
