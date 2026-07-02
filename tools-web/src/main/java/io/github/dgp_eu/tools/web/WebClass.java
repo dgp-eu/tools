@@ -29,39 +29,39 @@ import org.jspecify.annotations.NonNull;
 public final class WebClass {
     /** Constant for "Software Releases" */
     public static final String STR_SOFT_RELEASES = "Software Releases";
-    /**
-     * Menu
-     */
-    private static final SequencedMap<String, Map<String, String>> MAP_MENU = Stream.of(
-            Map.entry("home", Map.of(
-                    BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
-                    BasicStructuresClass.STR_MENU, "HomePage",
-                    BasicStructuresClass.STR_TITLE, "HomePage")),
-            Map.entry(BasicStructuresClass.STR_SOFTWARE_RLS, Map.of(
-                    BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
-                    BasicStructuresClass.STR_MENU, STR_SOFT_RELEASES,
-                    BasicStructuresClass.STR_TITLE, STR_SOFT_RELEASES)),
-            Map.entry(BasicStructuresClass.STR_TS, Map.of(
-                    BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
-                    BasicStructuresClass.STR_MENU, "SQLite Table Statistics",
-                    BasicStructuresClass.STR_TITLE, "SQLite Table Statistics")),
-            Map.entry(BasicStructuresClass.STR_FILE_HASHING, Map.of(
-                    BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
-                    BasicStructuresClass.STR_MENU, "Downloads File Hashing",
-                    BasicStructuresClass.STR_TITLE, "Downloads File Hashing")),
-            Map.entry(BasicStructuresClass.STR_ENV_DTLS, Map.of(
-                    BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
-                    BasicStructuresClass.STR_MENU, "Environment Details",
-                    BasicStructuresClass.STR_TITLE, "Environment Details"))
-    ).collect(
-            Collectors.toMap(
-                    Map.Entry::getKey, 
-                    Map.Entry::getValue, 
-                    (v1, _) -> v1, 
-                    LinkedHashMap::new)  // Ensures it returns a SequencedMap
-    );
+    /** Menu */
+    private static final SequencedMap<String, Map<String, String>> MAP_MENU = buildMenu();
     /** Variable for Folders relevant for Checksum Exposure */
     private static String[] strFolderNames;
+
+    /**
+     * Menu builder
+     * @return SequencedMap for HTML menu
+     */
+    private static SequencedMap<String, Map<String, String>> buildMenu() {
+        final LinkedHashMap<String, Map<String, String>> menu = new LinkedHashMap<>();
+        menu.put("home", Map.of(
+                BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
+                BasicStructuresClass.STR_MENU, "HomePage",
+                BasicStructuresClass.STR_TITLE, "HomePage"));
+        menu.put(BasicStructuresClass.STR_SOFTWARE_RLS, Map.of(
+                BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
+                BasicStructuresClass.STR_MENU, STR_SOFT_RELEASES,
+                BasicStructuresClass.STR_TITLE, STR_SOFT_RELEASES));
+        menu.put(BasicStructuresClass.STR_TS, Map.of(
+                BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
+                BasicStructuresClass.STR_MENU, "SQLite Table Statistics",
+                BasicStructuresClass.STR_TITLE, "SQLite Table Statistics"));
+        menu.put(BasicStructuresClass.STR_FILE_HASHING, Map.of(
+                BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
+                BasicStructuresClass.STR_MENU, "Downloads File Hashing",
+                BasicStructuresClass.STR_TITLE, "Downloads File Hashing"));
+        menu.put(BasicStructuresClass.STR_ENV_DTLS, Map.of(
+                BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
+                BasicStructuresClass.STR_MENU, "Environment Details",
+                BasicStructuresClass.STR_TITLE, "Environment Details"));
+        return menu;
+    }
 
     /**
      * Outputs file statistics into an HTML table
