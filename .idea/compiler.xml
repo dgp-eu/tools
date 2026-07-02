@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="tools-databases" />
         <module name="tools-cli" />
+        <module name="tools-undertow" />
         <module name="tools-environment" />
         <module name="tools-archiving" />
         <module name="tools-json_split" />

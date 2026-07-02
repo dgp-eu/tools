@@ -19,6 +19,8 @@
     <file url="file://$PROJECT_DIR$/tools-incubator/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tools-json_split/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tools-json_split/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tools-undertow/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tools-undertow/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tools-utils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tools-utils/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tools-web/src/main/java" charset="UTF-8" />
