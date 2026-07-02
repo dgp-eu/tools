@@ -56,10 +56,10 @@ public final class SpecificSqLiteClass {
 
     /**
      * Checks if SQLite database has expected file extension
-     * @param inDatabase input SQLite file as Path
+     * @param databasePath input SQLite file as Path
      */
-    private static void checkDatabaseFileExtension(final Path inDatabase) {
-        final String fileName = inDatabase.getFileName().toString().toLowerCase(Locale.ROOT);
+    private static void checkDatabaseFileExtension(final Path databasePath) {
+        final String fileName = databasePath.getFileName().toString().toLowerCase(Locale.ROOT);
         if (!fileName.endsWith(".db")
                 && !fileName.endsWith(".sqlite")) {
             throw new IllegalArgumentException("Database file must have .db or .sqlite extension");
@@ -68,7 +68,7 @@ public final class SpecificSqLiteClass {
 
     /**
      * Checks if SQLite database is a valid SQLite Format 3
-     * @param inDatabase input SQLite file as Path
+     * @param databasePath input SQLite file as Path
      */
     private static void checkDatabaseFileFormat(final Path databasePath) {
         try (InputStream inputStream = Files.newInputStream(databasePath)) {
