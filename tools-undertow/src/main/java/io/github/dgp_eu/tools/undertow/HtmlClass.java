@@ -225,41 +225,23 @@ public final class HtmlClass {
      * List and Maps management
      */
     public static final class TableSubClass {
-        /**
-         * CSS to align text to right
-         */
+        /** CSS to align text to right */
         private static final String CSS_TEXT_RIGHT = "text-align:right;";
-        /**
-         * variable for Current Tab value
-         */
+        /** variable for Current Tab value */
         private static String currentTabValue;
-        /**
-         * variable for HTML Table
-         */
-        private static final List<String> LIST_TABLE_LINES = new ArrayList<>();
-        /**
-         * Time Zone variable
-         */
+        /** variable for HTML Table */
+        private static final List<String> listTableLines = new ArrayList<>();
+        /** Time Zone variable */
         private static final long LARGE_STRING = 25;
-        /**
-         * variable for Remember Key
-         */
+        /** variable for Remember Key */
         private static String rememberKey;
-        /**
-         * variable for row counter
-         */
+        /** variable for row counter */
         private static int rowCounter;
-        /**
-         * variable for Table Header
-         */
+        /** variable for Table Header */
         private static String strTableHeader = "";
-        /**
-         * Time Zone variable
-         */
+        /** Time Zone variable */
         private static String strTimeZone;
-        /**
-         * variable for Counter usage
-         */
+        /** variable for Counter usage */
         private static boolean useCounter;
 
         /**
@@ -271,7 +253,7 @@ public final class HtmlClass {
             if (strTimeZone == null) {
                 setTimeZone(System.getProperty("user.timezone"));
             }
-            LIST_TABLE_LINES.clear();
+            listTableLines.clear();
             strTableHeader = "";
             rememberKey = getRememberKey(objFeatures);
             useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
@@ -279,7 +261,7 @@ public final class HtmlClass {
                 processRecord(recordMap);
             }
             finish();
-            return String.join("", LIST_TABLE_LINES);
+            return String.join("", listTableLines);
         }
 
         /**
@@ -287,9 +269,9 @@ public final class HtmlClass {
          */
         public static void finish() {
             if (!strTableHeader.isEmpty()) {
-                LIST_TABLE_LINES.add("</tbody></table>");
+                listTableLines.add("</tbody></table>");
                 if (!rememberKey.isEmpty()) {
-                    LIST_TABLE_LINES.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
+                    listTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
                 }
             }
         }
@@ -316,15 +298,15 @@ public final class HtmlClass {
             final String valueForTab = valObj == null ? "null" : valObj.toString();
             final String prev = currentTabValue == null ? "" : currentTabValue;
             if (!valueForTab.equalsIgnoreCase(prev)) {
-                if (LIST_TABLE_LINES.isEmpty()) {
+                if (listTableLines.isEmpty()) {
                     // first tab: open tab container
-                    LIST_TABLE_LINES.add("<div id=\"tabStandard\" class=\"tabber\">");
+                    listTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
                 } else if (currentTabValue != null) {
                     // close previous tab's table
-                    LIST_TABLE_LINES.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
+                    listTableLines.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
                 }
                 // open new tab with header
-                LIST_TABLE_LINES.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
+                listTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
                 currentTabValue = valueForTab;
                 rowCounter = 0;
             }
@@ -345,7 +327,7 @@ public final class HtmlClass {
                 rowCounter++;
                 recordMap.put("#", String.valueOf(rowCounter));
             }
-            LIST_TABLE_LINES.add(RowSubSubClass.buildTableBodyRow(recordMap));
+            listTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap));
         }
 
         /**
@@ -472,8 +454,8 @@ public final class HtmlClass {
              * ensuring Table Header is appended
              */
             private static void ensureHeaderAppended() {
-                if (LIST_TABLE_LINES.isEmpty()) {
-                    LIST_TABLE_LINES.add(strTableHeader);
+                if (listTableLines.isEmpty()) {
+                    listTableLines.add(strTableHeader);
                     rowCounter = 0;
                 }
             }
