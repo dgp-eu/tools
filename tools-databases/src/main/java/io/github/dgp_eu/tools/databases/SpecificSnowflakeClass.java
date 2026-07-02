@@ -137,10 +137,12 @@ public final class SpecificSnowflakeClass {
      */
     private static String getUsernameForConnection() {
         String currentUser = strUserName;
-        if (strUserName == null) {
-            currentUser = ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault());
+        if (currentUser == null) {
+            final String resolvedUser = ShellingClass.getCurrentUserAccount();
+            currentUser = resolvedUser == null ? null : resolvedUser.toUpperCase(Locale.getDefault());
         }
-        if (currentUser.isEmpty()) {
+        if (currentUser == null
+                || currentUser.isEmpty()) {
             currentUser = "UNKNOWN_USER";
         }
         return currentUser;
@@ -171,7 +173,9 @@ public final class SpecificSnowflakeClass {
      */
     public static void performSnowflakePreDefinedAction(final String strAction, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString())) {
-            assert objConnection != null;
+            if (objConnection == null) {
+                throw new SQLException("Snowflake connection is null.");
+            }
             try (Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
                 executeSnowflakeBootstrapQuery(objStatement);
                 final List<Properties> predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES);
