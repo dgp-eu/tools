@@ -112,18 +112,18 @@ public final class ProjectClass {
     private static Model getProjectModelContent(final MavenXpp3Reader reader, final String pomReference) {
         Model model = null;
         if (pomReference != null) {
-            try {
-                if (Files.exists(Path.of(pomFile))) {
-                    final BufferedReader bReader = Files.newBufferedReader(Path.of(pomReference), StandardCharsets.UTF_8);
+            if (Files.exists(Path.of(pomFile))) {
+                try (BufferedReader bReader = Files.newBufferedReader(Path.of(pomReference), StandardCharsets.UTF_8)) {
                     model = reader.read(bReader);
-                    bReader.close();
-                } else {
-                    final InputStream inputStream = ProjectClass.class.getResourceAsStream(pomReference);
-                    model = reader.read(inputStream);
-                    inputStream.close();
+                } catch (IOException | XmlPullParserException eb) {
+                    LogExposureClass.exposeInputOutputException(Arrays.toString(eb.getStackTrace()));
                 }
-            } catch (IOException | XmlPullParserException ex) {
-                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+            } else {
+                try (InputStream inputStream = ProjectClass.class.getResourceAsStream(pomReference)) {
+                    model = reader.read(inputStream);
+                } catch (IOException | XmlPullParserException ex) {
+                    LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+                }
             }
         }
         return model;
