@@ -291,11 +291,11 @@ public final class TimingClass {
          */
         private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
             return switch (strWhichPart) {
-                case "Day" -> duration.toDaysPart();
-                case "Hour" -> duration.toHoursPart();
+                case "Day"         -> duration.toDaysPart();
+                case "Hour"        -> duration.toHoursPart();
                 case "Millisecond" -> duration.toMillisPart();
-                case "Minute" -> duration.toMinutesPart();
-                case "Nanosecond" -> duration.toNanosPart();
+                case "Minute"      -> duration.toMinutesPart();
+                case "Nanosecond"  -> duration.toNanosPart();
                 case BasicStructuresClass.STR_SECOND -> duration.toSecondsPart();
                 default -> {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));

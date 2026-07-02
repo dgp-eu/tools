@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+// Copyright 2026 Daniel-Gheorghe Popiniuc
 package io.github.dgp_eu.tools.core;
 
 import java.io.*;
@@ -1103,7 +1101,8 @@ public final class FileOperationsClass {
             } catch (IOException ei) {
                 final Path foderName = Path.of(strFolderName);
                 final String strFeedback = String.format(FILE_FIND_ERR, foderName.getParent(), foderName.getFileName());
-                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.exposeInputOutputException(strFeedback,
+                        Arrays.toString(ei.getStackTrace()));
             }
             return pathProps;
         }

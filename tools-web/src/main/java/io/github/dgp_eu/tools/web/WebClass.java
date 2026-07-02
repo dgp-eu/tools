@@ -211,15 +211,35 @@ public final class WebClass {
             final List<Properties> resultReleases = getSoftwareReleasesFromDatabase();
             resultReleases.forEach( recordProperties -> {
                 final Properties newProperties = new Properties();
-                newProperties.put("Organization", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("OrganizationName"), recordProperties.get("OrganizationId")));
-                newProperties.put("Product", String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>", recordProperties.get("Releases"), recordProperties.get("ProductName"), recordProperties.get("ProductId"), recordProperties.get("BranchName"), recordProperties.get("BranchId")));
-                newProperties.put("Version", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("Latest release version"), recordProperties.get("VersionId")));
-                final String agingDays = recordProperties.get("Latest release aging days").toString().replaceAll("\\.0$"
-                        , "");
-                newProperties.put("Date", String.format("%s<br>==> %s", recordProperties.get("Latest release date"), recordProperties.get("Latest release aging full").toString()));
-                newProperties.put("Files", String.format("%s [%s]<br/>==> %s [%s]", recordProperties.get("File Kit Name"), recordProperties.get("File Kit Id"), recordProperties.get("File Installed Name"), recordProperties.get("File Installed Id")));
-                newProperties.put("Profile", recordProperties.get("Profile Name"));
-                newProperties.put(BasicStructuresClass.STR_ROW_STYLE, establishRowStyle(agingDays));
+                newProperties.put("Organization",
+                        String.format("%s<div style=\"text-align:right;\">[%s]</div>",
+                                recordProperties.get("OrganizationName"),
+                                recordProperties.get("OrganizationId")));
+                newProperties.put("Product",
+                        String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>",
+                                recordProperties.get("Releases"),
+                                recordProperties.get("ProductName"),
+                                recordProperties.get("ProductId"),
+                                recordProperties.get("BranchName"),
+                                recordProperties.get("BranchId")));
+                newProperties.put("Version",
+                        String.format("%s<div style=\"text-align:right;\">[%s]</div>",
+                                recordProperties.get("Latest release version"),
+                                recordProperties.get("VersionId")));
+                newProperties.put("Date",
+                        String.format("%s<br>==> %s",
+                                recordProperties.get("Latest release date"),
+                                recordProperties.get("Latest release aging full").toString()));
+                newProperties.put("Files",
+                        String.format("%s [%s]<br/>==> %s [%s]",
+                                recordProperties.get("File Kit Name"),
+                                recordProperties.get("File Kit Id"),
+                                recordProperties.get("File Installed Name"),
+                                recordProperties.get("File Installed Id")));
+                newProperties.put("Profile",
+                        recordProperties.get("Profile Name"));
+                newProperties.put(BasicStructuresClass.STR_ROW_STYLE,
+                        establishRowStyle(recordProperties.get("Latest release aging days").toString().replaceAll("\\.0$", "")));
                 softwareReleases.add(newProperties);
             });
             return softwareReleases;
@@ -231,17 +251,16 @@ public final class WebClass {
          * @return String row style
          */
         private static String establishRowStyle(final String agingDays) {
-            String strRowColor = "#fff";
+            String strRowColor = "#fff"; // white
             if (!agingDays.isEmpty()) {
                 final long[] longRanges = {14, 30, 90};
-                final String cleanedAging = agingDays.replaceAll(".0$", "");
-                final long longAging = BasicStructuresClass.convertStringIntoLong(cleanedAging);
+                final long longAging = BasicStructuresClass.convertStringIntoLong(agingDays);
                 if (longAging <= longRanges[0]) {
-                    strRowColor = "#51ff6d";
+                    strRowColor = "#51ff6d"; // bright green
                 } else if (longAging <= longRanges[1]) {
-                    strRowColor = "#ccffe8";
+                    strRowColor = "#ccffe8"; // washed out green
                 } else if (longAging <= longRanges[2]) {
-                    strRowColor = "#fdffcc";
+                    strRowColor = "#fdffcc"; // washed out yellow
                 }
             }
             return String.format("background-color:%s;", strRowColor);
