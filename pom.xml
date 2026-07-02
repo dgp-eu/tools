@@ -72,7 +72,7 @@
         <junit-jupiter.version>6.1.1</junit-jupiter.version>
         <jte.version>3.2.4</jte.version>
         <log4j-core.version>2.26.0</log4j-core.version>
-        <log4j-slf4j2-impl.version>2.26.0</log4j-slf4j2-impl.version>
+        <log4j-slf4j2-impl.version>2.26.1</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.16</maven-model.version>
         <oshi-core-ffm.version>7.3.2</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
