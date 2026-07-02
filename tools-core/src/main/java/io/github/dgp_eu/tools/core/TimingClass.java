@@ -359,19 +359,15 @@ public final class TimingClass {
      * Time Zones and associated coordinates handler
      */
     public static final class LocalizationSubClass {
-        /**
-         * Input time zone variable
-         */
-        private static String inputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
-        /**
-         * Output time zone variable
-         */
-        private static String outputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
+        /** Input time zone variable */
+        private static volatile String inputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
+        /** Output time zone variable */
+        private static volatile String outputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
 
         /**
          * Convert time-stamp
          * @param strTimeStamp input Time-stamp
-         * @return String converted time-stamp and formated
+         * @return String converted time-stamp and formatted
          */
         public static String convertTimestampFriendly(final String strTimeStamp, final String inputFormat, final String outputFormat) {
             final ZonedDateTime inTimeStamp = convertStringIntoZonedDateTime(strTimeStamp, inputFormat);
