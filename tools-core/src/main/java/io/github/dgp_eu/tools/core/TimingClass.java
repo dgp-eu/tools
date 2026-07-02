@@ -62,6 +62,17 @@ public final class TimingClass {
      */
     @Nullable
     public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
+        return getFileLastModifiedTimeAsHumanReadableFormat(file, "EEE, dd MMM yyyy HH:mm:ss.SSS");
+    }
+
+    /**
+     * get file last modified date time as human-readable format
+     * @param file given file
+     * @param output format pattern
+     * @return String
+     */
+    @Nullable
+    public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file, @NonNull final String outFormat) {
         String lastModifTime = null;
         try {
             final long modifTime = Files.getLastModifiedTime(file).toMillis();
@@ -69,7 +80,7 @@ public final class TimingClass {
             final Instant instant = Instant.ofEpochMilli(modifTime);
             // Convert to LocalDateTime in system default zone
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS", Locale.US);
+            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern(outFormat, Locale.US);
             lastModifTime = dateTime.format(fixedFormatter);
         } catch (IOException ei) {
             final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder", file.getParent(), file.getFileName());
@@ -197,6 +208,11 @@ public final class TimingClass {
                     final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                     strFinalOne = "Nanosecond";
+                    break;
+                case "HumanReadableTimeWithMilliseconds":
+                    final String strMilliRule = BasicStructuresClass.STR_TM_FRM_SP;
+                    arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
+                    strFinalOne = "Millisecond";
                     break;
                 case "TimeClockClassic":
                     arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};

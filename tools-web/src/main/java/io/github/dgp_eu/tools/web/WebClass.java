@@ -90,7 +90,7 @@ public final class WebClass {
             final List<Properties> crtFileStatistics = FileOperationsClass.StatisticsSubClass.getFileStatisticsIntoListOfProperties(crtFolderName);
             foldersStatistics.addAll(crtFileStatistics);
         }
-        final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Time", "SHA-256");
+        final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Timestamp", "SHA-256");
         final List<SequencedMap<Object, Object>> orderedList = foldersStatistics.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                 .toList();
