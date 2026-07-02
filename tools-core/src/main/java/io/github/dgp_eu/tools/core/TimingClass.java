@@ -81,7 +81,7 @@ public final class TimingClass {
     /**
      * get file last modified date time as human-readable format
      * @param file given file
-     * @param output format pattern
+     * @param outFormat format pattern
      * @return String
      */
     @Nullable
