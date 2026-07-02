@@ -75,7 +75,7 @@ public final class TimingClass {
      */
     @Nullable
     public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
-        return getFileLastModifiedTimeAsHumanReadableFormat(file, "EEE, dd MMM yyyy HH:mm:ss.SSS");
+        return getFileLastModifiedTimeAsHumanReadableFormat(file, DATE_TIME_MS_ABRV);
     }
 
     /**
