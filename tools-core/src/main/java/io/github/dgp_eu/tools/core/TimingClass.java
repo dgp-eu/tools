@@ -397,7 +397,7 @@ public final class TimingClass {
         /**
          * format date
          * @param strDate input date
-         * @return String formated date
+         * @return String formatted date
          */
         public static String formatDateFriendly(final String strDate, final String inputFormat, final String outputFormat) {
             final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat, Locale.US));

@@ -221,7 +221,7 @@ public final class ProjectClass {
                 && inPomFile.endsWith("-pom.xml")
                 && !"/tools-pom.xml".equalsIgnoreCase(inPomFile)) {
             pomParentFile = "/tools-pom.xml";
-            final String strFeedback = String.format("Parrent Project Object Model set %s", pomParentFile);
+            final String strFeedback = String.format("Parent Project Object Model set %s", pomParentFile);
             LogExposureClass.LOGGER.debug(strFeedback);
         }
     }

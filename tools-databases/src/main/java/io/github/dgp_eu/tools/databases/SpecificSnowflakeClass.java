@@ -23,17 +23,11 @@ import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ResultSettingSub
  * Snowflake methods
  */
 public final class SpecificSnowflakeClass {
-    /**
-     * String for Snowflake
-     */
+    /** String for Snowflake */
     public static final String STR_SNOWFLAKE = "Snowflake";
-    /**
-     * standard String
-     */
+    /** standard String */
     public static final String STR_ROLES = "Roles";
-    /**
-     * standard String
-     */
+    /** standard String */
     private static String strUserName;
 
     /**
@@ -64,9 +58,9 @@ public final class SpecificSnowflakeClass {
             connection = DriverManager.getConnection(strConnection, propConnection);
             final String strFeedbackOk = String.format("%s connection to database %s was successfully established!", STR_SNOWFLAKE, strDatabase);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             final String strFeedbackErr = String.format("%s connection has failed %s", STR_SNOWFLAKE, e.getLocalizedMessage());
-            LogExposureClass.LOGGER.debug(strFeedbackErr);
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return connection;
     }
@@ -183,7 +177,7 @@ public final class SpecificSnowflakeClass {
                 final List<Properties> predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES);
                 LogExposureClass.LOGGER.info(predefinedInfo.toString());
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
