@@ -17,7 +17,6 @@
     <meta name="Author" content="Daniel Popiniuc">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/web/static/styles.css">
-    <link rel="stylesheet" href="/web/static/common-sample1.css">
     <!-- Bootstrap components -->
     <link rel="stylesheet" href="/web/static/BootStrap/5.3.8/bootstrap.min.css">
     <script src="/web/static/BootStrap/5.3.8/bootstrap.bundle.min.js" defer></script>
@@ -28,6 +27,7 @@
     <script src="/web/static/FontAwesome/7.3.0/regular.min.js" defer></script>
     <script src="/web/static/FontAwesome/7.3.0/solid.min.js" defer></script>
     <!-- Tabber components -->
+    <link rel="stylesheet" href="/web/static/Tabber/1.0.0/tabber.css">
     <script src="/web/static/Tabber/1.0.0/tabber.min.js" defer></script>
 </head>
 <body>

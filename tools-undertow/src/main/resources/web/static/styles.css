@@ -66,6 +66,74 @@ nav ul {
     width: 14rem;
 }
 
+table {
+    border: 1px solid #FFF;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    empty-cells: show;
+}
+
+table thead tr th {
+    width: auto !important;
+}
+
+table tr {
+    border-bottom: 1px dotted #ccc !important;
+}
+
+table tr:hover {
+    background: #FFFF73 !important;
+}
+
+table tr:nth-child(even) {
+    background-color: #fff;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+    *zoom: 1;
+}
+table tr:nth-child(odd) {
+    background-color: #fff;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ffffff 0%, #f3f3f3 50%, #ededed 51%, #ffffff 100%);
+    *zoom: 1;
+}
+
+table tr th {
+    border: 1px inset #FFF;
+    box-shadow: none;
+    color: #333;
+    font-weight: bold;
+}
+
+table tr th,
+table tr:hover {
+    background-color: silver;
+    *zoom: 1;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #c0c0c0 0%, #ffffff 100%);
+    text-shadow: 1px 1px 1px #FFF;
+}
+
+table tr th:hover {
+    background-color: #ff0;
+    *zoom: 1;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ffff00 0%, #ffffff 100%);
+}
+
+table tr td {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+table tr td:hover {
+    background-color: #fefcea;
+    *zoom: 1;
+    background-size: 100%;
+    background-image: radial-gradient(ellipse cover at center, #fefcea 35%, #fefcea 35%, #ffff00 100%);
+    color: #000 !important;
+}
+
 td {
     font-family: monospace !important;
     vertical-align: top !important;

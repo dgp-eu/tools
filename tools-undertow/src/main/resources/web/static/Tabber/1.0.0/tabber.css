@@ -1,0 +1,90 @@
+
+.tabber {
+    float: left;
+    overflow: auto;
+}
+
+.tabberlive {
+    margin-top: 16px;
+}
+
+.tabberlive .tabbertab {
+    border: 1px solid #ccc;
+    border-top: 0;
+    margin: 0;
+    padding: 10px;
+}
+
+.tabberlive .tabbertabhide,
+.tabberlive .tabbertab h2,
+.tabberlive .tabbertab h3 {
+    display: none;
+}
+
+.tabberlive#tab2 .tabbertab {
+    height: 200px;
+    overflow: auto;
+}
+
+ul.tabbernav {
+    border-bottom: 1px solid #ccc;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+    padding: 3px 0;
+    *zoom: 1;
+}
+
+ul.tabbernav li {
+    display: inline;
+    list-style: none;
+    margin: 0;
+}
+
+ul.tabbernav li a {
+    background-color: silver;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #c0c0c0 0%, #ffffff 100%);
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    font-weight: normal;
+    margin-left: 3px;
+    padding: 3px 8px;
+    text-decoration: none;
+}
+
+ul.tabbernav li a:hover {
+    background-color: #ff0;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ffff00 0%, #ffffff 100%);
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+ul.tabbernav li a:link {
+    color: #448;
+}
+
+ul.tabbernav li a:visited {
+    color: #667;
+}
+
+ul.tabbernav li.tabberactive a {
+    background-color: orange;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ffa500 0%, #ffffff 100%);
+    border-bottom: 1px solid #fff;
+    font-weight: bold;
+}
+
+ul.tabbernav li.tabberactive a:hover {
+    background-color: red;
+    background-size: 100%;
+    background-image: linear-gradient(to bottom, #ff0000 0%, #ffffff 100%);
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #fff;
+    color: #ff0;
+}
+
