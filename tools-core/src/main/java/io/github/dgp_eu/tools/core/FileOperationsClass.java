@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.NonNull;
 
 import io.github.dgp_eu.tools.core.TimingClass.ConversionSubClass;
-import oshi.util.FormatUtil;
 
 /**
  * File Operations
@@ -1122,7 +1121,7 @@ public final class FileOperationsClass {
                     file.getFileName().toString());
             final long fileSize = file.toFile().length();
             fileProperties.put("Size [bytes]",
-                    String.format(dualContent, fileSize, FormatUtil.formatBytes(fileSize)));
+                    String.format(dualContent, fileSize, BasicStructuresClass.Formatting.formatBytes(fileSize)));
             fileProperties.put("Last Modified Timestamp",
                     handleFileLastModifiedTimestamp(file, dualContent));
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));

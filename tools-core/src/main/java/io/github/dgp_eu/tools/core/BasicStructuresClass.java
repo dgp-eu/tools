@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
@@ -285,6 +286,124 @@ public final class BasicStructuresClass {
         // Check if the protocol is "jar" (JAR execution) or "file" (IDE execution)
         final String protocol = classUrl.getProtocol();
         return "jar".equals(protocol);
+    }
+
+    /**
+     * Formatting logic
+     */
+    public static final class Formatting {
+        /** Binary prefix for KiloBytes */
+        private static final long KIBI = 1L << 10;
+        /** Binary prefix for MegaBytes */
+        private static final long MEBI = 1L << 20;
+        /** Binary prefix for GigaBytes */
+        private static final long GIBI = 1L << 30;
+        /** Binary prefix for TeraBytes */
+        private static final long TEBI = 1L << 40;
+        /** Binary prefix for PetaBytes */
+        private static final long PEBI = 1L << 50;
+        /** Binary prefix for ExaBytes */
+        private static final long EXBI = 1L << 60;
+        /** Decimal prefix used for Kilobytes */
+        private static final long KILO = 1_000L;
+        /** Decimal prefix used for MegaBytes */
+        private static final long MEGA = 1_000_000L;
+        /** Decimal prefix used for GigaBytes */
+        private static final long GIGA = 1_000_000_000L;
+        /** Decimal prefix used for TeraBytes */
+        private static final long TERA = 1_000_000_000_000L;
+        /** Decimal prefix used for PetaBytes */
+        private static final long PETA = 1_000_000_000_000_000L;
+        /** Decimal prefix used for ExaBytes */
+        private static final long EXA = 1_000_000_000_000_000_000L;
+
+        /**
+         * Format bytes into a rounded string representation using IEC standard
+         * @param inBytes input Bytes value
+         * @return Rounded string representation of the byte size
+         */
+        public static String formatBytes(final long inBytes) {
+            if (inBytes == 1L) { // bytes
+                return String.format(Locale.ROOT, "%d byte", inBytes);
+            } else if (inBytes < KIBI) { // bytes
+                return String.format(Locale.ROOT, "%d bytes", inBytes);
+            } else if (inBytes < MEBI) { // KiB
+                return formatValue(inBytes, KIBI, "KiB");
+            } else if (inBytes < GIBI) { // MiB
+                return formatValue(inBytes, MEBI, "MiB");
+            } else if (inBytes < TEBI) { // GiB
+                return formatValue(inBytes, GIBI, "GiB");
+            } else if (inBytes < PEBI) { // TiB
+                return formatValue(inBytes, TEBI, "TiB");
+            } else if (inBytes < EXBI) { // PiB
+                return formatValue(inBytes, PEBI, "PiB");
+            } else { // EiB
+                return formatValue(inBytes, EXBI, "EiB");
+            }
+        }
+
+        /**
+         * Format bytes into a rounded string representation using decimal SI units
+         * These are used by hard drive manufacturers for capacity.
+         * @param inBytes input Bytes value
+         * @return Rounded string representation of the byte size.
+         */
+        public static String formatBytesDecimal(final long inBytes) {
+            if (inBytes == 1L) { // bytes
+                return String.format(Locale.ROOT, "%d byte", inBytes);
+            } else if (inBytes < KILO) { // bytes
+                return String.format(Locale.ROOT, "%d bytes", inBytes);
+            } else {
+                return formatDecimal(inBytes, "B");
+            }
+        }
+
+        /**
+         * Format arbitrary units into a string to a rounded string representation.
+         *
+         * @param value The value
+         * @param unit  Units to append metric prefix to
+         * @return Rounded string representation of the value with metric prefix to extension
+         */
+        public static String formatDecimal(final long value, final String unit) {
+            if (value < KILO) {
+                return String.format(Locale.ROOT, "%d %s", value, unit).trim();
+            } else if (value < MEGA) { // K
+                return formatValue(value, KILO, "K" + unit);
+            } else if (value < GIGA) { // M
+                return formatValue(value, MEGA, "M" + unit);
+            } else if (value < TERA) { // G
+                return formatValue(value, GIGA, "G" + unit);
+            } else if (value < PETA) { // T
+                return formatValue(value, TERA, "T" + unit);
+            } else if (value < EXA) { // P
+                return formatValue(value, PETA, "P" + unit);
+            } else { // E
+                return formatValue(value, EXA, "E" + unit);
+            }
+        }
+
+        /**
+         * Format units as exact integer or fractional decimal based on the prefix,
+         * appending the appropriate units
+         * @param inValue input value to format
+         * @param inDivider divisor of the unit multiplier
+         * @param outSymbol String representing the units
+         * @return string with formatted value
+         */
+        private static String formatValue(final long inValue, final long inDivider, final String outSymbol) {
+            if (inValue % inDivider == 0) {
+                return String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol);
+            }
+            return String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
+        }
+
+        // Private constructor to prevent instantiation
+        private Formatting() {
+            // intentional empty
+        }
+
+    	
     }
 
     /**
