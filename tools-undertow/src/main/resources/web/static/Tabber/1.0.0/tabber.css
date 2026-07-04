@@ -85,6 +85,6 @@ ul.tabbernav li.tabberactive a:hover {
     background-image: linear-gradient(to bottom, #ff0000 0%, #ffffff 100%);
     border: 1px solid #ccc;
     border-bottom: 1px solid #fff;
-    color: #ff0;
+    color: #000;
 }
 
