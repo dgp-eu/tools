@@ -25,21 +25,23 @@ public final class SpecificSnowflakeClass {
     public static final String STR_SNOWFLAKE = "Snowflake";
     /** standard String */
     public static final String STR_ROLES = "Roles";
-    /** standard String */
+    /** connection string Variable */
+    private static String strConnection;
+    /** username variable */
     private static String strUserName;
 
     /**
      * building Snowflake connection String
-     * @param propInstance instance Properties
+     * @param inProperties instance Properties
      * @return Snowflake connection String
      */
-    private static String buildConnectionString(final Properties propInstance) {
-        String accountId = propInstance.getProperty("AccountIdentifier", "").toString();
+    public static String buildConnectionString(final Properties inProperties) {
+        String accountId = inProperties.getProperty("AccountIdentifier", "").toString();
         if (accountId.isBlank()) {
             final String strFeedback = "As attribute \"AccountIdentifier\" is missing will attempt building it by combining Organization and AccountLocator";
             LogExposureClass.LOGGER.debug(strFeedback);
-            final String strOrganization = propInstance.getProperty("Organization", "").toString().toLowerCase(Locale.getDefault());
-            final String accountLocator = propInstance.getProperty("AccountLocator", "").toString().toLowerCase(Locale.getDefault());
+            final String strOrganization = inProperties.getProperty("Organization", "").toString().toLowerCase(Locale.getDefault());
+            final String accountLocator = inProperties.getProperty("AccountLocator", "").toString().toLowerCase(Locale.getDefault());
             if (strOrganization.isBlank()
                     || accountLocator.isBlank()) {
                 final String strFeedbackErr = "Either attribute \"Organization\" or \"AccountLocator\" (or both) is missing creating attribute \"AccountIdentifier\" required for Snowflake connection string is not possible...";
@@ -48,7 +50,10 @@ public final class SpecificSnowflakeClass {
             }
             accountId = String.format("%s-%s.privatelink", strOrganization, accountLocator);
         }
-        return String.format("jdbc:snowflake://%s.snowflakecomputing.com/", accountId);
+        final String outConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", accountId);
+        final String strFeedback = String.format("Snowflake connection String has been build: %s", outConnection);
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return outConnection;
     }
 
     /**
@@ -63,7 +68,6 @@ public final class SpecificSnowflakeClass {
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
         Connection connection = null;
         try {
-            final String strConnection = buildConnectionString(propInstance);
             final String strFeedback = String.format("Will attempt to create a %s connection to database %s using %s as connection string and %s properties",
                     STR_SNOWFLAKE,
                     strDatabase,
@@ -149,6 +153,8 @@ public final class SpecificSnowflakeClass {
             }
         });
         properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
+        final String strFeedback = String.format("Snowflake connection Properties are: %s", properties);
+        LogExposureClass.LOGGER.debug(strFeedback);
         return properties;
     }
 
@@ -205,6 +211,14 @@ public final class SpecificSnowflakeClass {
             final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
+    }
+
+    /**
+     * Setter for strConnection
+     * @param inConnString imposed Snowflake connection String
+     */
+    public static void setConnectionString(final String inConnString) {
+        strConnection = inConnString;
     }
 
     /**
