@@ -36,23 +36,23 @@ public final class SpecificSnowflakeClass {
      * @return Snowflake connection String
      */
     public static String buildConnectionString(final Properties inProperties) {
-        String accountId = inProperties.getProperty("AccountIdentifier", "");
+        String accountId = inProperties.getOrDefault("AccountIdentifier", "").toString();
         if (accountId.isBlank()) {
-            final String strFeedback = "As attribute \"AccountIdentifier\" is missing will attempt building it by combining Organization and AccountLocator";
+            final String strFeedback = "As attribute \"AccountIdentifier\" is missing will attempt building it by combining attributes \"Organization\" and \"AccountLocator\"...";
             LogExposureClass.LOGGER.debug(strFeedback);
-            final String strOrganization = inProperties.getProperty("Organization", "").toLowerCase(Locale.getDefault());
-            final String accountLocator = inProperties.getProperty("AccountLocator", "").toLowerCase(Locale.getDefault());
+            final String strOrganization = inProperties.getOrDefault("Organization", "").toString();
+            final String accountLocator = inProperties.getOrDefault("AccountLocator", "").toString();
             if (strOrganization.isBlank()
                     || accountLocator.isBlank()) {
-                final String strFeedbackErr = "Either attribute \"Organization\" or \"AccountLocator\" (or both) is missing creating attribute \"AccountIdentifier\" required for Snowflake connection string is not possible...";
+                final String strFeedbackErr = "Either attribute \"Organization\" or \"AccountLocator\" (or both) is missing, hence creating attribute \"AccountIdentifier\" required for Snowflake connection string is not possible...";
                 LogExposureClass.LOGGER.error(strFeedbackErr);
                 throw new IllegalArgumentException(strFeedbackErr);
             }
             accountId = String.format("%s-%s.privatelink", strOrganization, accountLocator);
         }
-        final String outConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", accountId);
-        final String strFeedback = String.format("Snowflake connection String has been build: %s", outConnection);
-        LogExposureClass.LOGGER.debug(strFeedback);
+        final String outConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", accountId.replace("\"", "").toLowerCase(Locale.getDefault()));
+        final String strFeedbackFinal = String.format("Snowflake connection String has been build: %s", outConnection);
+        LogExposureClass.LOGGER.debug(strFeedbackFinal);
         return outConnection;
     }
 
@@ -143,7 +143,7 @@ public final class SpecificSnowflakeClass {
         final Properties properties = new Properties();
         properties.put("user", getUsernameForConnection());
         properties.put("db", strDatabase);
-        properties.put("allowUnderscoresInHost", true);
+        properties.put("allowUnderscoresInHost", "true");
         properties.put("JDBC_QUERY_RESULT_FORMAT", "JSON"); // overwrite default values which is Arrow
         final List<String> optionalProperties = List.of("Authenticator", "Role", "Schema", "Warehouse");
         optionalProperties.forEach(strValue -> {
