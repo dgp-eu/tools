@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
 import org.apache.logging.log4j.Level;

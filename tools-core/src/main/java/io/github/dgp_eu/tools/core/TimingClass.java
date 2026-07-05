@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
 import java.io.IOException;
@@ -195,7 +193,7 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTimeWithMilliseconds")
             , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
