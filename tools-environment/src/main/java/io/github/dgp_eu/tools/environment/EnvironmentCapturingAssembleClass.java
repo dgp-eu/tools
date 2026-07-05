@@ -1,22 +1,31 @@
-/*
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.environment;
 
-import oshi.hardware.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.core.ShellingClass;
+import oshi.hardware.Baseboard;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.Display;
+import oshi.hardware.Firmware;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.NetworkIF;
+import oshi.hardware.PhysicalMemory;
+import oshi.hardware.VirtualMemory;
 import oshi.software.os.NetworkParams;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 import oshi.util.PlatformEnum;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.JsonOperationsClass;
-import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
-import io.github.dgp_eu.tools.core.ShellingClass;
 
 /**
  * Capturing current environment details
@@ -58,12 +67,12 @@ public final class EnvironmentCapturingAssembleClass {
      */
     private static Map<String, Object> gatherHardwareDetails() {
         return Map.of(
-                "CPU", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutCentralProcessorUnit()),
-                "GPU", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutGraphicCards()),
-                "Mainboard", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.MotherboardAndSystemSubClass.getDetailsAboutMainboard()),
-                "Monitor", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutMonitor()),
-                "Network Interface", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutNetworkInterfaces()),
-                "RAM", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutRandomAccessMemory()));
+                "CPU", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutCentralProcessorUnit()),
+                "GPU", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutGraphicCards()),
+                "Mainboard", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.MotherboardAndSystemSubClass.getDetailsAboutMainboard()),
+                "Monitor", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutMonitor()),
+                "Network Interface", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutNetworkInterfaces()),
+                "RAM", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutRandomAccessMemory()));
     }
 
     /**
@@ -90,10 +99,10 @@ public final class EnvironmentCapturingAssembleClass {
      */
     private static Map<String, Object> gatherSoftwareDetails() {
         return Map.of(
-                "Java", JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails()),
-                "OS", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutOperatingSystem()),
-                "Network", JsonOperationsClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutNetwork()),
-                "Storage", JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
+                "Java", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(gatherJavaDetails()),
+                "OS", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutOperatingSystem()),
+                "Network", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(HardwareSubClass.getDetailsAboutNetwork()),
+                "Storage", BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
     }
 
     /**
@@ -134,13 +143,13 @@ public final class EnvironmentCapturingAssembleClass {
         final StringBuilder strJsonString = new StringBuilder(1000).append('{');
         final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
-        final String strHardware = JsonOperationsClass.getMapIntoJsonString(gatherHardwareDetails());
+        final String strHardware = BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(gatherHardwareDetails());
         if (strHardware != null) {
             strJsonString.append("\"Hardware\":").append(strHardware);
         }
         final String strFeedbackH = "I just captured Hardware information...";
         LogExposureClass.LOGGER.debug(strFeedbackH);
-        final String strSoftware = JsonOperationsClass.getMapIntoJsonString(gatherSoftwareDetails());
+        final String strSoftware = BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(gatherSoftwareDetails());
         if (strSoftware != null) {
             strJsonString.append(",\"Software\":").append(strSoftware);
         }
@@ -150,7 +159,7 @@ public final class EnvironmentCapturingAssembleClass {
         if (strAppDetails != null) {
             strJsonString.append(',').append(strAppDetails);
         }
-        final String strEnvironment = JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
+        final String strEnvironment = BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(gatherEnvironmentDetails());
         final String strFeedbackEnv = "I just captured Environment information...";
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
         if (strEnvironment != null) {

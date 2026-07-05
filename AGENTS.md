@@ -6,10 +6,12 @@
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
 - **tools-archiving**: CLI app for folder archiving using system executables (7-Zip, RAR, WinRAR)
 - **tools-cli**: CLI shared utility library for operations
-- **tools-databases**: CLI app and shared utility library for database access and operations
+- **tools-databases**: Shared utility library for database access and operations
+- **tools-databases-demo**: CLI app for database access and operations
 - **tools-environment**: CLI app and shared utility library for system environment capture
 - **tools-incubator**: CLI app and shared utility library for experimental features not yet production-ready
 - **tools-json_split**: CLI app for splitting large JSON files using streaming parsing
+- **tools-undertow**: Shared utility library for web server operations using Undertow and JTE
 - **tools-utils**: CLI app for various file system operations
 - **tools-web**: CLI app providing web interface for system information and utilities (Undertow + JTE)
 
@@ -28,19 +30,27 @@ tools (parent POM)
 │   └── Depends on: tools-core
 ├── tools-databases (io.github.dgp-eu.tools.databases)
 │   └── Depends on: tools-core
-    └── Depends on: tools-cli
+├── tools-databases-demo (io.github.dgp-eu.tools.databases-demo)
+│   └── Depends on: tools-core
+│   └── Depends on: tools-cli
+│   └── Depends on: tools-json
 ├── tools-environment (io.github.dgp-eu.tools.environment)
 │   └── Depends on: tools-core
-    └── Depends on: tools-cli
+│   └── Depends on: tools-cli
 ├── tools-incubator (io.github.dgp-eu.tools.incubator)
 │   └── Depends on: tools-core
-    └── Depends on: tools-cli
-└── tools-json_split (io.github.dgp-eu.tools.json_split)
-    └── Depends on: tools-core
-    └── Depends on: tools-cli
-└── tools-utils (io.github.dgp-eu.tools.utils)
-    └── Depends on: tools-core
-    └── Depends on: tools-cli
+│   └── Depends on: tools-cli
+├── tools-json (io.github.dgp-eu.tools.json)
+│   └── Depends on: tools-core
+│   └── Depends on: tools-cli
+├── tools-json_split (io.github.dgp-eu.tools.json_split)
+│   └── Depends on: tools-core
+│   └── Depends on: tools-cli
+├── tools-undertow (io.github.dgp-eu.tools.undertow)
+│   └── Depends on: tools-core
+├── tools-utils (io.github.dgp-eu.tools.utils)
+│   └── Depends on: tools-core
+│   └── Depends on: tools-cli
 └── tools-web (io.github.dgp-eu.tools.web)
     └── Depends on: tools-core
     └── Depends on: tools-cli
@@ -51,10 +61,8 @@ tools (parent POM)
 **Critical Pattern**: All utilities exposed through public static classes with inner SubClasses:
 - `BasicStructuresClass`: StringConversionSubClass, StringTransformationSubClass, StringCleaningSubClass, StringEvaluationSubClass, ListAndMapSubClass, PropertiesReaderSubClass
 - `FileOperationsClass`: RetrievingSubClass, ContentReadingSubClass, ContentWritingSubClass, WritingSubClass, MovingSubClass, DeletingSubClass, MassChangeSubClass, StatisticsSubClass, RetrievingCompactOrRegularFileSubClass
-- `JsonOperationsClass`: ArraySubClass, ObjectSubClass
 - `RegularExpressionsClass`: ConversionSubClass, ValidationSubClass
 - `TimingClass`: ConversionSubClass, LocalizationSubClass
-- `UndertowClass`: ParametersSubClass, SessionSubClass, TemplateRenderingSubClass
 - `ProjectClass`: ApplicationSubClass, LoaderSubClass, ComponentsSubClass
 
 CLI apps (archiving, json_split, etc.) use **picocli** for command parsing; extend AbstractApplication base class.
@@ -87,20 +95,24 @@ mvn central-publishing:publish
 
 ## Key Files & Packages
 
-| File | Purpose |
-|------|---------|
-| `pom.xml` (root) | Parent POM; declares 8 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
-| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*` | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc. |
-| `tools-core/src/main/resources/project.properties` | Windows-specific configuration (System32 paths, PowerShell location, web server defaults) |
-| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java` | Example JUnit 6 tests |
-| `tools-archiving/src/main/java/org/dgp-eu/tools/archiving/Application.java` | Entry point; picocli @Command |
-| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java` | Entry point; picocli @Command |
-| `tools-databases/src/main/java/org/dgp-eu/tools/databases/Application.java` | Entry point; picocli @Command |
-| `tools-environment/src/main/java/org/dgp-eu/tools/environment/Application.java` | Entry point; picocli @Command |
-| `tools-incubator/src/main/java/org/dgp-eu/tools/incubator/Application.java` | Entry point; picocli @Command |
-| `tools-json_split/src/main/java/org/dgp-eu/tools/json_split/Application.java` | Entry point; picocli @Command |
-| `tools-utils/src/main/java/org/dgp-eu/tools/utils/Application.java` | Entry point; picocli @Command |
-| `tools-web/src/main/java/org/dgp-eu/tools/web/Application.java` | Entry point; picocli @Command; Undertow web server integration |
+| File                                                                                  | Purpose                                                                                                                     |
+|---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `pom.xml` (root)                                                                      | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
+| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                              | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.  |
+| `tools-core/src/main/resources/project.properties`                                    | Windows-specific configuration (System32 paths, PowerShell location)                                                        |
+| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`         | Example JUnit 6 tests                                                                                                       |
+| `tools-archiving/src/main/java/org/dgp-eu/tools/archiving/Application.java`           | Entry point; picocli @Command                                                                                               |
+| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java`                 | Entry point; picocli @Command                                                                                               |
+| `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                          | Database functionality                                                                                                      |
+| `tools-databases-demo/src/main/java/org/dgp-eu/tools/databases/demo/Application.java` | Entry point; picocli @Command                                                                                               |
+| `tools-environment/src/main/java/org/dgp-eu/tools/environment/Application.java`       | Entry point; picocli @Command                                                                                               |
+| `tools-incubator/src/main/java/org/dgp-eu/tools/incubator/Application.java`           | Entry point; picocli @Command                                                                                               |
+| `tools-json/src/main/java/org/dgp-eu/tools/json/Application.java`                     | Entry point; picocli @Command                                                                                               |
+| `tools-json_split/src/main/java/org/dgp-eu/tools/json_split/Application.java`         | Entry point; picocli @Command                                                                                               |
+| `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                      | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
+| `tools-undertow/src/main/resources/undertow.properties`                               | Web server defaults                                                                                                         |
+| `tools-utils/src/main/java/org/dgp-eu/tools/utils/Application.java`                   | Entry point; picocli @Command                                                                                               |
+| `tools-web/src/main/java/org/dgp-eu/tools/web/Application.java`                       | Entry point; picocli @Command; Undertow web server integration                                                              |
 
 ## Project-Specific Conventions
 
@@ -176,12 +188,12 @@ This avoids creating separate files while maintaining logical grouping.
 **tools-archiving & tools-json_split** depend on **tools-core** but do NOT depend on each other.
 - No circular dependencies
 - Each child module creates self-contained JAR with dependencies via maven-assembly-plugin
-- Tools available for reuse: `FileOperationsClass`, `JsonOperationsClass`, `BasicStructuresClass`
+- Tools available for reuse: `FileOperationsClass`, `BasicStructuresClass`
 
 ### Common Utility Access Pattern
 ```java
 // In tools-archiving or tools-json_split
-import io.github.dgp-eu.tools.core.*;
+import io.github.dgp_eu.tools.core.*;
 
 // Use static methods from core utilities
 String fileSize = FileOperationsClass.RetrievingSubClass.getFileSizeFromPath(path);
@@ -190,24 +202,22 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 
 ## Integration Points & External Dependencies
 
-| Dependency | Version | Used For | Scope |
-|------------|---------|----------|-------|
-| Jackson Core (tools.jackson.core:jackson-databind) | 3.2.0 | JSON parsing and generation (custom build) | compile |
-| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.0 | XML serialization/deserialization (custom build) | compile |
-| SQLite JDBC | 3.53.2.0 | Database operations (sqlite-jdbc) in tools-databases | compile |
-| Picocli | 4.7.7 | CLI command parsing and help | compile |
-| Undertow Core | 2.4.1 | Lightweight web server (tools-web Java Web UI) | compile |
-| OSHI Core FFM | 7.3.1 | OS info capture (system memory, CPU, etc.) | compile |
-| JTE | 3.2.4 | Java Template Engine (tools-web UI rendering) | compile |
-| Log4j Core | 2.26.0 | Logging implementation via SLF4J adapter | compile |
-| Log4j SLF4J2 Adapter | 2.26.0 | SLF4J 2.0 API binding to Log4j 2 Core | compile |
-| Maven Model | 3.9.16 | POM file parsing (tools-core features) | compile |
-| Plexus Interpolation | 1.29 | String interpolation utilities | compile |
-| JUnit Jupiter | 6.1.0 | Testing framework | test |
-| JaCoCo | 0.8.15 | Code coverage measurement | test |
-| JSpecify | 1.0.0 | Null-safety annotations | compile |
-
-**Security Scanning**: OWASP Dependency-Check Maven plugin (v12.2.2) runs in verify phase; fails build if CVE CVSS >= 7.
+| Dependency                                                           | Version  | Used For                                             | Scope   |
+|----------------------------------------------------------------------|----------|------------------------------------------------------|---------|
+| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.0    | JSON parsing and generation (custom build)           | compile |
+| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.0    | XML serialization/deserialization (custom build)     | compile |
+| SQLite JDBC                                                          | 3.53.2.0 | Database operations (sqlite-jdbc) in tools-databases | compile |
+| Picocli                                                              | 4.7.7    | CLI command parsing and help                         | compile |
+| Undertow Core                                                        | 2.4.2    | Lightweight web server (tools-web Java Web UI)       | compile |
+| OSHI Core FFM                                                        | 7.3.2    | OS info capture (system memory, CPU, etc.)           | compile |
+| JTE                                                                  | 3.2.4    | Java Template Engine (tools-web UI rendering)        | compile |
+| Log4j Core                                                           | 2.26.1   | Logging implementation via SLF4J adapter             | compile |
+| Log4j SLF4J2 Adapter                                                 | 2.26.1   | SLF4J 2.0 API binding to Log4j 2 Core                | compile |
+| Maven Model                                                          | 3.9.16   | POM file parsing (tools-core features)               | compile |
+| Plexus Interpolation                                                 | 1.29     | String interpolation utilities                       | compile |
+| JUnit Jupiter                                                        | 6.1.1    | Testing framework                                    | test    |
+| JaCoCo                                                               | 0.8.15   | Code coverage measurement                            | test    |
+| JSpecify                                                             | 1.0.0    | Null-safety annotations                              | compile |
 
 ## Common Workflows for Agent-Assisted Development
 
@@ -221,7 +231,7 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 ### Adding a Feature to tools-archiving or tools-json_split
 1. Add picocli @Command subcommand class
 2. Register in Application.java `@Command(subcommands = {NewCommand.class, ...})`
-3. Implement logic using core utilities (`FileOperationsClass`, `JsonOperationsClass`, etc.)
+3. Implement logic using core utilities (`FileOperationsClass`, `BasicStructuresClass`, etc.)
 4. Create test class in `src/test/java`
 5. Run: `mvn verify` (or module-specific: `mvn -f tools-archiving/pom.xml verify`)
 

@@ -11,9 +11,9 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>tools-cli</artifactId>
-    <name>tools-cli</name>
-    <description>Java wrapper classes to standardize Picocli boiler plate</description>
+    <artifactId>tools-json</artifactId>
+    <name>tools-json</name>
+    <description>Java classes to handle JSON content</description>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -23,12 +23,12 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>tools.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
     </dependencies>
 
@@ -55,7 +55,7 @@
                         <configuration>
                             <target name="copy-and-rename-pom">
                                 <copy file="${basedir}/pom.xml"
-                                      tofile="${project.build.outputDirectory}/tools-cli-pom.xml"/>
+                                      tofile="${project.build.outputDirectory}/tools-json-pom.xml"/>
                             </target>
                         </configuration>
                     </execution>
@@ -68,14 +68,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.central</groupId>

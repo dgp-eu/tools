@@ -1,19 +1,15 @@
-/*
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
-package io.github.dgp_eu.tools.core;
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
+package io.github.dgp_eu.tools.json;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SequencedMap;
-import java.util.stream.Collectors;
 
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.RegularExpressionsClass;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
@@ -43,6 +39,10 @@ public final class JsonOperationsClass {
             }
         } catch (JacksonException _) {
             bolReturn = false;
+        }
+        if (!bolReturn) {
+            final String strFeedbackErr = String.format("input JSON is not valid, given was: %s", inJson);
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return bolReturn;
     }
@@ -81,28 +81,6 @@ public final class JsonOperationsClass {
         final String strFeedback = String.format("JSON information has been loaded from file %s", jsonFile.getFileName().toString());
         LogExposureClass.LOGGER.debug(strFeedback);
         return jsonRootNode;
-    }
-
-    /**
-     * Build a pair of Key and Value for JSON
-     * @param strKey Key to be used
-     * @param objValue Value to be used
-     * @return String with a pair of key and value
-     */
-    public static String getJsonKeyAndValue(final String strKey, final Object objValue) {
-        final List<String> unquotedValues = Arrays.asList("null", "true", "false");
-        final boolean needsQuotesAround = 
-            (objValue instanceof Integer)
-            || (objValue instanceof Double)
-            || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
-            || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
-            || BasicStructuresClass.StringEvaluationSubClass.isStringActuallyNumeric(objValue.toString())
-            || BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
-        String strRaw = "\"%s\":\"%s\"";
-        if (needsQuotesAround) {
-            strRaw = "\"%s\":%s";
-        }
-        return String.format(strRaw, strKey, objValue);
     }
 
     /**
@@ -194,31 +172,6 @@ public final class JsonOperationsClass {
      */
     public static String getJsonValue(final JsonNode givenJsonNode, final String strJsonNode) {
         return getJsonNodeFromTree(givenJsonNode, strJsonNode).asString();
-    }
-
-    /**
-     * Cycle inside Map and build a JSON string out of it
-     *
-     * @param arrayAttrib array with attribute values
-     * @return String
-     */
-    public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
-        final StringBuilder strJsonSubString = new StringBuilder(100);
-        final SequencedMap<String, Object> sortedMap = arrayAttrib.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, _) -> oldValue,
-                        LinkedHashMap::new // preserve sorted order
-                ));
-        sortedMap.forEach((strKey, objValue) -> {
-            if (!strJsonSubString.isEmpty()) {
-                strJsonSubString.append(',');
-            }
-            strJsonSubString.append(getJsonKeyAndValue(strKey, objValue));
-        });
-        return String.format("{%s}", strJsonSubString);
     }
 
     /**

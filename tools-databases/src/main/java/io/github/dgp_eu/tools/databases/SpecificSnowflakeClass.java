@@ -204,8 +204,8 @@ public final class SpecificSnowflakeClass {
                 throw new SQLException("Snowflake connection is null.");
             }
             try (Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
-                final List<Properties> predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES);
-                LogExposureClass.LOGGER.info(predefinedInfo.toString());
+                final String predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES).toString();
+                LogExposureClass.LOGGER.info(predefinedInfo);
             }
         } catch (SQLException e) {
             final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));

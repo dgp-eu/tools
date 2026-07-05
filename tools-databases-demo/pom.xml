@@ -11,9 +11,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>tools-cli</artifactId>
-    <name>tools-cli</name>
-    <description>Java wrapper classes to standardize Picocli boiler plate</description>
+    <artifactId>tools-database-demo</artifactId>
+    <name>tools-database-demo</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -23,12 +22,19 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-databases</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-cli</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.dgp-eu</groupId>
+            <artifactId>tools-json</artifactId>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
@@ -44,6 +50,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>io.github.dgp_eu.tools.databases.ApplicationDatabases</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -55,7 +72,7 @@
                         <configuration>
                             <target name="copy-and-rename-pom">
                                 <copy file="${basedir}/pom.xml"
-                                      tofile="${project.build.outputDirectory}/tools-cli-pom.xml"/>
+                                      tofile="${project.build.outputDirectory}/tools-databases-demo-pom.xml"/>
                             </target>
                         </configuration>
                     </execution>
@@ -83,6 +100,11 @@
                 <extensions>true</extensions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
 </project>

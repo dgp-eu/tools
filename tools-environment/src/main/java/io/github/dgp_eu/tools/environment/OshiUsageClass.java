@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.JsonOperationsClass;
 import oshi.ffm.SystemInfo;
 import oshi.hardware.Baseboard;
 import oshi.hardware.CentralProcessor;
@@ -92,7 +91,7 @@ public final class OshiUsageClass {
      * @return String
      */
     public static String getNetworkPhysicalMediumType(final int intPhysMedType) {
-        return JsonOperationsClass.getMapIntoJsonString(
+        return BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(
                 Map.of("Numeric", intPhysMedType,
                         BasicStructuresClass.STR_NAME, 
                         MEDIUM_TYPES.getOrDefault(intPhysMedType, "Unknown"))

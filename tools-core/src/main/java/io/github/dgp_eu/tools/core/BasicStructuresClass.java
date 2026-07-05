@@ -3,12 +3,14 @@
  */
 package io.github.dgp_eu.tools.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -274,6 +276,24 @@ public final class BasicStructuresClass {
     }
 
     /**
+     * reads Environment Variable into InputStream
+     * @param inEnvVariable input Environment Variable name
+     * @return String with value found
+     */
+    public static InputStream getEnvironmentVariableIntoInputStream(final String inEnvVariable) {
+        final String strEnvValue = System.getenv(inEnvVariable);
+        if (strEnvValue == null) {
+            final String strFeedback = String.format("Environment variable %s not found!", inEnvVariable);
+            LogExposureClass.LOGGER.error(strFeedback);
+            throw new IllegalArgumentException(strFeedback);
+        }
+        final InputStream inputStream = new ByteArrayInputStream(strEnvValue.getBytes(Charset.defaultCharset()));
+        final String strFeedback = String.format("Environment variable %s was found successfully!", inEnvVariable);
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return inputStream;
+    }
+
+    /**
      * detects if current execution is from JAR or not
      * @return boolean
      */
@@ -428,6 +448,53 @@ public final class BasicStructuresClass {
             });
             resultReleases.sort(Comparator.comparing(p -> p.getProperty("Element")));
             return resultReleases;
+        }
+
+        /**
+         * Build a pair of Key and Value for JSON
+         * @param strKey Key to be used
+         * @param objValue Value to be used
+         * @return String with a pair of key and value
+         */
+        public static String getJsonKeyAndValue(final String strKey, final Object objValue) {
+            final List<String> unquotedValues = Arrays.asList("null", "true", "false");
+            final boolean needsQuotesAround = 
+                (objValue instanceof Integer)
+                || (objValue instanceof Double)
+                || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
+                || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
+                || BasicStructuresClass.StringEvaluationSubClass.isStringActuallyNumeric(objValue.toString())
+                || BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
+            String strRaw = "\"%s\":\"%s\"";
+            if (needsQuotesAround) {
+                strRaw = "\"%s\":%s";
+            }
+            return String.format(strRaw, strKey, objValue);
+        }
+
+        /**
+         * Cycle inside Map and build a JSON string out of it
+         *
+         * @param arrayAttrib array with attribute values
+         * @return String
+         */
+        public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
+            final StringBuilder strJsonSubString = new StringBuilder(100);
+            final SequencedMap<String, Object> sortedMap = arrayAttrib.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (oldValue, _) -> oldValue,
+                            LinkedHashMap::new // preserve sorted order
+                    ));
+            sortedMap.forEach((strKey, objValue) -> {
+                if (!strJsonSubString.isEmpty()) {
+                    strJsonSubString.append(',');
+                }
+                strJsonSubString.append(getJsonKeyAndValue(strKey, objValue));
+            });
+            return String.format("{%s}", strJsonSubString);
         }
 
         /**

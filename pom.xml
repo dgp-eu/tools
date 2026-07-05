@@ -47,8 +47,10 @@
         <module>tools-archiving</module>
         <module>tools-cli</module>
         <module>tools-databases</module>
+        <module>tools-databases-demo</module>
         <module>tools-environment</module>
         <module>tools-incubator</module>
+        <module>tools-json</module>
         <module>tools-json_split</module>
         <module>tools-utils</module>
         <module>tools-undertow</module>
@@ -56,7 +58,7 @@
     </modules>
 
     <properties>
-        <revision>1.0.3-SNAPSHOT</revision>
+        <revision>1.1.0-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -71,8 +73,7 @@
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.1.1</junit-jupiter.version>
         <jte.version>3.2.4</jte.version>
-        <log4j-core.version>2.26.1</log4j-core.version>
-        <log4j-slf4j2-impl.version>2.26.1</log4j-slf4j2-impl.version>
+        <log4j.version>2.26.1</log4j.version>
         <maven-model.version>3.9.16</maven-model.version>
         <oshi-core-ffm.version>7.3.2</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
@@ -139,7 +140,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>${log4j-core.version}</version>
+                <version>${log4j.version}</version>
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://logging.apache.org/log4j/2.x/ -->
@@ -148,7 +149,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j2-impl</artifactId>
-                <version>${log4j-slf4j2-impl.version}</version>
+                <version>${log4j.version}</version>
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://maven.apache.org/download.cgi -->

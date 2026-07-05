@@ -1,8 +1,9 @@
 /*
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.databases;
+package io.github.dgp_eu.tools.database.demo;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +12,11 @@ import java.util.Properties;
 import io.github.dgp_eu.tools.cli.CommonInteractiveClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.databases.SpecificMySqlClass;
+import io.github.dgp_eu.tools.databases.SpecificSnowflakeClass;
+import io.github.dgp_eu.tools.json.JsonOperationsClass;
 import picocli.CommandLine;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Main Command Line
@@ -76,7 +81,7 @@ class GetInformationFromDatabase implements Runnable {
     @CommandLine.Option(
         names = { "-dbTp", "--databaseType" },
         description = "Type of Database",
-        arity = "1",
+        arity = BasicStructuresClass.ARITY_ONLY_ONE,
         required = true,
         completionCandidates = DatabaseTypes.class)
     private String strDbType;
@@ -112,6 +117,18 @@ class GetInformationFromDatabase implements Runnable {
         }
     }
 
+    private static Properties getEnvironmentVariableValueForMySql() {
+        final InputStream inputStream = BasicStructuresClass.getEnvironmentVariableIntoInputStream("MYSQL");
+        final JsonNode ndMySQL = JsonOperationsClass.getJsonFileNodes(inputStream);
+        final Properties properties = new Properties();
+        properties.put("ServerName", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerName"));
+        properties.put("Port", JsonOperationsClass.getJsonValue(ndMySQL, "/Port"));
+        properties.put("Username", JsonOperationsClass.getJsonValue(ndMySQL, "/Username"));
+        properties.put("Password", JsonOperationsClass.getJsonValue(ndMySQL, "/Password"));
+        properties.put("ServerTimezone", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerTimezone"));
+        return properties;
+    }
+
     /**
      * Action logic
      *
@@ -121,7 +138,7 @@ class GetInformationFromDatabase implements Runnable {
         Properties properties = new Properties();
         switch (strDatabaseType) {
             case "MySQL":
-                properties = SpecificMySqlClass.getConnectionPropertiesForMySQL();
+                properties = getEnvironmentVariableValueForMySql();
                 SpecificMySqlClass.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":

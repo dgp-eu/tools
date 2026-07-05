@@ -1,11 +1,6 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.databases;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,11 +10,10 @@ import java.util.List;
 import java.util.Properties;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.JsonOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ConnectivitySubClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass.ResultSettingSubClass;
-import tools.jackson.databind.JsonNode;
+
 
 /**
  * MySQL methods
@@ -29,31 +23,6 @@ public final class SpecificMySqlClass {
      * Database MySQL
      */
     public static final String STR_DB_MYSQL = "MySQL";
-
-    /**
-     * Getting Connection Properties For MySQL from Environment variable
-     * @return Properties
-     */
-    public static Properties getConnectionPropertiesForMySQL() {
-        final Properties properties = new Properties();
-        final String strEnv = "MYSQL";
-        final String strEnvMySql = System.getenv(strEnv);
-        if (strEnvMySql == null) {
-            final String strFeedback = String.format("Environment variable %s not found!", strEnv);
-            LogExposureClass.LOGGER.error(strFeedback);
-        } else {
-            final String strFeedback = String.format("Environment variable %s was found successfully!", strEnv);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes(Charset.defaultCharset()));
-            final JsonNode ndMySQL = JsonOperationsClass.getJsonFileNodes(inputStream);
-            properties.put("ServerName", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerName"));
-            properties.put("Port", JsonOperationsClass.getJsonValue(ndMySQL, "/Port"));
-            properties.put("Username", JsonOperationsClass.getJsonValue(ndMySQL, "/Username"));
-            properties.put("Password", JsonOperationsClass.getJsonValue(ndMySQL, "/Password"));
-            properties.put("ServerTimezone", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerTimezone"));
-        }
-        return properties;
-    }
 
     /**
      * Initiate a MySQL connection with Instance properties and DB specified

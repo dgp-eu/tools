@@ -251,24 +251,24 @@ public final class ProjectClass {
             final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
-                        .append(JsonOperationsClass.getMapIntoJsonString(projDependencies));
+                        .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projDependencies));
             }
             final Map<String, Object> projBuildPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_BUILD);
             if (!projBuildPlugins.isEmpty()) {
                 strJsonString.append(",\"Build Plugins\":")
-                        .append(JsonOperationsClass.getMapIntoJsonString(projBuildPlugins));
+                        .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projBuildPlugins));
             }
             final Map<String, Object> projPrflPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_PRFLE);
             if (!projPrflPlugins.isEmpty()) {
                 strJsonString.append(",\"Profile Plugins\":")
-                        .append(JsonOperationsClass.getMapIntoJsonString(projPrflPlugins));
+                        .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projPrflPlugins));
             }
             if (!prjModel.getModules().isEmpty()) {
                 strJsonString.append(getComponentModulesDetailsIfProjectModulesArePresent(prjModel));
             }
             final Map<String, Object> projLibModules = getProjectModuleLibraries();
             strJsonString.append(",\"Library Modules\":")
-                    .append(JsonOperationsClass.getMapIntoJsonString(projLibModules));
+                    .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projLibModules));
             final String strFeedback = "I just captured Application information...";
             LogExposureClass.LOGGER.debug(strFeedback);
             return strJsonString.append('}').toString();
@@ -330,7 +330,7 @@ public final class ProjectClass {
                 final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
-                            .append(JsonOperationsClass.getMapIntoJsonString(mdlDependencies));
+                            .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(mdlDependencies));
                 }
                 strJsonModule.append('}');
             });

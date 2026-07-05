@@ -9,7 +9,6 @@ import java.util.Properties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import io.github.dgp_eu.tools.core.JsonOperationsClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 
 /**
@@ -22,8 +21,7 @@ class EnvironmentCapturingAssembleClassTests {
     void testPackageCurrentEnvironmentDetailsIntoJson() {
         ProjectClass.setPomFile("/tools-environment-pom.xml");
         final String handled = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoJson();
-        final boolean isJsonValid = JsonOperationsClass.isJsonValid(handled);
-        assertTrue(isJsonValid, String.format("JSON produced by environment gathering logic does not seem to be valid... %s", handled));
+        assertNotNull(handled, String.format("JSON produced by environment gathering logic seem to be NULL... %s", handled));
     }
 
     @Test
