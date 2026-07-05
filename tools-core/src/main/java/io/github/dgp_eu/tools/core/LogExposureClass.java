@@ -19,16 +19,14 @@ import org.slf4j.LoggerFactory;
  * exposing things to Log
  */
 public final class LogExposureClass {
-
+    /** standard Unknown feature constant */
+    public static final String STR_I18N_UNKN_FTS = "Feature %s is NOT known in %s...";
+    /** standard Unknown constant */
+    public static final String STR_I18N_UNKN = "Unknown";
     /** Logger variable */
     public static final Logger LOGGER = LoggerFactory.getLogger(
         LogExposureClass.class
     );
-    /** standard Unknown feature constant */
-    public static final String STR_I18N_UNKN_FTS =
-        "Feature %s is NOT known in %s...";
-    /** standard Unknown constant */
-    public static final String STR_I18N_UNKN = "Unknown";
 
     /**
      * Constructor
