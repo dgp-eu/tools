@@ -36,17 +36,17 @@ public final class SpecificSnowflakeClass {
      * @return Snowflake connection String
      */
     public static String buildConnectionString(final Properties inProperties) {
-        String accountId = inProperties.getProperty("AccountIdentifier", "").toString();
+        String accountId = inProperties.getProperty("AccountIdentifier", "");
         if (accountId.isBlank()) {
             final String strFeedback = "As attribute \"AccountIdentifier\" is missing will attempt building it by combining Organization and AccountLocator";
             LogExposureClass.LOGGER.debug(strFeedback);
-            final String strOrganization = inProperties.getProperty("Organization", "").toString().toLowerCase(Locale.getDefault());
-            final String accountLocator = inProperties.getProperty("AccountLocator", "").toString().toLowerCase(Locale.getDefault());
+            final String strOrganization = inProperties.getProperty("Organization", "").toLowerCase(Locale.getDefault());
+            final String accountLocator = inProperties.getProperty("AccountLocator", "").toLowerCase(Locale.getDefault());
             if (strOrganization.isBlank()
                     || accountLocator.isBlank()) {
                 final String strFeedbackErr = "Either attribute \"Organization\" or \"AccountLocator\" (or both) is missing creating attribute \"AccountIdentifier\" required for Snowflake connection string is not possible...";
                 LogExposureClass.LOGGER.error(strFeedbackErr);
-                throw new RuntimeException(strFeedbackErr);
+                throw new IllegalArgumentException(strFeedbackErr);
             }
             accountId = String.format("%s-%s.privatelink", strOrganization, accountLocator);
         }
