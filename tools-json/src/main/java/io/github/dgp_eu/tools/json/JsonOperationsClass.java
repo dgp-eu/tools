@@ -164,6 +164,19 @@ public final class JsonOperationsClass {
     }
 
     /**
+     * get Json Node values into Properties
+     * @param givenJsonNode input JsonNode values
+     * @return Properties
+     */
+    public static Properties getJsonNodeValuesIntoProperties(final JsonNode givenJsonNode) {
+        final Properties properties = new Properties();
+        for (final Map.Entry<String, JsonNode> entry : givenJsonNode.properties()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+        return properties;
+    }
+
+    /**
      * Single value from a JSON node
      * 
      * @param givenJsonNode JSON node
