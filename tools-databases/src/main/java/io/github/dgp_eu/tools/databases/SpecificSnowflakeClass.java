@@ -65,23 +65,27 @@ public final class SpecificSnowflakeClass {
      */
     public static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
         loadSnowflakeDriver();
+        final String idConnection = propInstance.getProperty("ConnectionIdentifier");
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
         Connection connection = null;
         try {
-            final String strFeedback = String.format("Will attempt to create a %s connection to database %s using %s as connection string and %s properties",
+            final String strFeedback = String.format("Will attempt to create a %s connection named %s to database %s using %s as connection string and %s properties",
                     STR_SNOWFLAKE,
+                    idConnection,
                     strDatabase,
                     strConnection,
                     propConnection);
             LogExposureClass.LOGGER.debug(strFeedback);
             connection = DriverManager.getConnection(strConnection, propConnection);
-            final String strFeedbackOk = String.format("%s connection to database %s was successfully established!",
-                    STR_SNOWFLAKE, 
+            final String strFeedbackOk = String.format("%s connection named %s to database %s was successfully established!",
+                    STR_SNOWFLAKE,
+                    idConnection,
                     strDatabase);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (SQLException e) {
-            final String strFeedbackErr = String.format("%s connection has failed %s",
+            final String strFeedbackErr = String.format("%s connection named %s has failed %s",
                     STR_SNOWFLAKE,
+                    idConnection,
                     e.getLocalizedMessage());
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
