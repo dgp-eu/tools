@@ -1,4 +1,4 @@
-// Copyright 2026 Daniel-Gheorghe Popiniuc
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.undertow;
 
 import java.io.IOException;
@@ -18,8 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
-
-import org.apache.maven.model.Model;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
@@ -43,10 +41,9 @@ public final class HtmlClass {
      * @return Content
      */
     public static String buildApplicationDetail() {
-        final Model prjModel = ProjectClass.getProjectModel();
         final String prjVersion = ProjectClass.getProjectVersion();
-        final String prjFirstDeveloper = ProjectClass.getFirstDeveloper(prjModel);
-        return String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjVersion, prjFirstDeveloper);
+        final String prjFirstDeveloper = ProjectClass.getFirstDeveloper();
+        return String.format("%s&trade; v.%s &copy; by %s", ProjectClass.getProjectName(), prjVersion, prjFirstDeveloper);
     }
 
     /**

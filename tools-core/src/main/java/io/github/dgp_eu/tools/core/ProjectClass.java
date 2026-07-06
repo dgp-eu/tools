@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,8 +60,9 @@ public final class ProjectClass {
      * @param projectModel input Project Model
      * @return String with first developer value
      */
-    public static String getFirstDeveloper(final Model projectModel) {
-        final java.util.List<Developer> prjDevs = projectModel.getDevelopers();
+    public static String getFirstDeveloper() {
+        final Model projectModel = getProjectModel();
+        final List<Developer> prjDevs = projectModel.getDevelopers();
         String prjFirstDeveloper = "Developer(s) not defined";
         if (prjDevs != null
             && !prjDevs.isEmpty()) {
@@ -127,6 +129,10 @@ public final class ProjectClass {
             }
         }
         return model;
+    }
+
+    public static String getProjectName() {
+        return prjModel.getName();
     }
 
     /**
