@@ -498,6 +498,27 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * convert Property into JSON
+         * @param inProps input Properties
+         * @return JSON string
+         */
+        public static String getPropertiesIntoJsonString(final Properties inProps) {
+            final StringBuilder strJsonSubString = new StringBuilder(100);
+            inProps.forEach((objKey, objValue) -> {
+                if (!strJsonSubString.isEmpty()) {
+                    strJsonSubString.append(',');
+                }
+                strJsonSubString.append(
+                        getJsonKeyAndValue(
+                                objKey.toString(),
+                                StringCleaningSubClass.stripQuotes(objValue.toString())
+                        )
+                );
+            });
+            return String.format("{%s}", strJsonSubString);
+        }
+
+        /**
          * Get all words from a list of Strings with merged words glued by _
          * @param valList List of String with words glues by regexSep
          * @param regexSep separators for words detection
