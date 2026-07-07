@@ -739,10 +739,10 @@ public final class FileOperationsClass {
          * @param strFilePath  input Path
          * @return size of the file
          */
-        public static long getInternalFileSize(final String strFilePath) {
+        public static long getInternalFileSize(final String strFilePath, final boolean isExecutionFromJar) {
             final String strFilePathDisk = BasicStructuresClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
             long fileSizeActual = getFileSizeIfFileExistsAndIsReadable(strFilePathDisk);
-            if (BasicStructuresClass.isRunningFromJar()
+            if (isExecutionFromJar
                     || fileSizeActual < 0) {
                 try (InputStream inStream = Objects.requireNonNull(RetrievingSubClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
                     // transferTo returns the number of bytes transferred (Java 9+)

@@ -165,19 +165,26 @@ public final class DatabaseOperationsClass {
      * @return Query as String
      */
     public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
-        String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
-        final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strFilePath);
-        final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strFilePath, fileSizeActual);
+        String strRelativeFile = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
+        if (!strRelativeFile.endsWith(".sql")) {
+            strRelativeFile = strRelativeFile + ".sql";
+        }
+        boolean isExecutionFromJar = false;
+        if (BasicStructuresClass.isRunningFromJar()) {
+            isExecutionFromJar = true;
+        }
+        final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strRelativeFile, isExecutionFromJar);
+        final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strRelativeFile, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
         final long fileSizeLimit = 10;
         if (fileSizeActual < fileSizeLimit) {
             final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFileName, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             throw new UnsupportedOperationException(strFeedbackErr);
         }
-        if (!BasicStructuresClass.isRunningFromJar()) {
-            strFilePath = BasicStructuresClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
+        if (!isExecutionFromJar) {
+            strRelativeFile = BasicStructuresClass.getCurrentFolder() + "/src/main/resources" + strRelativeFile;
         }
-        return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strFilePath);
+        return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile);
     }
 
     /**
