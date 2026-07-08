@@ -115,6 +115,8 @@ public final class DatabaseOperationsClass {
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format("SQL query execution for %s purpose has failed: %s... %s", strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
+                final String strFeedbackErr2 = String.format("SQL query was: %s", strQueryToUse);
+                LogExposureClass.LOGGER.error(strFeedbackErr2);
             }
             final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format("SQL query execution finished for %s purpose", strPurpose));
@@ -165,7 +167,7 @@ public final class DatabaseOperationsClass {
      * @return Query as String
      */
     public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
-        String strRelativeFile = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
+        String strRelativeFile = String.format("/SQL/%s/%s", strDatabaseType, strFileName);
         if (!strRelativeFile.endsWith(".sql")) {
             strRelativeFile = strRelativeFile + ".sql";
         }
