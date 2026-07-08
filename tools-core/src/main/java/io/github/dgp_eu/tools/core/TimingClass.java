@@ -214,16 +214,19 @@ public final class TimingClass {
             final StringBuilder strFinalString = new StringBuilder(100);
             final String[] arrayStrings;
             String strFinalOne = null;
+            String strEmptyValue = "?";
             switch (strRule) {
                 case "HumanReadableTime":
                     final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                     strFinalOne = "Nanosecond";
+                    strEmptyValue = "INSTANT (less than a nanosecond)";
                     break;
                 case "HumanReadableTimeWithMilliseconds":
                     final String strMilliRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
                     strFinalOne = BasicStructuresClass.STR_MILLISECOND;
+                    strEmptyValue = "INSTANT (less than a millisecond)";
                     break;
                 case "TimeClockClassic":
                     arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
@@ -240,13 +243,17 @@ public final class TimingClass {
             if (strFinalOne != null) {
                 strFinalPart = getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]);
             }
-            return strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
+            String strReturn = strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
                     .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
                     .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
                     .append(getDurationWithCustomRules(duration, BasicStructuresClass.STR_SECOND, arrayStrings[2]))
                     .append(strFinalPart)
                     .toString()
                     .trim();
+            if (strReturn.isBlank()) {
+                strReturn = strEmptyValue;
+            }
+            return strReturn;
         }
 
         /**
