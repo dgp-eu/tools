@@ -66,6 +66,8 @@ public final class BasicStructuresClass {
     public static final String STR_FIRMWARE = "Firmware";
     /** HumanReadableTime constant */
     public static final String STR_TM_HUMAN = "HumanReadableTime";
+    /** HumanReadableTimeWithMilliseconds constant */
+    public static final String STR_TM_HUMAN_MS = "HumanReadableTimeWithMilliseconds";
     /** Icon string */
     public static final String STR_ICON = "icon";
     /** Index string */
@@ -161,7 +163,12 @@ public final class BasicStructuresClass {
         long denominatorUsed = denominator;
         if (denominatorUsed == 0) {
             denominatorUsed = 100;
-            final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return same numerator...", numerator);
+            final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return same numerator... %s",
+                    numerator,
+                    StackWalker.getInstance()
+                            .walk(frames -> frames.findFirst()
+                                    .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                                    .orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         final double percentageExact = (float) numerator * 100 / denominatorUsed;
@@ -194,7 +201,8 @@ public final class BasicStructuresClass {
         try {
             noToReturn = Double.parseDouble(strNumber);
         } catch (NumberFormatException noFormatException) {
-            final String strFeedback = String.format("Could not convert value %s into Double... %s", strNumber,
+            final String strFeedback = String.format("Could not convert value %s into Double... %s",
+                    strNumber,
                     Arrays.toString(noFormatException.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
@@ -269,7 +277,8 @@ public final class BasicStructuresClass {
         try {
             strAppFolder = directory.getCanonicalPath();
         } catch (IOException ex) {
-            final String strFeedback = String.format("Error encountered in getting folder... %s", Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format("Error encountered in getting folder... %s",
+                    Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return strAppFolder;
@@ -306,124 +315,6 @@ public final class BasicStructuresClass {
         // Check if the protocol is "jar" (JAR execution) or "file" (IDE execution)
         final String protocol = classUrl.getProtocol();
         return "jar".equals(protocol);
-    }
-
-    /**
-     * Formatting logic
-     */
-    public static final class Formatting {
-        /** Binary prefix for KiloBytes */
-        private static final long KIBI = 1L << 10;
-        /** Binary prefix for MegaBytes */
-        private static final long MEBI = 1L << 20;
-        /** Binary prefix for GigaBytes */
-        private static final long GIBI = 1L << 30;
-        /** Binary prefix for TeraBytes */
-        private static final long TEBI = 1L << 40;
-        /** Binary prefix for PetaBytes */
-        private static final long PEBI = 1L << 50;
-        /** Binary prefix for ExaBytes */
-        private static final long EXBI = 1L << 60;
-        /** Decimal prefix used for Kilobytes */
-        private static final long KILO = 1_000L;
-        /** Decimal prefix used for MegaBytes */
-        private static final long MEGA = 1_000_000L;
-        /** Decimal prefix used for GigaBytes */
-        private static final long GIGA = 1_000_000_000L;
-        /** Decimal prefix used for TeraBytes */
-        private static final long TERA = 1_000_000_000_000L;
-        /** Decimal prefix used for PetaBytes */
-        private static final long PETA = 1_000_000_000_000_000L;
-        /** Decimal prefix used for ExaBytes */
-        private static final long EXA = 1_000_000_000_000_000_000L;
-
-        /**
-         * Format bytes into a rounded string representation using IEC standard
-         * @param inBytes input Bytes value
-         * @return Rounded string representation of the byte size
-         */
-        public static String formatBytes(final long inBytes) {
-            if (inBytes == 1L) { // bytes
-                return String.format(Locale.ROOT, "%d byte", inBytes);
-            } else if (inBytes < KIBI) { // bytes
-                return String.format(Locale.ROOT, "%d bytes", inBytes);
-            } else if (inBytes < MEBI) { // KiB
-                return formatValue(inBytes, KIBI, "KiB");
-            } else if (inBytes < GIBI) { // MiB
-                return formatValue(inBytes, MEBI, "MiB");
-            } else if (inBytes < TEBI) { // GiB
-                return formatValue(inBytes, GIBI, "GiB");
-            } else if (inBytes < PEBI) { // TiB
-                return formatValue(inBytes, TEBI, "TiB");
-            } else if (inBytes < EXBI) { // PiB
-                return formatValue(inBytes, PEBI, "PiB");
-            } else { // EiB
-                return formatValue(inBytes, EXBI, "EiB");
-            }
-        }
-
-        /**
-         * Format bytes into a rounded string representation using decimal SI units
-         * These are used by hard drive manufacturers for capacity.
-         * @param inBytes input Bytes value
-         * @return Rounded string representation of the byte size.
-         */
-        public static String formatBytesDecimal(final long inBytes) {
-            if (inBytes == 1L) { // bytes
-                return String.format(Locale.ROOT, "%d byte", inBytes);
-            } else if (inBytes < KILO) { // bytes
-                return String.format(Locale.ROOT, "%d bytes", inBytes);
-            } else {
-                return formatDecimal(inBytes, "B");
-            }
-        }
-
-        /**
-         * Format arbitrary units into a string to a rounded string representation.
-         *
-         * @param value The value
-         * @param unit  Units to append metric prefix to
-         * @return Rounded string representation of the value with metric prefix to extension
-         */
-        public static String formatDecimal(final long value, final String unit) {
-            if (value < KILO) {
-                return String.format(Locale.ROOT, "%d %s", value, unit).trim();
-            } else if (value < MEGA) { // K
-                return formatValue(value, KILO, "K" + unit);
-            } else if (value < GIGA) { // M
-                return formatValue(value, MEGA, "M" + unit);
-            } else if (value < TERA) { // G
-                return formatValue(value, GIGA, "G" + unit);
-            } else if (value < PETA) { // T
-                return formatValue(value, TERA, "T" + unit);
-            } else if (value < EXA) { // P
-                return formatValue(value, PETA, "P" + unit);
-            } else { // E
-                return formatValue(value, EXA, "E" + unit);
-            }
-        }
-
-        /**
-         * Format units as exact integer or fractional decimal based on the prefix,
-         * appending the appropriate units
-         * @param inValue input value to format
-         * @param inDivider divisor of the unit multiplier
-         * @param outSymbol String representing the units
-         * @return string with formatted value
-         */
-        private static String formatValue(final long inValue, final long inDivider, final String outSymbol) {
-            if (inValue % inDivider == 0) {
-                return String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol);
-            }
-            return String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
-        }
-
-        // Private constructor to prevent instantiation
-        private Formatting() {
-            // intentional empty
-        }
-
-    	
     }
 
     /**
@@ -601,6 +492,77 @@ public final class BasicStructuresClass {
 
         // Private constructor to prevent instantiation
         private ListAndMapSubClass() {
+            // intentional empty
+        }
+
+    }
+
+    /**
+     * Conversion things
+     */
+    public static final class NumberConversionSubClass {
+
+        /**
+         * Format bytes into a rounded string representation using IEC standard
+         * @param inBytes input Bytes value
+         * @return Rounded string representation of the byte size
+         */
+        public static String convertUnits(final long inBytes, final String strStyle) {
+              long[] arrayNumbers = null;
+              String[] arraySymbols = null;
+              switch (strStyle) {
+                  case "decimal":
+                      arrayNumbers = new long[]{1L, 1_000L, 1_000_000L, 1_000_000_000L, 1_000_000_000_000L, 1_000_000_000_000_000L, 1_000_000_000_000_000_000L};
+                      arraySymbols = new String[]{"byte", "bytes", "KB", "MB", "GB", "TB", "PB", "EB"};
+                      break;
+                  case "binary":
+                      arrayNumbers = new long[]{1L, 1L << 10, 1L << 20, 1L << 30, 1L << 40, 1L << 50, 1L << 60};
+                      arraySymbols = new String[]{"byte", "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
+                      break;
+                  default:
+                      // intentionally left blank
+                      break;
+              }
+              String outString = "";
+              if (arrayNumbers == null) {
+                  outString = ""; 
+              } else if (inBytes == arrayNumbers[0]) { // bytes
+                  outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[0]);
+              } else if (inBytes < arrayNumbers[1]) { // bytes
+                  outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[1]);
+              } else if (inBytes < arrayNumbers[2]) { // KiB
+                  outString = formatValue(inBytes, arrayNumbers[1], arraySymbols[2]);
+              } else if (inBytes < arrayNumbers[3]) { // MiB
+                  outString = formatValue(inBytes, arrayNumbers[2], arraySymbols[3]);
+              } else if (inBytes < arrayNumbers[4]) { // GiB
+                  outString = formatValue(inBytes, arrayNumbers[3], arraySymbols[4]);
+              } else if (inBytes < arrayNumbers[5]) { // TiB
+                  outString = formatValue(inBytes, arrayNumbers[4], arraySymbols[5]);
+              } else if (inBytes < arrayNumbers[6]) { // PiB
+                  outString = formatValue(inBytes, arrayNumbers[5], arraySymbols[6]);
+              } else { // EiB
+                  outString = formatValue(inBytes, arrayNumbers[6], arraySymbols[7]);
+              }
+              return outString;
+        }
+
+        /**
+         * Format units as exact integer or fractional decimal based on the prefix,
+         * appending the appropriate units
+         * @param inValue input value to format
+         * @param inDivider divisor of the unit multiplier
+         * @param outSymbol String representing the units
+         * @return string with formatted value
+         */
+        private static String formatValue(final long inValue, final long inDivider, final String outSymbol) {
+            if (inValue % inDivider == 0) {
+                return String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol);
+            }
+            return String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
+        }
+
+        // Private constructor to prevent instantiation
+        private NumberConversionSubClass() {
             // intentional empty
         }
 

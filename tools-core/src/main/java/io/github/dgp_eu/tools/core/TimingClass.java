@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -16,8 +17,10 @@ import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,38 +69,55 @@ public final class TimingClass {
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
     }
 
-    /**
-     * get file last modified date time as human-readable format
-     * @param file given file
-     * @return String
-     */
-    @Nullable
-    public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
-        return getFileLastModifiedTimeAsHumanReadableFormat(file, DATE_TIME_MS_ABRV);
+    private static void appendIfNotZero(List<String> parts, long value, String unit) {
+        if (value != 0) {
+            parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
+        }
     }
 
     /**
-     * get file last modified date time as human-readable format
-     * @param file given file
-     * @param outFormat format pattern
-     * @return String
+     * Aging logic 
+     * @param startTimestamp reference ZonedDatetime
+     * @param finishTimestamp ending ZonedDateTime
+     * @return Aging
      */
-    @Nullable
-    public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file, @NonNull final String outFormat) {
-        String lastModifTime = null;
-        try {
-            final long modifTime = Files.getLastModifiedTime(file).toMillis();
-            // Convert to Instant
-            final Instant instant = Instant.ofEpochMilli(modifTime);
-            // Convert to LocalDateTime in system default zone
-            final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern(outFormat, Locale.US);
-            lastModifTime = dateTime.format(fixedFormatter);
-        } catch (IOException ei) {
-            final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder", file.getParent(), file.getFileName());
-            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+    public static String computeAging(ZonedDateTime startTimestamp, ZonedDateTime finishTimestamp) {
+        final boolean negative = finishTimestamp.isBefore(startTimestamp); 
+        if (negative) {
+            ZonedDateTime tmp = startTimestamp;
+            startTimestamp = finishTimestamp;
+            finishTimestamp = tmp;
         }
-        return lastModifTime;
+        ZonedDateTime cursor = startTimestamp;
+        Period period = Period.between(cursor.toLocalDate(), finishTimestamp.toLocalDate());
+        cursor = cursor.plus(period);
+        Duration duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
+        if (duration.isNegative()) {
+            period = period.minusDays(1);
+            cursor = startTimestamp.plus(period);
+            duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
+        }
+        final long years = period.getYears();
+        final int months = period.getMonths();
+        final int days = period.getDays();
+        long hours = duration.toHours();
+        duration = duration.minusHours(hours);
+        long minutes = duration.toMinutes();
+        duration = duration.minusMinutes(minutes);
+        long seconds = duration.getSeconds();
+        int mili = duration.toMillisPart();
+        final List<String> parts = new ArrayList<>();
+        appendIfNotZero(parts, years, "year");
+        appendIfNotZero(parts, months, "month");
+        appendIfNotZero(parts, days, "day");
+        appendIfNotZero(parts, hours, "hour");
+        appendIfNotZero(parts, minutes, "minute");
+        appendIfNotZero(parts, seconds, "second");
+        appendIfNotZero(parts, mili, "millisecond");
+        if (parts.isEmpty()) {
+            return "INSTANT (less than 1 millisecond)";
+        }
+        return (negative ? "-" : "") + String.join(", ", parts);
     }
 
     /**
@@ -193,7 +213,7 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTimeWithMilliseconds")
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, BasicStructuresClass.STR_TM_HUMAN_MS)
             , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
@@ -216,13 +236,13 @@ public final class TimingClass {
             String strFinalOne = null;
             String strEmptyValue = "?";
             switch (strRule) {
-                case "HumanReadableTime":
+                case BasicStructuresClass.STR_TM_HUMAN:
                     final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                     strFinalOne = "Nanosecond";
                     strEmptyValue = "INSTANT (less than a nanosecond)";
                     break;
-                case "HumanReadableTimeWithMilliseconds":
+                case BasicStructuresClass.STR_TM_HUMAN_MS:
                     final String strMilliRule = BasicStructuresClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
                     strFinalOne = BasicStructuresClass.STR_MILLISECOND;
@@ -368,6 +388,71 @@ public final class TimingClass {
         private static volatile String inputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
         /** Output time zone variable */
         private static volatile String outputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
+
+        /**
+         * File time related logic
+         */
+        public static final class FileSubSubClass {
+
+            /**
+             * get Last Modified date time
+             * @param file given file
+             * @return ZonedDateTime
+             */
+            @Nullable
+            public static ZonedDateTime getFileLastModifiedZonedDateTime(@NonNull final Path file) {
+                ZonedDateTime zDateTime = null;
+                try {
+                    final Instant modifTime = Files.getLastModifiedTime(file).toInstant();
+                    zDateTime = ZonedDateTime.ofInstant(modifTime, ZoneId.of(inputTimeZone));
+                } catch (IOException ei) {
+                    final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder",
+                            file.getParent(),
+                            file.getFileName());
+                    LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+                }
+                return zDateTime;
+            }
+
+            /**
+             * File Last Modified Aging 
+             * @param file given file
+             * @return String with file Last Modified aging 
+             */
+            public static String getFileLastModifiedAging(@NonNull final Path file) {
+                final ZonedDateTime zStartTimeStamp = getFileLastModifiedZonedDateTime(file);
+                final ZonedDateTime zStopTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
+                return computeAging(zStartTimeStamp, zStopTimeStamp);
+            }
+
+            /**
+             * get file last modified date time as human-readable format
+             * @param file given file
+             * @return String
+             */
+            @Nullable
+            public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
+                return getFileLastModifiedTimeAsHumanReadableFormat(file, DATE_TIME_MS_ABRV);
+            }
+
+            /**
+             * get file last modified date time as human-readable format
+             * @param file given file
+             * @param outFormat format pattern
+             * @return String
+             */
+            @Nullable
+            public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file, @NonNull final String outFormat) {
+                final ZonedDateTime dateTime = getFileLastModifiedZonedDateTime(file);
+                final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern(outFormat, Locale.US);
+                String returnString = null;
+                if (dateTime != null) {
+                    returnString = dateTime.format(fixedFormatter);
+                }
+                return returnString;
+            }
+
+        }
 
         /**
          * Convert time-stamp

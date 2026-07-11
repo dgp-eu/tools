@@ -85,8 +85,6 @@ public final class SpecificSqLiteClass {
 
     /**
      * Initiates a SQLite connection
-     * 
-     * @param strSqLiteFile file with SQLite database
      * @return Connection
      */
     public static Connection getSqLiteConnection() {

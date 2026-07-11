@@ -57,7 +57,6 @@ public final class ProjectClass {
 
     /**
      * retrieving first Developer within Project Model
-     * @param projectModel input Project Model
      * @return String with first developer value
      */
     public static String getFirstDeveloper() {

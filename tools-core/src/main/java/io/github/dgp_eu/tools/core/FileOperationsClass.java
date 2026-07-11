@@ -8,9 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,8 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
-
-import io.github.dgp_eu.tools.core.TimingClass.ConversionSubClass;
 
 /**
  * File Operations
@@ -1114,37 +1110,23 @@ public final class FileOperationsClass {
          */
         private static Properties getSingleFileStatistic(final Path file) {
             final Properties fileProperties = new Properties();
-            final String dualContent = "<div style=\"text-align:right;\">%s</div>==> %s";
             fileProperties.put("Folder",
                     file.getParent().toString());
             fileProperties.put("File",
                     file.getFileName().toString());
             final long fileSize = file.toFile().length();
             fileProperties.put("Size [bytes]",
-                    String.format(dualContent, fileSize, BasicStructuresClass.Formatting.formatBytes(fileSize)));
+                    fileSize);
+            fileProperties.put("Size",
+                    BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary"));
+            final String lastModifTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
+                    TimingClass.DATE_TIME_MS);
             fileProperties.put("Last Modified Timestamp",
-                    handleFileLastModifiedTimestamp(file, dualContent));
+                    lastModifTs);
+            fileProperties.put("Last Modified Aging",
+                    TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedAging(file));
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
             return fileProperties;
-        }
-
-        /**
-         * File Last Modified w. Aging 
-         * @param file to evaluate
-         * @param dualContent pattern for output
-         * @return String with file Time-stamp and aging 
-         */
-        private static String handleFileLastModifiedTimestamp(final Path file, final String dualContent) {
-            final String lastModifTs = TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
-                    TimingClass.DATE_TIME_MS);
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS, Locale.US);
-            final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(LocalDateTime.parse(lastModifTs, formatter), ZoneId.systemDefault());
-            final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
-            final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
-            final Duration objDuration = Duration.between(zStartTimeStamp, zStopTimeStamp);
-            return String.format(dualContent,
-                    lastModifTs,
-                    ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTimeWithMilliseconds"));
         }
 
         /**

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp_eu.tools.core.TimingClass;
 
 /**
  * HtmlClass tests
@@ -127,6 +129,7 @@ class HtmlClassTests {
     @DisplayName("TableSubClass.getListOfSequencedMapIntoHtmlTable generates table rows, headers and tabs when New Tab feature is used")
     void testGetListOfSequencedMapIntoHtmlTableProducesTableAndTabs() {
         final SequencedMap<Object, Object> rec1 = new LinkedHashMap<>();
+        TimingClass.LocalizationSubClass.setOutputTimeZone(ZoneId.systemDefault().toString());
         rec1.put("Category", "A");
         rec1.put("Name", "Item1");
         rec1.put("Quantity", "10");

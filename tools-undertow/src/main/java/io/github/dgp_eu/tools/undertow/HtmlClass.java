@@ -66,7 +66,7 @@ public final class HtmlClass {
         String fileChecksum = "unknown SHA-256 checksum";
         if (Files.exists(fileName)) {
             fileSize = String.format(Locale.US, strThousandSep, fileName.toFile().length());
-            fileModified = TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
+            fileModified = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
             fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256");
         } else {
             final String strFeedback = String.format("Given file %s was not found on disk, hence will be looking for it within JAR", fileName);
@@ -408,8 +408,10 @@ public final class HtmlClass {
                     strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
                 }
                 return Map.of(
-                        BasicStructuresClass.STR_STYLE, cellStyle,
-                        "value", strValue);
+                        BasicStructuresClass.STR_STYLE,
+                        cellStyle,
+                        "value",
+                        strValue);
             }
 
             /**

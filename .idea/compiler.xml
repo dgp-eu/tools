@@ -10,6 +10,7 @@
         <module name="tools-cli" />
         <module name="tools-undertow" />
         <module name="tools-environment" />
+        <module name="tools-database-demo" />
         <module name="tools-json" />
         <module name="tools-archiving" />
         <module name="tools-json_split" />

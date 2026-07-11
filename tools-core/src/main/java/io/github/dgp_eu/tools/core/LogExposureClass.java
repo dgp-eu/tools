@@ -127,6 +127,13 @@ public final class LogExposureClass {
                 strReplacement[1],
                 strReplacement[2]
             );
+            case 4 -> String.format(
+                    strUnformatted,
+                    strReplacement[0],
+                    strReplacement[1],
+                    strReplacement[2],
+                    strReplacement[3]
+                );
             default -> getUnsupportedFeatures(
                 String.valueOf(intRsParams),
                 StackWalker.getInstance().walk(frames ->

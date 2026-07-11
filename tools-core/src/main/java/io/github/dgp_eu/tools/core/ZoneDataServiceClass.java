@@ -37,10 +37,21 @@ public final class ZoneDataServiceClass {
     /**
      * Supported IANA time-zone identifiers
      */
-    private static final List<String> SUPPORTED_TZ = new CopyOnWriteArrayList<>(List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"));
-    /**
-     * Cached zones
-     */
+    private static final List<String> SUPPORTED_TZ = new CopyOnWriteArrayList<>(List.of(
+            "America/Los_Angeles",
+            "America/Phoenix",
+            "America/Denver",
+            "America/Chicago",
+            "America/New_York",
+            "Europe/London",
+            "Europe/Prague",
+            "Europe/Berlin",
+            "Europe/Bucharest",
+            "Asia/Kolkata",
+            "Asia/Shanghai",
+            "Asia/Tokyo",
+            "Australia/Melbourne"));
+    /** Cached time zones */
     private static final Map<String, ZoneInfoRecord> CACHE = new ConcurrentHashMap<>();
     /** Record for ZoneInfo */
     /* default */ public record ZoneInfoRecord(
