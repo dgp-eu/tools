@@ -395,6 +395,13 @@ public final class TimingClass {
         public static final class FileSubSubClass {
 
             /**
+             * Constructor
+             */
+            private FileSubSubClass() {
+                // intentionally blank
+            }
+
+            /**
              * get Last Modified date time
              * @param file given file
              * @return ZonedDateTime
