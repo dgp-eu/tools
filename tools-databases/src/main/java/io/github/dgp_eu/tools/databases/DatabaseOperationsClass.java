@@ -597,7 +597,7 @@ public final class DatabaseOperationsClass {
                 assert rsStandard != null;
                 listReturn = switch (strFetchType) {
                     case "Structure" -> getResultSetColumnStructure(rsStandard);
-                    case STR_VALUES -> getResultSetColumnValuesWithNullCheck(rsStandard);
+                    case STR_VALUES  -> getResultSetColumnValuesWithNullCheck(rsStandard);
                     default -> {
                         final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFetchType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                         throw new UnsupportedOperationException(strFeedbackErr);

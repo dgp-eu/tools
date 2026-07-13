@@ -96,7 +96,7 @@ public final class SpecificSnowflakeClass {
      * Retrieving Snowflake JDBC driver version
      * @return String
      */
-    private static String getSnowflakeJdbcDriverVersion() {
+    public static String getSnowflakeJdbcDriverVersion() {
         final String vSnowflakeId = "snowflake.jdbc";
         String vJdbcVersion = null;
         String vFoundIn = null;
