@@ -126,7 +126,7 @@ public final class TimingClass {
      * @return String
      */
     public static String getCurrentDateTimeUniveralTimeCoordination() {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+        return DateTimeFormatter.ofPattern(DATE_TIME_MS, Locale.US)
                 .format(ZonedDateTime.now(Clock.systemUTC()));
     }
 
