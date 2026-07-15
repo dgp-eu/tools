@@ -4,6 +4,7 @@ package io.github.dgp_eu.tools.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -118,6 +119,15 @@ public final class TimingClass {
             return "INSTANT (less than 1 millisecond)";
         }
         return (negative ? "-" : "") + String.join(", ", parts);
+    }
+
+    /**
+     * Current DateTime UTC
+     * @return String
+     */
+    public static String getCurrentDateTimeUniveralTimeCoordination() {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+                .format(ZonedDateTime.now(Clock.systemUTC()));
     }
 
     /**
