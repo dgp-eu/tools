@@ -160,18 +160,19 @@ public final class BasicStructuresClass {
      * @return float value
      */
     public static float computePercentageSafely(final long numerator, final long denominator) {
-        long denominatorUsed = denominator;
-        if (denominatorUsed == 0) {
-            denominatorUsed = 100;
-            final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return same numerator... %s",
+        double percentageExact = (float) numerator;
+        if (denominator == 0) {
+            final String strFeedback = String.format("Denominator is %s hence Percentage calculation with Numerator %s is not possible and will return same numerator... %s",
+                    denominator,
                     numerator,
                     StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst()
-                                    .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                                    .orElse(LogExposureClass.STR_I18N_UNKN)));
+                    .walk(frames -> frames.findFirst()
+                            .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                            .orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
+        } else {
+            percentageExact = percentageExact * 100 / denominator;
         }
-        final double percentageExact = (float) numerator * 100 / denominatorUsed;
         return (float) new BigDecimal(Double.toString(percentageExact))
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
