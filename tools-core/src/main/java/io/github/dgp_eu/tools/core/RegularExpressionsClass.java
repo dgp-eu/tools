@@ -40,6 +40,16 @@ public final class RegularExpressionsClass {
     public static final String REGEXP_VERSION = "^[0-9.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
     /** Regular Expression for Prompt Parameters within SQL Query */
     public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    public static final String STR_BYTE_SIZE = "\\d*\\.?\\d*\\s(byte|bytes|KB|KiB|MB|MiB|GB|GiB|TB|TiB|PB|PiB|EB|EiB)";
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    public static final String STR_FULL_AGING = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
+            + "(|(1[0-1]{1}|[1-9]{1})\\smonth(s|)(|,\\s))"
+            + "(|(1\\d{1}|2\\d{1}|30|\\d{1})\\sday(s|)(|,\\s))"
+            + "(|(1\\d{1}|2[0-3]{1}|\\d{1})\\s(hour(s|))(|,\\s))"
+            + "(|([1-5]{1}\\d{1}|\\d{1})\\s(minute(s|))(|,\\s))"
+            + "(|([1-5]{1}\\d{1}|\\d{1})\\s(second(s|))(|,\\s))"
+            + "(|\\d{1,3}\\s(millisecond(s|)))$";
     /** Regular Expression for Long Timestamp with Milliseconds  */
     public static final String STR_LONG_TS_MSEC = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s[1-2]\\d{3}\\s([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
     /**
@@ -328,12 +338,13 @@ public final class RegularExpressionsClass {
         public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
             boolean bolReturn = false;
             if (inputString != null) {
-                String regularExpression = REGEXP_VERSION;
-                if (STR_LONG_TS_MSEC.equals(mapIdentifier)) {
-                    regularExpression = STR_LONG_TS_MSEC;
-                } else if (!"version".equalsIgnoreCase(mapIdentifier)) {
-                    regularExpression = MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
-                }
+                final String regularExpression = switch (mapIdentifier) {
+                    case "byteSize"       -> STR_BYTE_SIZE;
+                    case "fullAging"      -> STR_FULL_AGING;
+                    case STR_LONG_TS_MSEC -> STR_LONG_TS_MSEC;
+                    case "version"        -> REGEXP_VERSION;
+                    default               -> MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
+                };
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
                 bolReturn = pattern.matcher(inputString).matches();
             }
