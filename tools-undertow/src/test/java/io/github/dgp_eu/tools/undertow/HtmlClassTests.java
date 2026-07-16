@@ -31,11 +31,19 @@ import io.github.dgp_eu.tools.core.TimingClass;
 class HtmlClassTests {
 
     @Test
+    @DisplayName("buildApplicationCopyright should be returned as String")
+    void buildApplicationCopyright() {
+        ProjectClass.setPomFile("/tools-core-pom.xml");
+        final String appCopyright = HtmlClass.buildApplicationCopyright();
+        assertTrue(appCopyright.contains("&copy; by "), "Application copyright should have Copyright symbol followed by single space and \"by\" word");
+    }
+
+    @Test
     @DisplayName("buildApplicationDetail should be returned as String")
     void buildApplicationDetail() {
         ProjectClass.setPomFile("/tools-core-pom.xml");
         final String appDetail = HtmlClass.buildApplicationDetail();
-        assertTrue(appDetail.contains(" &copy; by "), "Application detail should have Copyright symbol followed by");
+        assertTrue(appDetail.contains("&trade; v."), "Application detail should have TradeMark symbol followed by single space, small letter v and dot");
     }
 
     @Test

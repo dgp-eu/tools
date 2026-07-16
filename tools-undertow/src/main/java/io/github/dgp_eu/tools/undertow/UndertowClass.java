@@ -7,6 +7,7 @@ import gg.jte.output.Utf8ByteOutput;
 import gg.jte.resolve.ResourceCodeResolver;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.TimingClass;
 import io.github.dgp_eu.tools.core.ZoneDataServiceClass;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -338,9 +339,11 @@ public final class UndertowClass {
             packParameter("timeZoneSelect", selectTimeZones);
             packParameter("currentPageQuery", getCurrentPageQuery());
             packParameter("geoCoordinates", HtmlClass.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
-            final gg.jte.Content myApp = output -> output.writeContent(HtmlClass.buildApplicationDetail());
-            packParameter("appDetails", myApp);
-            final String dtNow = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
+            final gg.jte.Content appDetail = output -> output.writeContent(HtmlClass.buildApplicationDetail());
+            packParameter("appDetails", appDetail);
+            final gg.jte.Content appCopyright = output -> output.writeContent(HtmlClass.buildApplicationCopyright());
+            packParameter("appCopyright", appCopyright);
+            final String dtNow = DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS_ABRV, Locale.US)
                     .format(ZonedDateTime.now(ZoneId.of(sessionTimeZone)));
             packParameter("timeNow", dtNow);
         }

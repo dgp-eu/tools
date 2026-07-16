@@ -7,6 +7,7 @@
 @param String currentPageQuery
 @param String geoCoordinates
 @param Content appDetails
+@param Content appCopyright
 @param String timeNow
 <!DOCTYPE html>
 <html lang="en-US">
@@ -21,11 +22,11 @@
     <link rel="stylesheet" href="/web/static/BootStrap/5.3.8/bootstrap.min.css">
     <script src="/web/static/BootStrap/5.3.8/bootstrap.bundle.min.js" defer></script>
     <!-- Fontawesome components -->
-    <link rel="stylesheet" href="/web/static/FontAwesome/7.3.0/fontawesome.min.css">
-    <script src="/web/static/FontAwesome/7.3.0/brands.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.3.0/fontawesome.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.3.0/regular.min.js" defer></script>
-    <script src="/web/static/FontAwesome/7.3.0/solid.min.js" defer></script>
+    <link rel="stylesheet" href="/web/static/FontAwesome/7.3.1/fontawesome.min.css">
+    <script src="/web/static/FontAwesome/7.3.1/brands.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.1/fontawesome.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.1/regular.min.js" defer></script>
+    <script src="/web/static/FontAwesome/7.3.1/solid.min.js" defer></script>
     <!-- Tabber components -->
     <link rel="stylesheet" href="/web/static/Tabber/1.0.0/tabber.css">
     <script src="/web/static/Tabber/1.0.0/tabber.min.js" defer></script>
@@ -37,7 +38,6 @@
     </header>
     <nav>
         <ul>${menu}</ul>
-        <span id="now" style="top:0rem;font-size:0.6rem;margin:0.25rem;position:fixed;">${timeNow}</span>
     </nav>
     <main>${content}</main>
     <footer>
@@ -50,7 +50,9 @@
             <button class="btn btn-outline-primary" onclick="javascript:document.TZform.submit();" style="padding:0 var(--bs-btn-padding-x)!important;">Set</button>
             <input type="hidden" name="redirectAction" value="${currentPageQuery}">
         </form>
-        <span id="app" style="float:right;margin:0rem 0.5rem;">${appDetails}</span>
+        <span id="now" style="top:0rem;font-size:0.5rem;position:fixed;right:0.25rem;">${timeNow}</span>
+        <span id="app" style="bottom:0.55rem;font-size:0.5rem;position:fixed;right:0.25rem;">${appDetails}</span>
+        <span id="app" style="bottom:0rem;font-size:0.5rem;position:fixed;right:0.25rem;">${appCopyright}</span>
     </footer>
 </body>
 </html>

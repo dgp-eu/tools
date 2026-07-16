@@ -498,6 +498,20 @@ public final class TimingClass {
         }
 
         /**
+         * Convert time-stamp
+         * @param strTimeStamp input Time-stamp
+         * @return String converted time-stamp and formatted
+         */
+        public static String convertZonedTimestampFriendly(final ZonedDateTime inTimeStamp, final String outputFormat) {
+            ZonedDateTime outTime = inTimeStamp;
+            if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
+                outTime = inTimeStamp.withZoneSameInstant(ZoneId.of(outputTimeZone));
+            }
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
+            return outTime.format(formatter);
+        }
+
+        /**
          * format date
          * @param strDate input date
          * @return String formatted date

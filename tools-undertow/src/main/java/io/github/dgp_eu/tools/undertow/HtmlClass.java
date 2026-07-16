@@ -9,8 +9,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,10 +40,18 @@ public final class HtmlClass {
      * Application Details
      * @return Content
      */
+    public static String buildApplicationCopyright() {
+        final String prjFirstDeveloper = ProjectClass.getFirstDeveloper();
+        return String.format("&copy; by %s", prjFirstDeveloper);
+    }
+
+    /**
+     * Application Details
+     * @return Content
+     */
     public static String buildApplicationDetail() {
         final String prjVersion = ProjectClass.getProjectVersion();
-        final String prjFirstDeveloper = ProjectClass.getFirstDeveloper();
-        return String.format("%s&trade; v.%s &copy; by %s", ProjectClass.getProjectName(), prjVersion, prjFirstDeveloper);
+        return String.format("%s&trade; v.%s", ProjectClass.getProjectName(), prjVersion);
     }
 
     /**
@@ -82,13 +90,9 @@ public final class HtmlClass {
                 LogExposureClass.LOGGER.debug(strFeedback3);
                 assert resourceUrl != null;
                 final long lastModified = resourceUrl.openConnection().getLastModified();
-                final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
-                final String[] strInOut = {TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV};
-                if (strLastModified.contains(".")) {
-                    strInOut[0] = TimingClass.DATE_TIME_MS;
-                    strInOut[1] = TimingClass.DATE_TIME_MS_ABRV;
-                }
-                fileModified = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, strInOut[0], strInOut[1]));
+                final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
+                fileModified = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
+                        TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
                 fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksumFromInputStream(inStream, "SHA-256");
             } catch (IOException ex) {
                 LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
