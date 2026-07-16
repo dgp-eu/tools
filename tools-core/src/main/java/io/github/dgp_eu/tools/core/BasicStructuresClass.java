@@ -159,23 +159,21 @@ public final class BasicStructuresClass {
      * @param denominator dividing number
      * @return float value
      */
-    public static float computePercentageSafely(final long numerator, final long denominator) {
-        double percentageExact = (float) numerator;
+    public static BigDecimal computePercentageSafely(final long numerator, final long denominator) {
+        BigDecimal percentageExact = new BigDecimal(numerator);
         if (denominator == 0) {
             final String strFeedback = String.format("Denominator is %s hence Percentage calculation with Numerator %s is not possible and will return same numerator... %s",
                     denominator,
                     numerator,
                     StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst()
+                            .walk(frames -> frames.findFirst()
                             .map(frame -> frame.getClassName() + "." + frame.getMethodName())
                             .orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
         } else {
-            percentageExact = percentageExact * 100 / denominator;
+            percentageExact = percentageExact.divide(new BigDecimal(denominator)).multiply(new BigDecimal(100L));
         }
-        return (float) new BigDecimal(Double.toString(percentageExact))
-                .setScale(2, RoundingMode.HALF_UP)
-                .doubleValue();
+        return percentageExact.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,24 +28,24 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
     void testComputePercentageSafelySimple() {
-        final float original = 51.0f;
-        final float handled = BasicStructuresClass.computePercentageSafely(51, 100);
+        final BigDecimal original = new BigDecimal(51).setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal handled = BasicStructuresClass.computePercentageSafely(51, 100);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
     }
 
     @Test
     @DisplayName("Simple test to verify that 0 is same as 51 divided by 0")
     void testComputePercentageSafelyZeroDivision() {
-        final float original = 55.0f;
-        final float handled = BasicStructuresClass.computePercentageSafely(55, 0);
+        final BigDecimal original = new BigDecimal(55).setScale(2, RoundingMode.HALF_UP);
+        final BigDecimal handled = BasicStructuresClass.computePercentageSafely(55, 0);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
     }
 
     @Test
     @DisplayName("Simple test to verify that 51.123 is not the same as 51.123 divided by 1000")
     void testComputePercentageSafelyNotEnoughPrecision() {
-        final float expected = (float) 51.123;
-        final float handled = BasicStructuresClass.computePercentageSafely(51_123L, 100_000L);
+        final BigDecimal expected = new BigDecimal(51.123);
+        final BigDecimal handled = BasicStructuresClass.computePercentageSafely(51_123L, 100_000L);
         assertNotEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
 

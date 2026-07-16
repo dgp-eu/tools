@@ -63,7 +63,7 @@ class JsonSplit implements Runnable {
     /**
      * Size percentage difference between actual & splitSize/SIZE_THRESHOLD
      */
-    private static float sizeDifference;
+    private static BigDecimal sizeDifference;
     /**
      * balances threshold size
      */
@@ -128,7 +128,11 @@ class JsonSplit implements Runnable {
     }
 
     private static void performJsonSplit(final String strFileName) {
-        final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!", strFileName, fileSize, sizeThreshold, Math.abs(sizeDifference));
+        final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!",
+                strFileName,
+                fileSize,
+                sizeThreshold,
+                sizeDifference.abs());
         LogExposureClass.LOGGER.info(strFeedback);
         JsonSplitClass.setInputJsonFile(strFileName);
         JsonSplitClass.setDestinationFolder(OPT_FOLDER_DEST.getFolderDestination());
@@ -152,10 +156,10 @@ class JsonSplit implements Runnable {
      * Setter for fileSize
      */
     private static void setFileSizeDifferenceCompareToThreshold() {
-        final float sizePercentage = BasicStructuresClass.computePercentageSafely(fileSize, sizeThreshold);
-        sizeDifference = (float) new BigDecimal(Double.toString(100 - sizePercentage))
-                .setScale(2, RoundingMode.HALF_UP)
-                .doubleValue();
+        final BigDecimal sizePercentage = BasicStructuresClass.computePercentageSafely(fileSize, sizeThreshold);
+        sizeDifference = new BigDecimal(100L)
+                .subtract(sizePercentage)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     /**

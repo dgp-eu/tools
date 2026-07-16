@@ -4,6 +4,7 @@
 package io.github.dgp_eu.tools.archiving;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -98,7 +99,7 @@ public final class ArchivingClass {
                     LogExposureClass.LOGGER.warn("Invalid SIZE_BYTES value '{}', defaulting to 0.", sizeBytesStr);
                     fileOrigSize = 0L;
                 }
-                final float percentage = BasicStructuresClass.computePercentageSafely(fileArchSize, fileOrigSize);
+                final BigDecimal percentage = BasicStructuresClass.computePercentageSafely(fileArchSize, fileOrigSize);
                 final String strFeedbackFinal = String.format("Folder %s statistics are %s which was compressed to " +
                         "archive %s having a size of %s bytes (which is %s%% of the original)",
                         strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
