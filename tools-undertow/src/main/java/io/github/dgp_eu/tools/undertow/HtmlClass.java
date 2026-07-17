@@ -377,6 +377,36 @@ public final class HtmlClass {
             }
 
             /**
+             * right Style if Value is full Aging
+             * @param inCellStyle input cell style
+             * @param inValue input value
+             * @return String new style if matches
+             */
+            private static String checkValueIfMatchesFullAging(final String inCellStyle, final String inValue) {
+                String outCellStyle = inCellStyle;
+                final boolean isFullAging = RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inValue, "fullAging");
+                if (isFullAging) {
+                    outCellStyle = CSS_TEXT_RIGHT + "white-space:nowrap;";
+                }
+                return outCellStyle;
+            }
+
+            /**
+             * right Style if Value is byte or multiple of
+             * @param inCellStyle input cell style
+             * @param inValue input value
+             * @return String new style if matches
+             */
+            private static String checkValueIfMatchesByteSizes(final String inCellStyle, final String inValue) {
+                String outCellStyle = inCellStyle;
+                final boolean isByteSize = RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inValue, "byteSize");
+                if (isByteSize) {
+                    outCellStyle = CSS_TEXT_RIGHT;
+                }
+                return outCellStyle;
+            }
+
+            /**
              * Manage Cell Style and Value
              * @param inValue input value
              * @return Map
@@ -410,6 +440,12 @@ public final class HtmlClass {
                     strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
                 } else if (strValue.length() >= LARGE_STRING) {
                     strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
+                }
+                if (cellStyle.isBlank()) {
+                    cellStyle = checkValueIfMatchesByteSizes(cellStyle, strValue); // check for disk size
+                }
+                if (cellStyle.isBlank()) {
+                    cellStyle = checkValueIfMatchesFullAging(cellStyle, strValue); // check for full Aging
                 }
                 return Map.of(
                         BasicStructuresClass.STR_STYLE,

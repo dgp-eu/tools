@@ -291,7 +291,7 @@ public final class EnvironmentCapturingAssembleClass {
             final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
             final List<Display> displays = OshiUsageClass.HardwareSubClass.getOshiMonitor();
             for (final Display crtDisplay : displays) {// The EDID is the "fingerprint" of the monitor hardware
-                final byte[] edid = crtDisplay.getEdid();
+                final byte[] edid = crtDisplay.getDisplayInfo().getEdid();
                 final String uniqueId = "Monitor #" + BasicStructuresClass.StringTransformationSubClass.computeStringSignature(Base64.getEncoder().encodeToString(edid));
                 final Map<String, Object> crtMonitor = digestSingleDisplayDetails(crtDisplay);
                 crtMonitor.forEach((strKey, strValue) -> arrayAttributes.put(uniqueId + " " + strKey, strValue));
