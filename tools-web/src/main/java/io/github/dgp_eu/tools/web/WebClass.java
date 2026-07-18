@@ -293,7 +293,7 @@ public final class WebClass {
                 final Properties rsProperties = new Properties();
                 rsProperties.put("Purpose", STR_SOFT_RELEASES);
                 rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
-                rsProperties.put("FetchType", "Values");
+                rsProperties.put("FetchType", DatabaseOperationsClass.STR_VALUES);
                 resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
