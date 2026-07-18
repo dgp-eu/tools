@@ -35,6 +35,7 @@
     <style type="text/css">.tabber{display:none;}</style>
     <header id="TitleContainer">
         <h1 id="PageTitle">${title}</h1>
+        <span id="now" style="top:0rem;font-size:0.5rem;position:fixed;right:0.25rem;">${timeNow}</span>
     </header>
     <nav>
         <ul>${menu}</ul>
@@ -50,7 +51,6 @@
             <button class="btn btn-outline-primary" onclick="javascript:document.TZform.submit();" style="padding:0 var(--bs-btn-padding-x)!important;">Set</button>
             <input type="hidden" name="redirectAction" value="${currentPageQuery}">
         </form>
-        <span id="now" style="top:0rem;font-size:0.5rem;position:fixed;right:0.25rem;">${timeNow}</span>
         <span id="app" style="bottom:0.55rem;font-size:0.5rem;position:fixed;right:0.25rem;">${appDetails}</span>
         <span id="app" style="bottom:0rem;font-size:0.5rem;position:fixed;right:0.25rem;">${appCopyright}</span>
     </footer>

@@ -33,7 +33,7 @@ h1 {
     font-weight: bold !important;
     margin-left: -14rem;
     margin-right: 14rem;
-    z-index: 9999;
+    z-index: 999;
 }
 
 header {
@@ -42,7 +42,7 @@ header {
     position: fixed;
     text-align: center;
     width: 100%;
-    z-index: 9999;
+    z-index: 900;
 }
 
 .infoBox {
@@ -54,7 +54,7 @@ header {
     text-align: center;
     top: 3.5rem;
     width: 30%;
-    z-index: 999;
+    z-index: 990;
 }
 
 main {
