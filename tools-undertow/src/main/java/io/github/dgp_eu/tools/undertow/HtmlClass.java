@@ -268,7 +268,7 @@ public final class HtmlClass {
         /**
          * final
          */
-        public static void finish() {
+        private static void finish() {
             if (!strTableHeader.isEmpty()) {
                 listTableLines.add("</tbody></table>");
                 if (!rememberKey.isEmpty()) {
@@ -343,7 +343,7 @@ public final class HtmlClass {
         /**
          * Rows logic
          */
-        public static final class RowSubSubClass {
+        private static final class RowSubSubClass {
 
             /**
              * Table Body row logic
@@ -454,19 +454,12 @@ public final class HtmlClass {
                         strValue);
             }
 
-            /**
-             * constructor
-             */
-            private RowSubSubClass() {
-                // intentionally left blank
-            }
-
         }
 
         /**
          * Rows logic
          */
-        public static final class HeaderSubSubClass {
+        private static final class HeaderSubSubClass {
 
             /**
              * Table Body row logic
@@ -507,13 +500,6 @@ public final class HtmlClass {
                 if (strTableHeader.isEmpty()) {
                     strTableHeader = buildTableHeader(recordMap);
                 }
-            }
-
-            /**
-             * constructor
-             */
-            private HeaderSubSubClass() {
-                // intentionally left blank
             }
 
         }
