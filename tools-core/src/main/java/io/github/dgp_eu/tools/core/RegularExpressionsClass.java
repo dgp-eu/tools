@@ -3,6 +3,7 @@
  */
 package io.github.dgp_eu.tools.core;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -231,9 +232,9 @@ public final class RegularExpressionsClass {
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
                     default -> {
-                        return TimingClass.ConversionSubClass.convertTimeFormat(text,
-                                MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT),
-                                MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
+                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT), Locale.US);
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
+                        return TimingClass.LocalizationSubClass.convertDateOrTimestampFormats(text, inputFormat, outputFormat);
                     }
                 }
             } catch (IllegalStateException _) {

@@ -169,7 +169,7 @@ public final class RemoteInformationRetrievalClass {
                             .firstValue("Last-Modified")
                             .orElse("");
                     if (!lastModified.isBlank() ) {
-                        fileProperties.put("Last Modified", TimingClass.ConversionSubClass.convertTimeFormat(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                        fileProperties.put("Last Modified", TimingClass.LocalizationSubClass.convertDateOrTimestampFormats(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                     }
                     fileProperties.put("Size", responseHeader.headers()
                             .firstValueAsLong("Content-Length")

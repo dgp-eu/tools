@@ -287,50 +287,6 @@ public final class TimingClass {
         }
 
         /**
-         * converts a Date from one format to another
-         *
-         * @param inDate input Date
-         * @param inTimeFormat input Time Format
-         * @param outTimeFormat output Time Format
-         * @return String
-         */
-        @NonNull
-        public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
-            final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
-            final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
-            return convertTimeFormat(inDate, inputFormatter, outputFormatter);
-        }
-
-        /**
-         * converts a Date from one format to another
-         *
-         * @param inDate input Date
-         * @param inTimeFormat input Time Format
-         * @param outTimeFormat output Time Format
-         * @return String
-         */
-        @NonNull
-        public static String convertTimeFormat(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
-            String outDate = ""; 
-            try {
-                final ZonedDateTime zonedDateTime;
-                if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
-                    zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.systemDefault());
-                } else {
-                    zonedDateTime = LocalDateTime.parse(inDate, inTimeFormat).atZone(ZoneId.systemDefault());
-                }
-                outDate = zonedDateTime.format(outTimeFormat);
-            } catch (DateTimeParseException e) {
-                final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            } catch (UnsupportedTemporalTypeException e) {
-                final String strFeedback = String.format("Unsupported Temporal time for %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-            return outDate;
-        }
-
-        /**
          * get number for Duration
          * 
          * @param duration actual duration in nanoseconds
@@ -469,6 +425,39 @@ public final class TimingClass {
                 return returnString;
             }
 
+        }
+
+        /**
+         * converts a Date from one format to another
+         *
+         * @param inDate input Date
+         * @param inTimeFormat input Time Format
+         * @param outTimeFormat output Time Format
+         * @return String
+         */
+        @NonNull
+        public static String convertDateOrTimestampFormats(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
+            String outDate = ""; 
+            try {
+                final ZonedDateTime zonedDateTime;
+                if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
+                    zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.of(inputTimeZone));
+                } else {
+                    zonedDateTime = LocalDateTime.parse(inDate, inTimeFormat).atZone(ZoneId.of(inputTimeZone));
+                }
+                ZonedDateTime outTime = zonedDateTime;
+                if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
+                    outTime = zonedDateTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
+                }
+                outDate = outTime.format(outTimeFormat);
+            } catch (DateTimeParseException e) {
+                final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            } catch (UnsupportedTemporalTypeException e) {
+                final String strFeedback = String.format("Unsupported Temporal time for %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return outDate;
         }
 
         /**
