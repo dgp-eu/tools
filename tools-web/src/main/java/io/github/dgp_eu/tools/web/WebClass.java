@@ -21,7 +21,6 @@ import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
-import io.github.dgp_eu.tools.core.TimingClass;
 import io.github.dgp_eu.tools.databases.DatabaseOperationsClass;
 import io.github.dgp_eu.tools.databases.SpecificSqLiteClass;
 import io.github.dgp_eu.tools.environment.EnvironmentCapturingAssembleClass;
@@ -161,17 +160,6 @@ public final class WebClass {
     public static HttpHandler handleWebContent() {
         return exchange -> {
             UndertowClass.handleCommonThings(exchange);
-            final String page = UndertowClass.ParametersSubClass.getPageParameter();
-            switch(page) {
-                case BasicStructuresClass.STR_FILE_HASHING,
-                        BasicStructuresClass.STR_SOFTWARE_RLS,
-                        BasicStructuresClass.STR_TS:
-                    TimingClass.LocalizationSubClass.setInputTimeZone("UTC");
-                    break;
-                default:
-                    // intentionally blank
-                    break;
-            }
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
             UndertowClass.TemplateRenderingSubClass.setOutput(output);

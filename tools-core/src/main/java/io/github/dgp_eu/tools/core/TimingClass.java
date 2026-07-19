@@ -421,7 +421,7 @@ public final class TimingClass {
                 ZonedDateTime zDateTime = null;
                 try {
                     final Instant modifTime = Files.getLastModifiedTime(file).toInstant();
-                    zDateTime = ZonedDateTime.ofInstant(modifTime, ZoneId.of(inputTimeZone));
+                    zDateTime = ZonedDateTime.ofInstant(modifTime, ZoneId.of(outputTimeZone));
                 } catch (IOException ei) {
                     final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder",
                             file.getParent(),
