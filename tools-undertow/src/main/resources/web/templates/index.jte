@@ -48,7 +48,6 @@
             </a>
             ${timeZoneSelect}
             <input type="hidden" name="page" value="Localization">
-            <button class="btn btn-outline-primary" onclick="javascript:document.TZform.submit();" style="padding:0 var(--bs-btn-padding-x)!important;">Set</button>
             <input type="hidden" name="redirectAction" value="${currentPageQuery}">
         </form>
         <span id="app" style="bottom:0.55rem;font-size:0.5rem;position:fixed;right:0.25rem;">${appDetails}</span>

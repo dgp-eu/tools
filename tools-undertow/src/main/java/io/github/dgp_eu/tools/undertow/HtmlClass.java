@@ -144,6 +144,7 @@ public final class HtmlClass {
         selectProps.put("Id", "TZ");
         selectProps.put("Default", inTimeZone);
         selectProps.put("Size", 1);
+        selectProps.put("AutoSubmit", 1);
         return SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps);
     }
 
@@ -185,14 +186,20 @@ public final class HtmlClass {
                 outHtml.add(buildLabelTag(objFeatures));
             }
             manageAdditionalAttributesAndDefaults(objFeatures);
-            outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
+            outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>",
+                    objFeatures.get("Name"),
+                    objFeatures.get("Id"),
+                    additionalAttrib));
             mapValues.forEach((strValue, strText) -> {
                 String strSelected = "";
                 if (!defaults.isEmpty()
                         && defaults.contains(strValue)) {
                     strSelected = " selected";
                 }
-                outHtml.add(String.format("<option value=\"%s\"%s>%s</option>", strValue, strSelected, strText));
+                outHtml.add(String.format("<option value=\"%s\"%s>%s</option>",
+                        strValue,
+                        strSelected,
+                        strText));
             });
             outHtml.add("</select>");
             return String.join("", outHtml);
@@ -209,6 +216,10 @@ public final class HtmlClass {
             }
             if (!objFeatures.getOrDefault("Size", "").toString().isEmpty()) {
                 additionalAttrib = String.format(" size=\"%s\"", objFeatures.get("Size"));
+            }
+            final String autoSubmit = objFeatures.getOrDefault("AutoSubmit", "").toString();
+            if (!autoSubmit.isEmpty()) {
+                 additionalAttrib += " onChange=\"javascript:this.form.submit();\"";
             }
             defaults = Arrays.asList(defaultVals);
         }
