@@ -142,7 +142,6 @@ public final class TimingClass {
         int intHours   = (int) hours;
         int intMinutes = (int) minutes;
         int intSeconds = (int) seconds;
-        //final List<Integer> ageComponents = Arrays.asList(years, months, days, intHours, intMinutes, intSeconds, mili);
         final AgingInfoRecord ageComponents = new AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
         return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative);
     }

@@ -5,6 +5,7 @@ package io.github.dgp_eu.tools.core;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,57 +14,49 @@ import java.util.regex.Pattern;
  * Regular Expressions things
  */
 public final class RegularExpressionsClass {
-    /** Patterns Map */
-    public static final Map<String, Map<String, String>> MAP_PATTERNS = Map.of(
-            BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.ISO_DATE,
-                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.ISO_DATE_LONG,
-                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.ISO_DATE_ABRV,
-                    RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}\\d{1}))"),
-            BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.DATE_TIME,
-                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.DATE_TIME_LONG,
-                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_ABRV,
-                    RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}"),
-            BasicStructuresClass.STR_TS_MSEC, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.DATE_TIME_MS,
-                    BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.DATE_TIME_MS_LONG,
-                    BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_MS_ABRV,
-                    RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
-            );
     /** Regular Expression for short form Age as Date */
     private static final String REGEXP_AGE_DATE = "[+-](?<years>\\d{4})"
-            + "-(?<months>(0\\d{1}|1[0-1]{1}))"
-            + "-(?<days>([0-2]{1}\\d{1}|30))";
+            + "-(?<months>(0\\d|1[0-1]))"
+            + "-(?<days>([0-2]\\d|30))";
     /** Regular Expression for short form Age as Time */
-    private static final String REGEXP_AGE_TIME = "[+-](?<hours>([0-1]\\d{1}|2[0-3]{1}))"
-            + "\\:(?<minutes>[0-5]{1}\\d{1})"
-            + "\\:(?<seconds>[0-5]{1}\\d{1})";
+    private static final String REGEXP_AGE_TIME = "[+-](?<hours>([0-1]\\d|2[0-3]))"
+            + "\\:(?<minutes>[0-5]\\d)"
+            + "\\:(?<seconds>[0-5]\\d)";
     /** Regular Expression for short form Age as Time-stamp */
     private static final String REGEXP_AGE_TS = "[+-](?<yearsTS>\\d{4})"
-            + "-(?<monthsTS>(0\\d{1}|1[0-1]{1}))"
-            + "-(?<daysTS>([0-2]{1}\\d{1}|30))"
-            + "\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))"
-            + "\\:(?<minutesTS>[0-5]{1}\\d{1})"
-            + "\\:(?<secondsTS>[0-5]{1}\\d{1})";
+            + "-(?<monthsTS>(0\\d|1[0-1]))"
+            + "-(?<daysTS>([0-2]\\d|30))"
+            + "\\s(?<hoursTS>([0-1]\\d|2[0-3]))"
+            + "\\:(?<minutesTS>[0-5]\\d)"
+            + "\\:(?<secondsTS>[0-5]\\d)";
     /** Regular Expression for short form Age as Time-stamp full string */
     private static final String REGEXP_AGE_TS9 = "^" + REGEXP_AGE_TS + "$";
     /** Regular Expression for short form Age as Time-stamp with Milliseconds */
     private static final String REGEXP_AGE_TS_MS = "[+-](?<yearsTsMs>\\d{4})"
-            + "-(?<monthsTsMs>(0\\d{1}|1[0-1]{1}))"
-            + "-(?<daysTsMs>([0-2]{1}\\d{1}|30))"
-            + "\\s(?<hoursTsMs>([0-1]\\d{1}|2[0-3]{1}))"
-            + "\\:(?<minutesTsMs>[0-5]{1}\\d{1})"
-            + "\\:(?<secondsTsMs>[0-5]{1}\\d{1})"
+            + "-(?<monthsTsMs>(0\\d|1[0-1]))"
+            + "-(?<daysTsMs>([0-2]\\d|30))"
+            + "\\s(?<hoursTsMs>([0-1]\\d|2[0-3]))"
+            + "\\:(?<minutesTsMs>[0-5]\\d)"
+            + "\\:(?<secondsTsMs>[0-5]\\d)"
             + "\\.(?<millisecondsTsMs>\\d{1,3})";
     private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
     /** Regular Expression for full words Aging */
     private static final String REGEXP_AGING_FULL = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
-            + "(|(1[0-1]{1}|[1-9]{1})\\smonth(s|)(|,\\s))"
-            + "(|(1\\d{1}|2\\d{1}|30|\\d{1})\\sday(s|)(|,\\s))"
-            + "(|(1\\d{1}|2[0-3]{1}|\\d{1})\\s(hour(s|))(|,\\s))"
-            + "(|([1-5]{1}\\d{1}|\\d{1})\\s(minute(s|))(|,\\s))"
-            + "(|([1-5]{1}\\d{1}|\\d{1})\\s(second(s|))(|,\\s))"
+            + "(|(1[0-1]|[1-9])\\smonth(s|)(|,\\s))"
+            + "(|(1\\d|2\\d|30|\\d)\\sday(s|)(|,\\s))"
+            + "(|(1\\d|2[0-3]|\\d)\\s(hour(s|))(|,\\s))"
+            + "(|([1-5]\\d|\\d)\\s(minute(s|))(|,\\s))"
+            + "(|([1-5]\\d|\\d)\\s(second(s|))(|,\\s))"
             + "(|\\d{1,3}\\s(millisecond(s|)))$";
-    /** Regular Expression for Prompt Parameters within SQL Query */
+    /** Regular Expression for byte size value and unit of measure */
     private static final String REGEXP_BYTE_SIZE = "\\d*\\.?\\d*\\s(byte|bytes|KB|KiB|MB|MiB|GB|GiB|TB|TiB|PB|PiB|EB|EiB)";
+    /** Regular Expression for Date identification/validation */
+    private static final String REGEXP_DATE = "(1|2)\\d{3}"
+            + "\\-("
+            + "(01|03|05|07|08|10|12)\\-(0[1-9]|[1-2]\\d|3[0-1])" // months w. 31 days
+            + "|(04|06|09|11)\\-(0[1-9]|[1-2]\\d|30)" // month w. 30 days
+            + "|02\\-(0[1-9]|[1-2]\\d)" // month w. 28/29 days (February) 
+            + ")";
     /** Regular Expression for Latitude */
     private static final String REGEXP_LATITUDE = "([+-])(\\d{2})(\\d{2})(\\d{2})?";
     /** Regular Expression for Longitude */
@@ -80,6 +73,12 @@ public final class RegularExpressionsClass {
     private static final String REGEXP_NO_NUMERIC = "-?\\d+(\\.\\d+)?-?";
     /** Regular Expression for Prompt Parameters within SQL Query */
     public static final String REGEXP_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
+    /** Regular Expression for Time identification/validation */
+    private static final String REGEXP_TIME = "([0-1]\\d|2[0-3])\\:[0-5]}\\d\\:[0-5]\\d";
+    /** Regular Expression for Time-stamp identification/validation */
+    private static final String REGEXP_TS = REGEXP_DATE + "\\s" + REGEXP_TIME;
+    /** Regular Expression for Time-stamp with Milliseconds identification/validation */
+    private static final String REGEXP_TS_MS = REGEXP_DATE + "\\s" + REGEXP_TIME + "\\.\\d{3}";
     /** Version Patterns Map */
     private static final String REGEXP_VERSION = "^[0-9.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
     /** string constant for agingDate */
@@ -92,8 +91,18 @@ public final class RegularExpressionsClass {
     private static final String STR_AGING_TS_MS = "agingTimestampWithMilliseconds";
     /** string constant for MavenPackage */
     private static final String STR_MAVEN_PKG = "MavenPackage";
-    /** string constant for Regular Expression */
-    private static final String STR_REG_EXP = "Regular Expression";
+    /** Record for ZoneInfo */
+    /* default */ public record DateTimeInfoRec(
+        String input,
+        String outputLong,
+        String outputAbbreviated,
+        String regularExpression) {}
+    /** Patterns Map for Date/Timestamp/TimestampWithMilliseconds identification/validation/conversion */
+    private static final Map<String, DateTimeInfoRec> MAP_PATTERNS = new ConcurrentHashMap<>();
+
+    static {
+        loadDateTimePatternsIntoMap();
+    }
 
     /**
      * building Central Maven Repository URL
@@ -122,7 +131,7 @@ public final class RegularExpressionsClass {
         final StringJoiner sjRegExp = new StringJoiner("|");
         sortedRegExp.forEach((key, value) -> {
             if (value.isBlank()) {
-                sjRegExp.add(String.format("(?<%s>%s)", key, MAP_PATTERNS.get(key).get(STR_REG_EXP)));
+                sjRegExp.add(String.format("(?<%s>%s)", key, MAP_PATTERNS.get(key).regularExpression));
             } else {
                 sjRegExp.add(String.format("(?<%s>%s)", key, value));
             }
@@ -220,6 +229,23 @@ public final class RegularExpressionsClass {
     }
 
     /**
+     * Getter for MAP_PATTERNS
+     * @return
+     */
+    public static Map<String, DateTimeInfoRec> getMapPatterns() {
+        return MAP_PATTERNS;
+    }
+
+    /**
+     * Populates MAP_PATTERNS list
+     */
+    private static void loadDateTimePatternsIntoMap() {
+        MAP_PATTERNS.put(BasicStructuresClass.STR_JUST_DATE, new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
+        MAP_PATTERNS.put(BasicStructuresClass.STR_TIMESTAMP, new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
+        MAP_PATTERNS.put(BasicStructuresClass.STR_TS_MSEC, new DateTimeInfoRec(TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_LONG, TimingClass.DATE_TIME_MS_ABRV, REGEXP_TS_MS));
+    }
+
+    /**
      * Replace patterns within large Text
      * @param inString original text
      * @return replaced text
@@ -252,9 +278,9 @@ public final class RegularExpressionsClass {
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
                     default -> {
-                        final String inPattern = MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT);
+                        final String inPattern = MAP_PATTERNS.get(matchedGroup).input;
                         final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(inPattern, Locale.US);
-                        final String outPattern = MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT);
+                        final String outPattern = MAP_PATTERNS.get(matchedGroup).outputAbbreviated;
                         final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(outPattern, Locale.US);
                         return TimingClass.LocalizationSubClass.convertDateOrTimestampFormats(text, inputFormat, outputFormat);
                     }
@@ -330,7 +356,7 @@ public final class RegularExpressionsClass {
             if (isAgingString) {
                 return convertAgingDateOrTime(matcher, sequencedMap, ageString);
             } else {
-                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string",
+                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string... %s",
                         ageString,
                         StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedbackErr);
@@ -367,7 +393,7 @@ public final class RegularExpressionsClass {
                 final int mili       = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
                 return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
             } else {
-                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string",
+                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string... %s",
                         inString,
                         StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedbackErr);
@@ -420,7 +446,7 @@ public final class RegularExpressionsClass {
                     case STR_AGING_TS_MS   -> REGEXP_AGE_TS_MS9;
                     case STR_AGING_TS      -> REGEXP_AGE_TS9;
                     case "version"         -> REGEXP_VERSION;
-                    default                -> MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
+                    default                -> MAP_PATTERNS.get(mapIdentifier).regularExpression;
                 };
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
                 bolReturn = pattern.matcher(inputString).matches();
