@@ -488,6 +488,8 @@ public final class TimingClass {
         /**
          * Convert time-stamp
          * @param strTimeStamp input Time-stamp
+         * @param inTimeFormat input Time Format
+         * @param outputFormat output Time Format as String
          * @return String converted time-stamp and formatted
          */
         public static String convertTimestampFriendly(final String strTimeStamp, final String inputFormat, final String outputFormat) {
@@ -502,7 +504,8 @@ public final class TimingClass {
 
         /**
          * Convert String into Zoned Date Time
-         * @param strTimeStamp input time-stamp as String
+         * @param strTimeStamp input time-stamp
+         * @param inputFormat input Time Format as String
          * @return ZonedDateTime
          */
         private static ZonedDateTime convertStringIntoZonedDateTime(final String strTimeStamp, final String inputFormat) {
@@ -513,7 +516,8 @@ public final class TimingClass {
 
         /**
          * Convert time-stamp
-         * @param strTimeStamp input Time-stamp
+         * @param inTimeStamp input Time-stamp
+         * @param outputFormat output Time Format as String
          * @return String converted time-stamp and formatted
          */
         public static String convertZonedTimestampFriendly(final ZonedDateTime inTimeStamp, final String outputFormat) {
@@ -528,6 +532,8 @@ public final class TimingClass {
         /**
          * format date
          * @param strDate input date
+         * @param inputFormat input Time Format
+         * @param outputFormat output Time Format as String
          * @return String formatted date
          */
         public static String formatDateFriendly(final String strDate, final String inputFormat, final String outputFormat) {
