@@ -270,7 +270,7 @@ public final class RegularExpressionsClass {
                     }
                     case STR_AGING_TS_MS, STR_AGING_TS -> {
                         final boolean isNegative = text.substring(0, 1).contentEquals("-");
-                        final TimingClass.AgingInfoRecord ageComponents = ConversionSubClass.convertAgingStringIntoAgingComponents(text);
+                        final TimingClass.AgingInfoRecord ageComponents = ConversionSubClass.convertAgingTimestampStringIntoAgingComponents(text);
                         return TimingClass.composeAgingInWordsFromListOfIntegerComponents(ageComponents, isNegative);
                     }
                     case STR_AGING_DATE -> {
@@ -368,13 +368,13 @@ public final class RegularExpressionsClass {
          * @param inString
          * @return
          */
-        private static TimingClass.AgingInfoRecord convertAgingStringIntoAgingComponents(final String inString) {
+        private static TimingClass.AgingInfoRecord convertAgingTimestampStringIntoAgingComponents(final String inString) {
             final int strLength = inString.length();
             final String agingRegExp = switch (strLength) {
                 case 20 -> REGEXP_AGE_TS9;
                 case 24 -> REGEXP_AGE_TS_MS9;
                 default -> {
-                    final String strFeedbackErr = String.format("An aging String is expected to have either 20 or 24 characters but given one %s  has %s number of characters... %s",
+                    final String strFeedbackErr = String.format("An Aging Timestamp String is expected to have either 20 or 24 characters but given one %s has %s number of characters... %s",
                             inString,
                             strLength,
                             StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -393,7 +393,7 @@ public final class RegularExpressionsClass {
                 final int mili       = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
                 return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
             } else {
-                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string... %s",
+                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging Timestamp String... %s",
                         inString,
                         StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedbackErr);
