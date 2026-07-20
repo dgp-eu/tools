@@ -15,19 +15,10 @@ import java.util.regex.Pattern;
 public final class RegularExpressionsClass {
     /** Patterns Map */
     public static final Map<String, Map<String, String>> MAP_PATTERNS = Map.of(
-            RegularExpressionsClass.STR_AGING_DATE, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
-            RegularExpressionsClass.STR_AGING_TS, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
-            RegularExpressionsClass.STR_AGING_TIME, Map.of(RegularExpressionsClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
-            "decimal", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
             BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.ISO_DATE,
                     BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.ISO_DATE_LONG,
                     BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.ISO_DATE_ABRV,
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}\\d{1}))"),
-            "long", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,18}-?"),
-            RegularExpressionsClass.STR_MAVEN_PKG, Map.of(RegularExpressionsClass.STR_REG_EXP, "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+",
-                    "URL", "https://repo1.maven.org/maven2/%s/%s/",
-                    "HTMLlink", "<a href=\"%s\" target=\"_blank\">%s</a>"),
-            "numeric", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
             BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, TimingClass.DATE_TIME,
                     BasicStructuresClass.STR_OUTPUT_LONG, TimingClass.DATE_TIME_LONG,
                     BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_ABRV,
@@ -37,52 +28,72 @@ public final class RegularExpressionsClass {
                     BasicStructuresClass.STR_OUTPUT_SHORT, TimingClass.DATE_TIME_MS_ABRV,
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
             );
-    /** Version Patterns Map */
-    public static final String REGEXP_VERSION = "^[0-9.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
-    /** Regular Expression for Prompt Parameters within SQL Query */
-    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
-    /** Regular Expression for Prompt Parameters within SQL Query */
-    public static final String STR_BYTE_SIZE = "\\d*\\.?\\d*\\s(byte|bytes|KB|KiB|MB|MiB|GB|GiB|TB|TiB|PB|PiB|EB|EiB)";
-    /** Regular Expression for Prompt Parameters within SQL Query */
-    public static final String STR_FULL_AGING = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
+    /** Regular Expression for short form Age as Date */
+    private static final String REGEXP_AGE_DATE = "[+-](?<years>\\d{4})"
+            + "-(?<months>(0\\d{1}|1[0-1]{1}))"
+            + "-(?<days>([0-2]{1}\\d{1}|30))";
+    /** Regular Expression for short form Age as Time */
+    private static final String REGEXP_AGE_TIME = "[+-](?<hours>([0-1]\\d{1}|2[0-3]{1}))"
+            + "\\:(?<minutes>[0-5]{1}\\d{1})"
+            + "\\:(?<seconds>[0-5]{1}\\d{1})";
+    /** Regular Expression for short form Age as Time-stamp */
+    private static final String REGEXP_AGE_TS = "[+-](?<yearsTS>\\d{4})"
+            + "-(?<monthsTS>(0\\d{1}|1[0-1]{1}))"
+            + "-(?<daysTS>([0-2]{1}\\d{1}|30))"
+            + "\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))"
+            + "\\:(?<minutesTS>[0-5]{1}\\d{1})"
+            + "\\:(?<secondsTS>[0-5]{1}\\d{1})";
+    /** Regular Expression for short form Age as Time-stamp full string */
+    private static final String REGEXP_AGE_TS9 = "^" + REGEXP_AGE_TS + "$";
+    /** Regular Expression for short form Age as Time-stamp with Milliseconds */
+    private static final String REGEXP_AGE_TS_MS = "[+-](?<yearsTsMs>\\d{4})"
+            + "-(?<monthsTsMs>(0\\d{1}|1[0-1]{1}))"
+            + "-(?<daysTsMs>([0-2]{1}\\d{1}|30))"
+            + "\\s(?<hoursTsMs>([0-1]\\d{1}|2[0-3]{1}))"
+            + "\\:(?<minutesTsMs>[0-5]{1}\\d{1})"
+            + "\\:(?<secondsTsMs>[0-5]{1}\\d{1})"
+            + "\\.(?<millisecondsTsMs>\\d{1,3})";
+    private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
+    /** Regular Expression for full words Aging */
+    private static final String REGEXP_AGING_FULL = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
             + "(|(1[0-1]{1}|[1-9]{1})\\smonth(s|)(|,\\s))"
             + "(|(1\\d{1}|2\\d{1}|30|\\d{1})\\sday(s|)(|,\\s))"
             + "(|(1\\d{1}|2[0-3]{1}|\\d{1})\\s(hour(s|))(|,\\s))"
             + "(|([1-5]{1}\\d{1}|\\d{1})\\s(minute(s|))(|,\\s))"
             + "(|([1-5]{1}\\d{1}|\\d{1})\\s(second(s|))(|,\\s))"
             + "(|\\d{1,3}\\s(millisecond(s|)))$";
-    /** Regular Expression for Long Timestamp with Milliseconds  */
-    public static final String STR_LONG_TS_MSEC = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s[1-2]\\d{3}\\s([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
-    /**
-     * Regex for Latitude: Sign, 2 digits (deg), 2 digits (min), 
-     * optional 2 digits (sec)
-     */
-    private static final Pattern LAT_REGEX = Pattern.compile("([+-])(\\d{2})(\\d{2})(\\d{2})?");
-    /**
-     * Regex for Longitude: Sign, 3 digits (deg), 2 digits (min), 
-     * optional 2 digits (sec)
-     */
-    private static final Pattern LON_REGEX = Pattern.compile("([+-])(\\d{3})(\\d{2})(\\d{2})?");
-    /**
-     * Regular Expression string
-     */
-    public static final String STR_REG_EXP = "Regular Expression";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_DATE = "agingDate";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_TIME = "agingTime";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_TS = "agingTimestamp";
-    /**
-     * string constant
-     */
-    public static final String STR_MAVEN_PKG = "MavenPackage";
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    private static final String REGEXP_BYTE_SIZE = "\\d*\\.?\\d*\\s(byte|bytes|KB|KiB|MB|MiB|GB|GiB|TB|TiB|PB|PiB|EB|EiB)";
+    /** Regular Expression for Latitude */
+    private static final String REGEXP_LATITUDE = "([+-])(\\d{2})(\\d{2})(\\d{2})?";
+    /** Regular Expression for Longitude */
+    private static final String REGEXP_LONGITUDE = "([+-])(\\d{3})(\\d{2})(\\d{2})?";
+    /** Regular Expression for Long Time-stamp with Milliseconds  */
+    public static final String REGEXP_LONG_TS_MS = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s[1-2]\\d{3}\\s([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
+    /** Regular Expression for Number as Decimal */
+    private static final String REGEXP_MAVEN_PKG = "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+";
+    /** Regular Expression for Number as Decimal */
+    private static final String REGEXP_NO_DECIMAL = "-?\\d+\\.\\d+-?";
+    /** Regular Expression for Number as Long */
+    private static final String REGEXP_NO_LONG = "-?\\d{1,18}-?";
+    /** Regular Expression for Number as Numeric */
+    private static final String REGEXP_NO_NUMERIC = "-?\\d+(\\.\\d+)?-?";
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    public static final String REGEXP_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
+    /** Version Patterns Map */
+    private static final String REGEXP_VERSION = "^[0-9.]+(|\\.(Alpha|Beta|CR|Final|RC)|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
+    /** string constant for agingDate */
+    private static final String STR_AGING_DATE = "agingDate";
+    /** string constant for agingTime */
+    private static final String STR_AGING_TIME = "agingTime";
+    /** string constant for agingTimestamp */
+    private static final String STR_AGING_TS = "agingTimestamp";
+    /** string constant for agingTimestamp */
+    private static final String STR_AGING_TS_MS = "agingTimestampWithMilliseconds";
+    /** string constant for MavenPackage */
+    private static final String STR_MAVEN_PKG = "MavenPackage";
+    /** string constant for Regular Expression */
+    private static final String STR_REG_EXP = "Regular Expression";
 
     /**
      * building Central Maven Repository URL
@@ -91,7 +102,7 @@ public final class RegularExpressionsClass {
      */
     public static String buildCentralMavenRepositoryUniformResourceLocator(final String inPackage) {
         final String[] urlParts = inPackage.split(":");
-        return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1]);
+        return String.format("https://repo1.maven.org/maven2/%s/%s/", urlParts[0].replace('.', '/'), urlParts[1]);
     }
 
     /**
@@ -100,14 +111,22 @@ public final class RegularExpressionsClass {
      */
     private static String buildRegExpForMassReplace() {
         final SequencedMap<String, String> sortedRegExp = new LinkedHashMap<>();
-        sortedRegExp.put(STR_MAVEN_PKG, "");
-        sortedRegExp.put(STR_AGING_TS, "");
-        sortedRegExp.put(STR_AGING_DATE, "");
+        sortedRegExp.put(STR_MAVEN_PKG, REGEXP_MAVEN_PKG);
+        sortedRegExp.put(STR_AGING_TS_MS, REGEXP_AGE_TS_MS);
+        sortedRegExp.put(STR_AGING_TS, REGEXP_AGE_TS);
+        sortedRegExp.put(STR_AGING_DATE, REGEXP_AGE_DATE);
+        sortedRegExp.put(STR_AGING_TIME, REGEXP_AGE_TIME);
         sortedRegExp.put(BasicStructuresClass.STR_TS_MSEC, "");
         sortedRegExp.put(BasicStructuresClass.STR_TIMESTAMP, "");
-        sortedRegExp.put(BasicStructuresClass.STR_JUST_DATE, "key");
+        sortedRegExp.put(BasicStructuresClass.STR_JUST_DATE, "");
         final StringJoiner sjRegExp = new StringJoiner("|");
-        sortedRegExp.forEach((key, _) -> sjRegExp.add(String.format("(?<%s>%s)", key, MAP_PATTERNS.get(key).get(STR_REG_EXP))));
+        sortedRegExp.forEach((key, value) -> {
+            if (value.isBlank()) {
+                sjRegExp.add(String.format("(?<%s>%s)", key, MAP_PATTERNS.get(key).get(STR_REG_EXP)));
+            } else {
+                sjRegExp.add(String.format("(?<%s>%s)", key, value));
+            }
+        });
         return sjRegExp.toString();
     }
 
@@ -119,10 +138,10 @@ public final class RegularExpressionsClass {
      */
     public static int countOccurrences(final String haystack, final String needleType) {
         final Pattern pattern = switch(needleType) {
-            case "NamedParameters" -> Pattern.compile(STR_PRMTR_RGX);
+            case "NamedParameters"                 -> Pattern.compile(REGEXP_PRMTR_RGX);
             case "ComplexPositionalTypeParameters" -> Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
-            case "PositionalTypeParameters" -> Pattern.compile("%[ACEGHSTXacdefghostx]");
-            default -> Pattern.compile(".*");
+            case "PositionalTypeParameters"        -> Pattern.compile("%[ACEGHSTXacdefghostx]");
+            default                                -> Pattern.compile(".*");
         };
         final Matcher matcher = pattern.matcher(haystack);
         int count = 0;
@@ -136,7 +155,7 @@ public final class RegularExpressionsClass {
      * check if pattern exists into text
      * @param text to search within
      * @param pattern to search for
-     * @return int
+     * @return int 1 if found otherwise 0
      */
     public static int doesExist(final String text, final String pattern) {
         final Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
@@ -151,7 +170,8 @@ public final class RegularExpressionsClass {
      * @return double numeric value
      */
     public static double dmsToDecimal(final String part, final boolean isLon) {
-        final Matcher matched = (isLon ? LON_REGEX : LAT_REGEX).matcher(part);
+        final Pattern inPattern = Pattern.compile((isLon ? REGEXP_LONGITUDE : REGEXP_LATITUDE));
+        final Matcher matched = inPattern.matcher(part);
         double decToReturn = 0.0;
         if (matched.matches()) {
             final double sign = "-".equals(matched.group(1)) ? -1.0 : 1.0;
@@ -188,6 +208,7 @@ public final class RegularExpressionsClass {
         final List<String> capturedGroups = List.of(
                 STR_MAVEN_PKG,
                 STR_AGING_TS,
+                STR_AGING_TS_MS,
                 STR_AGING_DATE,
                 BasicStructuresClass.STR_TS_MSEC,
                 BasicStructuresClass.STR_TIMESTAMP,
@@ -218,22 +239,23 @@ public final class RegularExpressionsClass {
                             return text;
                         } else {
                             final String strURL = buildCentralMavenRepositoryUniformResourceLocator(text);
-                            return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("HTMLlink"), strURL, text);
+                            return String.format("<a href=\"%s\" target=\"_blank\">%s</a>", strURL, text);
                         }
                     }
-                    case STR_AGING_TS -> {
-                        final String strDate = text.substring(0, 11);
-                        final String strTime = text.substring(12, 20);
-                        return ConversionSubClass.convertAgingDateIntoHumanReadableString(strDate)
-                                + "<br/>" + ConversionSubClass.convertAgingTimeIntoHumanReadableString(strTime);
+                    case STR_AGING_TS_MS, STR_AGING_TS -> {
+                        final boolean isNegative = text.substring(0, 1).contentEquals("-");
+                        final TimingClass.AgingInfoRecord ageComponents = ConversionSubClass.convertAgingStringIntoAgingComponents(text);
+                        return TimingClass.composeAgingInWordsFromListOfIntegerComponents(ageComponents, isNegative);
                     }
                     case STR_AGING_DATE -> {
-                        final String outString = ConversionSubClass.convertAgingDateIntoHumanReadableString(text);
+                        final String outString = ConversionSubClass.convertAgingDateOrTimeIntoHumanReadableString(text);
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
                     default -> {
-                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT), Locale.US);
-                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
+                        final String inPattern = MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT);
+                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(inPattern, Locale.US);
+                        final String outPattern = MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT);
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(outPattern, Locale.US);
                         return TimingClass.LocalizationSubClass.convertDateOrTimestampFormats(text, inputFormat, outputFormat);
                     }
                 }
@@ -263,7 +285,9 @@ public final class RegularExpressionsClass {
                             resultDateOrTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
                         }
                     } catch (NumberFormatException noFormatException) {
-                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA, strPlural, Arrays.toString(noFormatException.getStackTrace()));
+                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA,
+                                strPlural,
+                                Arrays.toString(noFormatException.getStackTrace()));
                         LogExposureClass.LOGGER.error(strFeedback);
                     }
                 });
@@ -274,33 +298,80 @@ public final class RegularExpressionsClass {
         }
 
         /**
-         * Convert aging Date into human-readable String
+         * Convert aging Date/Time into human-readable String
          * @param ageString input String
          * @return String in human-readable format
          */
-        public static String convertAgingDateIntoHumanReadableString(final String ageString) {
-            final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
+        public static String convertAgingDateOrTimeIntoHumanReadableString(final String ageString) {
+            final int lengthAgeString = ageString.length();
+            Pattern agePattern = null;
+            final SequencedMap<String, String> sequencedMap = new LinkedHashMap<>();
+            switch (lengthAgeString) {
+                case 11:
+                    agePattern = Pattern.compile(REGEXP_AGE_DATE);
+                    sequencedMap.put("years", "year");
+                    sequencedMap.put("months", "month");
+                    sequencedMap.put("days", "day");
+                    break;
+                case 9:
+                    agePattern = Pattern.compile(REGEXP_AGE_TIME);
+                    sequencedMap.put("hours", "hour");
+                    sequencedMap.put("minutes", "minute");
+                    sequencedMap.put("seconds", "second");
+                    break;
+                default:
+                    final String strFeedbackErr = String.format("Given string does not seem to be of any expected lengths of an Aging Date (11) nor Time (9) but is %s... %s",
+                            lengthAgeString,
+                            StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+            }
             final Matcher matcher = agePattern.matcher(ageString);
-            final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
-            sequencedMapDate.put("years", "year");
-            sequencedMapDate.put("months", "month");
-            sequencedMapDate.put("days", "day");
-            return convertAgingDateOrTime(matcher, sequencedMapDate, ageString);
+            final boolean isAgingString = matcher.matches();
+            if (isAgingString) {
+                return convertAgingDateOrTime(matcher, sequencedMap, ageString);
+            } else {
+                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string",
+                        ageString,
+                        StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                throw new UnsupportedOperationException(strFeedbackErr);
+            }
         }
 
         /**
-         * Convert aging Time into human-readable String
-         * @param ageString input String
-         * @return String in human-readable format
+         * convert Aging String into Aging Components
+         * @param inString
+         * @return
          */
-        public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
-            final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
-            final Matcher matcher = agePattern.matcher(ageString);
-            final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
-            sequencedMapTime.put("hours", "hour");
-            sequencedMapTime.put("minutes", "minute");
-            sequencedMapTime.put("seconds", "second");
-            return convertAgingDateOrTime(matcher, sequencedMapTime, ageString);
+        private static TimingClass.AgingInfoRecord convertAgingStringIntoAgingComponents(final String inString) {
+            final int strLength = inString.length();
+            final String agingRegExp = switch (strLength) {
+                case 20 -> REGEXP_AGE_TS9;
+                case 24 -> REGEXP_AGE_TS_MS9;
+                default -> {
+                    final String strFeedbackErr = String.format("An aging String is expected to have either 20 or 24 characters but given one %s  has %s number of characters... %s",
+                            inString,
+                            strLength,
+                            StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+                }
+            };
+            final Pattern pattern = Pattern.compile(agingRegExp);
+            final boolean isAgingString = pattern.matcher(inString).matches();
+            if (isAgingString) {
+                final int years      = Integer.parseInt(inString.substring(1, 5));
+                final int months     = Integer.parseInt(inString.substring(6, 8));
+                final int days       = Integer.parseInt(inString.substring(9, 11));
+                final int intHours   = Integer.parseInt(inString.substring(12, 14));
+                final int intMinutes = Integer.parseInt(inString.substring(15, 17));
+                final int intSeconds = Integer.parseInt(inString.substring(18, 19));
+                final int mili       = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
+                return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
+            } else {
+                final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string",
+                        inString,
+                        StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                throw new UnsupportedOperationException(strFeedbackErr);
+            }
         }
 
         /**
@@ -340,11 +411,16 @@ public final class RegularExpressionsClass {
             boolean bolReturn = false;
             if (inputString != null) {
                 final String regularExpression = switch (mapIdentifier) {
-                    case "byteSize"       -> STR_BYTE_SIZE;
-                    case "fullAging"      -> STR_FULL_AGING;
-                    case STR_LONG_TS_MSEC -> STR_LONG_TS_MSEC;
-                    case "version"        -> REGEXP_VERSION;
-                    default               -> MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
+                    case "byteSize"        -> REGEXP_BYTE_SIZE;
+                    case "decimal"         -> REGEXP_NO_DECIMAL;
+                    case "fullAging"       -> REGEXP_AGING_FULL;
+                    case "long"            -> REGEXP_NO_LONG;
+                    case "numeric"         -> REGEXP_NO_NUMERIC;
+                    case REGEXP_LONG_TS_MS -> REGEXP_LONG_TS_MS;
+                    case STR_AGING_TS_MS   -> REGEXP_AGE_TS_MS9;
+                    case STR_AGING_TS      -> REGEXP_AGE_TS9;
+                    case "version"         -> REGEXP_VERSION;
+                    default                -> MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
                 };
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
                 bolReturn = pattern.matcher(inputString).matches();

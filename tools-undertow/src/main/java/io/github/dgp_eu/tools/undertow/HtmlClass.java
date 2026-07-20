@@ -233,7 +233,7 @@ public final class HtmlClass {
         /** variable for HTML Table */
         private static final List<String> listTableLines = new ArrayList<>();
         /** Time Zone variable */
-        private static final long LARGE_STRING = 25;
+        private static final long LARGE_STRING = 20;
         /** variable for Remember Key */
         private static String rememberKey;
         /** variable for row counter */

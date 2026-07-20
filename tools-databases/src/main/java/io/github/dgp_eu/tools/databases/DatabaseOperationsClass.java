@@ -135,7 +135,7 @@ public final class DatabaseOperationsClass {
         objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
         final String strFeedbackPrmV = String.format("Parameters values are %s", valFields);
         LogExposureClass.LOGGER.debug(strFeedbackPrmV);
-        final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, RegularExpressionsClass.STR_PRMTR_RGX);
+        final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, RegularExpressionsClass.REGEXP_PRMTR_RGX);
         final String strFeedbackPrm = String.format("Parameters for query are %s", listMatches);
         LogExposureClass.LOGGER.debug(strFeedbackPrm);
         final List<String> mapParameterOrder = new ArrayList<>();

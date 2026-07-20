@@ -56,6 +56,15 @@ public final class TimingClass {
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
     /** Map with predefined time format patterns used for duration and time-stamp formatting. */
     private static final Map<String, String> TIME_FORMATS;
+    /** Record for Aging Components */
+    /* default */ public record AgingInfoRecord(
+        Integer intYears,
+        Integer intMonths,
+        Integer intDays,
+        Integer intHours,
+        Integer intMinutes,
+        Integer intSeconds,
+        Integer intMilliseconds) {}
 
     static {
         // Initialize the concurrent map
@@ -74,6 +83,27 @@ public final class TimingClass {
         if (value != 0) {
             parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
         }
+    }
+
+    /**
+     * composing Aging as words from Integer components
+     * @param inAgeComponents age components as List of Integer values
+     * @param negative true or false
+     * @return String with words for aging
+     */
+    public static String composeAgingInWordsFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final boolean negative) {
+        final List<String> parts = new ArrayList<>();
+        appendIfNotZero(parts, inAgeComponents.intYears, "year");
+        appendIfNotZero(parts, inAgeComponents.intMonths, "month");
+        appendIfNotZero(parts, inAgeComponents.intDays, "day");
+        appendIfNotZero(parts, inAgeComponents.intHours, "hour");
+        appendIfNotZero(parts, inAgeComponents.intMinutes, "minute");
+        appendIfNotZero(parts, inAgeComponents.intSeconds, "second");
+        appendIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
+        if (parts.isEmpty()) {
+            return "INSTANT (less than 1 millisecond)";
+        }
+        return (negative ? "-" : "") + String.join(", ", parts);
     }
 
     /**
@@ -98,27 +128,23 @@ public final class TimingClass {
             cursor = startTimestamp.plus(period);
             duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
         }
-        final long years = period.getYears();
+        final int years  = period.getYears();
         final int months = period.getMonths();
-        final int days = period.getDays();
-        long hours = duration.toHours();
-        duration = duration.minusHours(hours);
+        final int days   = period.getDays();
+        // duration components
+        long hours   = duration.toHours();
+        duration     = duration.minusHours(hours);
         long minutes = duration.toMinutes();
-        duration = duration.minusMinutes(minutes);
+        duration     = duration.minusMinutes(minutes);
         long seconds = duration.getSeconds();
-        int mili = duration.toMillisPart();
-        final List<String> parts = new ArrayList<>();
-        appendIfNotZero(parts, years, "year");
-        appendIfNotZero(parts, months, "month");
-        appendIfNotZero(parts, days, "day");
-        appendIfNotZero(parts, hours, "hour");
-        appendIfNotZero(parts, minutes, "minute");
-        appendIfNotZero(parts, seconds, "second");
-        appendIfNotZero(parts, mili, "millisecond");
-        if (parts.isEmpty()) {
-            return "INSTANT (less than 1 millisecond)";
-        }
-        return (negative ? "-" : "") + String.join(", ", parts);
+        int mili     = duration.toMillisPart();
+        // assemble for word composition
+        int intHours   = (int) hours;
+        int intMinutes = (int) minutes;
+        int intSeconds = (int) seconds;
+        //final List<Integer> ageComponents = Arrays.asList(years, months, days, intHours, intMinutes, intSeconds, mili);
+        final AgingInfoRecord ageComponents = new AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
+        return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative);
     }
 
     /**
