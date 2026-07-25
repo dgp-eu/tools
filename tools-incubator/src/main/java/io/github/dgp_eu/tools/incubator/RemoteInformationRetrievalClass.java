@@ -117,7 +117,10 @@ public final class RemoteInformationRetrievalClass {
             docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             docBuilderFactory.setExpandEntityReferences(false);
+            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+            docBuilderFactory.setXIncludeAware(false);
             doc = parseDocumentFromInputStram(inStream, docBuilderFactory);
         } catch (ParserConfigurationException e) {
             final String strFeedback = String.format("Parser Configuration Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
@@ -137,8 +140,13 @@ public final class RemoteInformationRetrievalClass {
         try {
             final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             doc = docBuilder.parse(inStream);
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            final String strFeedback = String.format("Exception while attempting to read remote XML from an URL... %s", Arrays.toString(e.getStackTrace()));
+        } catch (ParserConfigurationException e) {
+            final String strFeedback = String.format("ParserConfigurationException was thrown while attempting to read remote XML from an URL... %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
+        } catch (SAXException e) {
+            LogExposureClass.LOGGER.error("A DOCTYPE was passed into the XML document");
+        } catch (IOException e) {
+            final String strFeedback = String.format("IOException occurred, XXE may still possible... %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return doc;
