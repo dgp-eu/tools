@@ -488,7 +488,7 @@ public final class TimingClass {
         /**
          * Convert time-stamp
          * @param strTimeStamp input Time-stamp
-         * @param inTimeFormat input Time Format
+         * @param inputFormat input Time Format
          * @param outputFormat output Time Format as String
          * @return String converted time-stamp and formatted
          */
