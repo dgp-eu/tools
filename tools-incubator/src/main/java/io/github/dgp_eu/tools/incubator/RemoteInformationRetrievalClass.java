@@ -144,7 +144,8 @@ public final class RemoteInformationRetrievalClass {
             final String strFeedback = String.format("ParserConfigurationException was thrown while attempting to read remote XML from an URL... %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         } catch (SAXException e) {
-            LogExposureClass.LOGGER.error("A DOCTYPE was passed into the XML document");
+            final String strFeedback = String.format("SAXException thrown... DOCTYPE was passed into the XML document... %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         } catch (IOException e) {
             final String strFeedback = String.format("IOException occurred, XXE may still possible... %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
