@@ -28,7 +28,6 @@
 
 ul.tabbernav {
     border-bottom: 1px solid #ccc;
-    font-size: 12px;
     font-weight: bold;
     margin: 0;
     padding: 3px 0;
@@ -75,7 +74,7 @@ ul.tabbernav li.tabberactive a {
     background-color: orange;
     background-size: 100%;
     background-image: linear-gradient(to bottom, #ffa500 0%, #ffffff 100%);
-    border-bottom: 1px solid #fff;
+    border-bottom: 0px;
     font-weight: bold;
 }
 
