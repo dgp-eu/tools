@@ -43,6 +43,7 @@ public final class ZoneDataServiceClass {
             "America/Denver",
             "America/Chicago",
             "America/New_York",
+            "UTC",
             "Europe/London",
             "Europe/Prague",
             "Europe/Berlin",

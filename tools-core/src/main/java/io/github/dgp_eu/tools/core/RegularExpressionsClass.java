@@ -74,7 +74,7 @@ public final class RegularExpressionsClass {
     /** Regular Expression for Prompt Parameters within SQL Query */
     public static final String REGEXP_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
     /** Regular Expression for Time identification/validation */
-    private static final String REGEXP_TIME = "([0-1]\\d|2[0-3])\\:[0-5]}\\d\\:[0-5]\\d";
+    private static final String REGEXP_TIME = "([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d";
     /** Regular Expression for Time-stamp identification/validation */
     private static final String REGEXP_TS = REGEXP_DATE + "\\s" + REGEXP_TIME;
     /** Regular Expression for Time-stamp with Milliseconds identification/validation */
@@ -240,9 +240,9 @@ public final class RegularExpressionsClass {
      * Populates MAP_PATTERNS list
      */
     private static void loadDateTimePatternsIntoMap() {
-        MAP_PATTERNS.put(BasicStructuresClass.STR_JUST_DATE, new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
-        MAP_PATTERNS.put(BasicStructuresClass.STR_TIMESTAMP, new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
         MAP_PATTERNS.put(BasicStructuresClass.STR_TS_MSEC, new DateTimeInfoRec(TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_LONG, TimingClass.DATE_TIME_MS_ABRV, REGEXP_TS_MS));
+        MAP_PATTERNS.put(BasicStructuresClass.STR_TIMESTAMP, new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
+        MAP_PATTERNS.put(BasicStructuresClass.STR_JUST_DATE, new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
     }
 
     /**
@@ -437,16 +437,19 @@ public final class RegularExpressionsClass {
             boolean bolReturn = false;
             if (inputString != null) {
                 final String regularExpression = switch (mapIdentifier) {
-                    case "byteSize"        -> REGEXP_BYTE_SIZE;
-                    case "decimal"         -> REGEXP_NO_DECIMAL;
-                    case "fullAging"       -> REGEXP_AGING_FULL;
-                    case "long"            -> REGEXP_NO_LONG;
-                    case "numeric"         -> REGEXP_NO_NUMERIC;
-                    case REGEXP_LONG_TS_MS -> REGEXP_LONG_TS_MS;
-                    case STR_AGING_TS_MS   -> REGEXP_AGE_TS_MS9;
-                    case STR_AGING_TS      -> REGEXP_AGE_TS9;
-                    case "version"         -> REGEXP_VERSION;
-                    default                -> MAP_PATTERNS.get(mapIdentifier).regularExpression;
+                    case "byteSize"                         -> REGEXP_BYTE_SIZE;
+                    case "decimal"                          -> REGEXP_NO_DECIMAL;
+                    case "fullAging"                        -> REGEXP_AGING_FULL;
+                    case "long"                             -> REGEXP_NO_LONG;
+                    case "numeric"                          -> REGEXP_NO_NUMERIC;
+                    case REGEXP_LONG_TS_MS                  -> REGEXP_LONG_TS_MS;
+                    case STR_AGING_TS_MS                    -> REGEXP_AGE_TS_MS9;
+                    case STR_AGING_TS                       -> REGEXP_AGE_TS9;
+                    case BasicStructuresClass.STR_TIMESTAMP -> REGEXP_TS;
+                    case BasicStructuresClass.STR_TS_MSEC   -> REGEXP_TS_MS;
+                    case BasicStructuresClass.STR_JUST_DATE -> REGEXP_DATE;
+                    case "version"                          -> REGEXP_VERSION;
+                    default                                 -> MAP_PATTERNS.get(mapIdentifier).regularExpression;
                 };
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
                 bolReturn = pattern.matcher(inputString).matches();

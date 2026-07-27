@@ -244,7 +244,7 @@ public final class HtmlClass {
         /** variable for HTML Table */
         private static final List<String> listTableLines = new ArrayList<>();
         /** Time Zone variable */
-        private static final long LARGE_STRING = 20;
+        private static final long LARGE_STRING = 25;
         /** variable for Remember Key */
         private static String rememberKey;
         /** variable for row counter */
@@ -252,7 +252,9 @@ public final class HtmlClass {
         /** variable for Table Header */
         private static String strTableHeader = "";
         /** Time Zone variable */
-        private static String strTimeZone;
+        private static String strInTimeZone;
+        /** Time Zone variable */
+        private static String strOutTimeZone;
         /** variable for Counter usage */
         private static boolean useCounter;
 
@@ -262,8 +264,11 @@ public final class HtmlClass {
          * @return String
          */
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
-            if (strTimeZone == null) {
-                setTimeZone(System.getProperty("user.timezone"));
+            if (strInTimeZone == null) {
+                setInTimeZone(System.getProperty("user.timezone"));
+            }
+            if (strOutTimeZone == null) {
+                setOutTimeZone(System.getProperty("user.timezone"));
             }
             listTableLines.clear();
             strTableHeader = "";
@@ -273,7 +278,8 @@ public final class HtmlClass {
                 processRecord(recordMap);
             }
             finish();
-            return String.join("", listTableLines);
+            return String.join("", listTableLines)
+                    + String.format("<div>InputTZ = %s, OutputTZ = %s</div>", strInTimeZone, strOutTimeZone);
         }
 
         /**
@@ -343,12 +349,21 @@ public final class HtmlClass {
         }
 
         /**
-         * Setter for strTimeZone
+         * Setter for strInTimeZone
          * @param inTimeZone input time zone
          */
-        public static void setTimeZone(final String inTimeZone) {
-            strTimeZone = inTimeZone;
-            TimingClass.LocalizationSubClass.setOutputTimeZone(inTimeZone);
+        public static void setInTimeZone(final String inTimeZone) {
+            strInTimeZone = inTimeZone;
+            TimingClass.LocalizationSubClass.setInputTimeZone(inTimeZone);
+        }
+
+        /**
+         * Setter for strInTimeZone
+         * @param outTimeZone output time zone
+         */
+        public static void setOutTimeZone(final String outTimeZone) {
+            strOutTimeZone = outTimeZone;
+            TimingClass.LocalizationSubClass.setOutputTimeZone(outTimeZone);
         }
 
         /**

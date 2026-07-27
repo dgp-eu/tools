@@ -464,11 +464,13 @@ public final class TimingClass {
         public static String convertDateOrTimestampFormats(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
             String outDate = ""; 
             try {
-                final ZonedDateTime zonedDateTime;
-                if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
-                    zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.of(inputTimeZone));
-                } else {
+                ZonedDateTime zonedDateTime = null;
+                if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(inDate)) {
                     zonedDateTime = LocalDateTime.parse(inDate, inTimeFormat).atZone(ZoneId.of(inputTimeZone));
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(inDate)) {
+                    zonedDateTime = LocalDateTime.parse(inDate, inTimeFormat).atZone(ZoneId.of(inputTimeZone));
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
+                    zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.of(inputTimeZone));
                 }
                 ZonedDateTime outTime = zonedDateTime;
                 if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {

@@ -79,7 +79,7 @@ public final class UndertowClass {
         ParametersSubClass.redirectPageIfNeeded(inExchange);
         final Object tzAttribute = UndertowClass.SessionSubClass.getSession().getAttribute("TZ");
         final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
-        HtmlClass.TableSubClass.setTimeZone(timeZone);
+        HtmlClass.TableSubClass.setOutTimeZone(timeZone);
     }
 
     /**

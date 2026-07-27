@@ -32,6 +32,8 @@ import io.undertow.server.HttpHandler;
  * Web interface class
  */
 public final class WebClass {
+    /** Constant for "Experimental Output" */
+    public static final String STR_XPRMT_OUT = "Experimental Output";
     /** Constant for "Software Releases" */
     public static final String STR_SOFT_RELEASES = "Software Releases";
     /** Menu */
@@ -40,6 +42,29 @@ public final class WebClass {
     private static final Properties EMPTY_TABLE_PROPERTIES = new Properties();
     /** Variable for Folders relevant for Checksum Exposure */
     private static String[] strFolderNames = new String[0];
+
+    /**
+     * Experimental Output
+     * @return String with experimental table content
+     */
+    private static String buildExperimentalOutput() {
+        final List<Properties> outProperties = new ArrayList<>();
+        final Properties crtRow = new Properties();
+        crtRow.put("Null Column", "NULL");
+        crtRow.put("Empty Column", "");
+        crtRow.put("Decimal Column", "16.25");
+        crtRow.put("Integer Column", "1975");
+        crtRow.put("Long Column", "2147483648");
+        crtRow.put("DateTime w. Milliseconds Column", "2026-07-27 13:50:32.123");
+        crtRow.put("DateTime Column", "2025-01-01 12:20:59");
+        crtRow.put("Date Column", "2099-12-31");
+        outProperties.add(crtRow);
+        final List<String> desiredOrder = List.of("Null Column");
+        final List<SequencedMap<Object, Object>> orderedList = outProperties.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
+    }
 
     /**
      * Menu builder
@@ -67,6 +92,10 @@ public final class WebClass {
                 BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
                 BasicStructuresClass.STR_MENU, "Environment Details",
                 BasicStructuresClass.STR_TITLE, "Environment Details"));
+        menu.put(STR_XPRMT_OUT, Map.of(
+                BasicStructuresClass.STR_ICON, "fa-solid fa-flask-vial",
+                BasicStructuresClass.STR_MENU, STR_XPRMT_OUT,
+                BasicStructuresClass.STR_TITLE, STR_XPRMT_OUT));
         return menu;
     }
 
@@ -140,6 +169,7 @@ public final class WebClass {
         final String page = UndertowClass.ParametersSubClass.getPageParameter();
         final String strSqLiteInfoBox = HtmlClass.buildFileInfoBox(Path.of(SpecificSqLiteClass.getInternalDatabase()));
         return output -> output.writeContent(switch(page) {
+            case STR_XPRMT_OUT                          -> buildExperimentalOutput();
             case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable()
                     + HtmlClass.buildFileInfoBox(Path.of(ProjectClass.getPomFile()));
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
