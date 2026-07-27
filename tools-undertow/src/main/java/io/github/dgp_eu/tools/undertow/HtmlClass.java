@@ -278,8 +278,7 @@ public final class HtmlClass {
                 processRecord(recordMap);
             }
             finish();
-            return String.join("", listTableLines)
-                    + String.format("<div>InputTZ = %s, OutputTZ = %s</div>", strInTimeZone, strOutTimeZone);
+            return String.join("", listTableLines);
         }
 
         /**
