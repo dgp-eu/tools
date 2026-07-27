@@ -121,7 +121,7 @@ public final class RemoteInformationRetrievalClass {
             docBuilderFactory.setExpandEntityReferences(false);
             // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
             docBuilderFactory.setXIncludeAware(false);
-            doc = parseDocumentFromInputStram(inStream, docBuilderFactory);
+            doc = parseDocumentFromInputStream(inStream, docBuilderFactory);
         } catch (ParserConfigurationException e) {
             final String strFeedback = String.format("Parser Configuration Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
@@ -135,7 +135,7 @@ public final class RemoteInformationRetrievalClass {
      * @param docBuilderFactory DocumentBuilderFactory
      * @return Document
      */
-    private static Document parseDocumentFromInputStram(final InputStream inStream, final DocumentBuilderFactory docBuilderFactory) {
+    private static Document parseDocumentFromInputStream(final InputStream inStream, final DocumentBuilderFactory docBuilderFactory) {
         Document doc = null;
         try {
             final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -147,7 +147,7 @@ public final class RemoteInformationRetrievalClass {
             final String strFeedback = String.format("SAXException thrown... DOCTYPE was passed into the XML document... %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         } catch (IOException e) {
-            final String strFeedback = String.format("IOException occurred, XXE may still possible... %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format("IOException occurred, XXE may still be possible... %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return doc;

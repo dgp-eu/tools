@@ -83,12 +83,20 @@ public final class HtmlClass {
             try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
                 final String strFeedback2 = String.format("Input Stream is: %s", inStream);
                 LogExposureClass.LOGGER.debug(strFeedback2);
-                assert inStream != null;
+                if (inStream == null) {
+                    final String strFeedback21 = String.format("Resource not found in JAR for checksum: %s", internalFile);
+                    LogExposureClass.LOGGER.error(strFeedback21);
+                    throw new IOException(strFeedback21);
+                }
                 fileSize = String.format(Locale.US, strThousandSep, inStream.transferTo(OutputStream.nullOutputStream()));
                 final URL resourceUrl = HtmlClass.class.getResource(internalFile);
                 final String strFeedback3 = String.format("URI is: %s", resourceUrl);
                 LogExposureClass.LOGGER.debug(strFeedback3);
-                assert resourceUrl != null;
+                if (resourceUrl == null) {
+                    final String strFeedback4 = String.format("Resource URL not found in JAR: %s", internalFile);
+                    LogExposureClass.LOGGER.error(strFeedback4);
+                    throw new IOException(strFeedback4);
+                }
                 final long lastModified = resourceUrl.openConnection().getLastModified();
                 final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
                 fileModified = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
@@ -239,24 +247,22 @@ public final class HtmlClass {
     public static final class TableSubClass {
         /** CSS to align text to right */
         private static final String CSS_TEXT_RIGHT = "text-align:right;";
-        /** variable for Current Tab value */
-        private static String currentTabValue;
-        /** variable for HTML Table */
-        private static final List<String> listTableLines = new ArrayList<>();
         /** Time Zone variable */
         private static final long LARGE_STRING = 25;
-        /** variable for Remember Key */
-        private static String rememberKey;
-        /** variable for row counter */
-        private static int rowCounter;
-        /** variable for Table Header */
-        private static String strTableHeader = "";
         /** Time Zone variable */
         private static String strInTimeZone;
         /** Time Zone variable */
         private static String strOutTimeZone;
-        /** variable for Counter usage */
-        private static boolean useCounter;
+
+        /** Per-call mutable context to avoid shared static state. */
+        private static final class TableBuildContext {
+            private String currentTabValue;
+            private final List<String> listTableLines = new ArrayList<>();
+            private String rememberKey;
+            private int rowCounter;
+            private String strTableHeader = "";
+            private boolean useCounter;
+        }
 
         /**
          * Generate HTML from a Map of values
@@ -264,31 +270,32 @@ public final class HtmlClass {
          * @return String
          */
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
+            final TableBuildContext ctx = new TableBuildContext();
             if (strInTimeZone == null) {
                 setInTimeZone(System.getProperty("user.timezone"));
             }
             if (strOutTimeZone == null) {
                 setOutTimeZone(System.getProperty("user.timezone"));
             }
-            listTableLines.clear();
-            strTableHeader = "";
-            rememberKey = getRememberKey(objFeatures);
-            useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
+            ctx.listTableLines.clear();
+            ctx.strTableHeader = "";
+            ctx.rememberKey = getRememberKey(objFeatures);
+            ctx.useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
             for (final SequencedMap<Object, Object> recordMap : inList) {
-                processRecord(recordMap);
+                processRecord(recordMap, ctx);
             }
-            finish();
-            return String.join("", listTableLines);
+            finish(ctx);
+            return String.join("", ctx.listTableLines);
         }
 
         /**
          * final
          */
-        private static void finish() {
-            if (!strTableHeader.isEmpty()) {
-                listTableLines.add("</tbody></table>");
-                if (!rememberKey.isEmpty()) {
-                    listTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
+        private static void finish(final TableBuildContext tblContext) {
+            if (!tblContext.strTableHeader.isEmpty()) {
+                tblContext.listTableLines.add("</tbody></table>");
+                if (!tblContext.rememberKey.isEmpty()) {
+                    tblContext.listTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", tblContext.currentTabValue));
                 }
             }
         }
@@ -310,22 +317,22 @@ public final class HtmlClass {
          * handle Tab switch
          * @param recordMap properties of the record to be transformed into HTML row
          */
-        private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap) {
-            final Object valObj = recordMap.get(rememberKey);
+        private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
+            final Object valObj = recordMap.get(tblContext.rememberKey);
             final String valueForTab = valObj == null ? "null" : valObj.toString();
-            final String prev = currentTabValue == null ? "" : currentTabValue;
+            final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
             if (!valueForTab.equalsIgnoreCase(prev)) {
-                if (listTableLines.isEmpty()) {
+                if (tblContext.listTableLines.isEmpty()) {
                     // first tab: open tab container
-                    listTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
-                } else if (currentTabValue != null) {
+                    tblContext.listTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
+                } else if (tblContext.currentTabValue != null) {
                     // close previous tab's table
-                    listTableLines.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
+                    tblContext.listTableLines.add(String.format("</tbody></table></div><!-- %s -->", tblContext.currentTabValue));
                 }
                 // open new tab with header
-                listTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
-                currentTabValue = valueForTab;
-                rowCounter = 0;
+                tblContext.listTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, tblContext.strTableHeader));
+                tblContext.currentTabValue = valueForTab;
+                tblContext.rowCounter = 0;
             }
         }
 
@@ -333,18 +340,18 @@ public final class HtmlClass {
          * process each record
          * @param recordMap map with record content
          */
-        private static void processRecord(final SequencedMap<Object, Object> recordMap) {
-            HeaderSubSubClass.ensureHeaderExists(recordMap);
-            if (rememberKey.isEmpty()) {
-                HeaderSubSubClass.ensureHeaderAppended();
+        private static void processRecord(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
+            HeaderSubSubClass.ensureHeaderExists(recordMap, tblContext);
+            if (tblContext.rememberKey.isEmpty()) {
+                HeaderSubSubClass.ensureHeaderAppended(tblContext);
             } else {
-                handleTabSwitch(recordMap);
+                handleTabSwitch(recordMap, tblContext);
             }
-            if (useCounter) {
-                rowCounter++;
-                recordMap.put("#", String.valueOf(rowCounter));
+            if (tblContext.useCounter) {
+                tblContext.rowCounter++;
+                recordMap.put("#", String.valueOf(tblContext.rowCounter));
             }
-            listTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap));
+            tblContext.listTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap, tblContext));
         }
 
         /**
@@ -375,11 +382,11 @@ public final class HtmlClass {
              * @param recordMap properties of the record to be transformed into HTML row
              * @return String
              */
-            private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap) {
+            private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
                 final StringBuilder strTableRow = new StringBuilder(1000);
                 strTableRow.append("<tr>");
                 recordMap.forEach((strKey, objValue) -> {
-                    if (!rememberKey.equalsIgnoreCase(strKey.toString())
+                    if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
                             && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
                         final StringBuilder cellStyle = new StringBuilder(100);
                         if (recordMap.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
@@ -491,16 +498,16 @@ public final class HtmlClass {
              * @param recordMap properties of the record to be transformed into HTML row
              * @return String
              */
-            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap) {
+            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
                 final StringBuilder strBuilder = new StringBuilder(100);
                 strBuilder.append("<table><thead>");
                 recordMap.forEach((strKey, _) -> {
-                    if (!rememberKey.equalsIgnoreCase(strKey.toString())
+                    if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
                             && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
                         strBuilder.append(String.format("<th>%s</th>", strKey));
                     }
                 });
-                if (useCounter) {
+                if (tblContext.useCounter) {
                     strBuilder.append("<th>#</th>");
                 }
                 strBuilder.append("</thead><tbody>");
@@ -510,10 +517,10 @@ public final class HtmlClass {
             /**
              * ensuring Table Header is appended
              */
-            private static void ensureHeaderAppended() {
-                if (listTableLines.isEmpty()) {
-                    listTableLines.add(strTableHeader);
-                    rowCounter = 0;
+            private static void ensureHeaderAppended(final TableBuildContext tblContext) {
+                if (tblContext.listTableLines.isEmpty()) {
+                    tblContext.listTableLines.add(tblContext.strTableHeader);
+                    tblContext.rowCounter = 0;
                 }
             }
 
@@ -521,9 +528,9 @@ public final class HtmlClass {
              * initiating Table Header
              * @param recordMap records to parse
              */
-            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap) {
-                if (strTableHeader.isEmpty()) {
-                    strTableHeader = buildTableHeader(recordMap);
+            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
+                if (tblContext.strTableHeader.isEmpty()) {
+                    tblContext.strTableHeader = buildTableHeader(recordMap, tblContext);
                 }
             }
 

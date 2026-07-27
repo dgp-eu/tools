@@ -389,7 +389,7 @@ public final class RegularExpressionsClass {
                 final int days       = Integer.parseInt(inString.substring(9, 11));
                 final int intHours   = Integer.parseInt(inString.substring(12, 14));
                 final int intMinutes = Integer.parseInt(inString.substring(15, 17));
-                final int intSeconds = Integer.parseInt(inString.substring(18, 19));
+                final int intSeconds = Integer.parseInt(inString.substring(18, 20));
                 final int mili       = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
                 return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
             } else {
