@@ -248,7 +248,7 @@ public final class HtmlClass {
         /** CSS to align text to right */
         private static final String CSS_TEXT_RIGHT = "text-align:right;";
         /** Time Zone variable */
-        private static final long LARGE_STRING = 25;
+        private static final long LARGE_STRING = 20;
         /** Time Zone variable */
         private static String strInTimeZone;
         /** Time Zone variable */
