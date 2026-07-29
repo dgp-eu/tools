@@ -4,13 +4,22 @@ package io.github.dgp_eu.tools.json;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.networknt.schema.OutputFormat;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.dialect.Dialects;
+import com.networknt.schema.output.OutputUnit;
+
+import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
 import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -20,6 +29,39 @@ import tools.jackson.databind.json.JsonMapper;
  * JSON handling
  */
 public final class JsonOperationsClass {
+
+    public static void validateJsonFileAgainstJsonSchemaSubClass(final String fileSchema, final String fileData) {
+        final ObjectMapper mapper = JsonMapper.builder()
+                .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .build();
+        try(InputStream schemaStream = JsonOperationsClass.class.getResourceAsStream(fileSchema)) {
+            // Load the JSON Schema
+            final SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft202012());
+            final Schema schema = schemaRegistry.getSchema(schemaStream);
+            // Load the JSON data
+            JsonNode jsonNode = getJsonFileNodes(Path.of(fileData));
+            // Validate
+            final OutputUnit outputUnit = schema.validate(jsonNode, OutputFormat.HIERARCHICAL, executionContext -> {
+                executionContext.executionConfig(executionConfig -> executionConfig
+                        .annotationCollectionEnabled(true)
+                        .annotationCollectionFilter(keyword -> true)
+                        .formatAssertionsEnabled(true));
+            });
+            if (!outputUnit.isValid()) {
+                final String strFeedback = String.format("Errors on data validation on the file %s using %s schema were encountered... %s",
+                        fileData,
+                        fileSchema,
+                        outputUnit);
+                LogExposureClass.LOGGER.debug(strFeedback);
+                throw new IllegalArgumentException(strFeedback);
+            }
+        } catch (IOException ei) {
+            final Path ptPrjProps = Path.of(fileSchema);
+            final String strFeedback = String.format(FileOperationsClass.FILE_FIND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+        }
+    }
 
     /**
      * check if input JSON is valid

@@ -66,6 +66,7 @@ Various Java classes to be re-used
 * [Java Secret: Loading and unloading static fields](https://www.javacodegeeks.com/2011/10/java-secret-loading-and-unloading.html)
 * [Java Secret: Using an enum to build a State machine](https://www.javacodegeeks.com/2011/07/java-secret-using-enum-to-build-state.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
+* [JSON Schema Validator in Java: A Comprehensive Guide](https://www.javaspring.net/blog/json-schema-validator-java/)
 * [Laws of Software Design](https://www.javacodegeeks.com/2011/01/laws-of-software-design.html)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
 * [Switch as an expression in Java with Lambda-like syntax](https://www.javacodegeeks.com/2020/05/switch-as-an-expression-in-java-with-lambda-like-syntax.html)
