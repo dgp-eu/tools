@@ -58,7 +58,7 @@
     </modules>
 
     <properties>
-        <revision>1.1.1-SNAPSHOT</revision>
+        <revision>1.1.1</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -341,13 +341,9 @@
                     <configuration>
                         <updatePomFile>true</updatePomFile>
                         <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                        <pomElements>
-                            <parent>expand</parent>
-                            <repositories>remove</repositories>
-                            <pluginRepositories>remove</pluginRepositories>
-                        </pomElements>
                     </configuration>
                     <executions>
+                        <!-- enable flattening -->
                         <execution>
                             <id>flatten</id>
                             <phase>process-resources</phase>
@@ -355,9 +351,9 @@
                                 <goal>flatten</goal>
                             </goals>
                         </execution>
+                        <!-- ensure proper cleanup -->
                         <execution>
-                            <id>flatten-clean</id>
-                            <phase>clean</phase>
+                            <id>flatten.clean</id>
                             <goals>
                                 <goal>clean</goal>
                             </goals>
