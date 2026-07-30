@@ -178,7 +178,7 @@ public final class HtmlClass {
             final String strLabel = objFeatures.getOrDefault("Label", "").toString()
                     + (objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
             final String tagLabelRaw = "<label for=\"%s\"%s>%s:</label>";
-            final String strLabelStyle = objFeatures.getOrDefault("Label Style", "").toString().isEmpty() ? "" : "style=\"" + objFeatures.get("Label Style").toString() + "\"";
+            final String strLabelStyle = objFeatures.getOrDefault("Label Style", "").toString().isEmpty() ? "" : " style=\"" + objFeatures.get("Label Style").toString() + "\"";
             return String.format(tagLabelRaw, objFeatures.get("Id"), strLabelStyle, strLabel)
                     + (objFeatures.getOrDefault("Label on Same Line", "").toString().isEmpty() ? "<br/>" : "");
         }
@@ -247,7 +247,7 @@ public final class HtmlClass {
     public static final class TableSubClass {
         /** CSS to align text to right */
         private static final String CSS_TEXT_RIGHT = "text-align:right;";
-        /** Time Zone variable */
+        /** Minimum string length threshold for time-zone pattern replacement */
         private static final long LARGE_STRING = 20;
         /** Time Zone variable */
         private static String strInTimeZone;

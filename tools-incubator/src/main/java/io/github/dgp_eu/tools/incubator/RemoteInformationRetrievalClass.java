@@ -55,7 +55,7 @@ public final class RemoteInformationRetrievalClass {
     }
 
     /**
-     * build URL from Strin
+     * build URL from String
      * @param strWebSite input URL as String
      * @return URL
      */

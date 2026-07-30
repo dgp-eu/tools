@@ -390,8 +390,8 @@ public final class RegularExpressionsClass {
                 final int intHours   = Integer.parseInt(inString.substring(12, 14));
                 final int intMinutes = Integer.parseInt(inString.substring(15, 17));
                 final int intSeconds = Integer.parseInt(inString.substring(18, 20));
-                final int mili       = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
-                return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
+                final int milli      = strLength == 24 ? Integer.parseInt(inString.substring(21, 24)) : 0;
+                return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, milli);
             } else {
                 final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging Timestamp String... %s",
                         inString,

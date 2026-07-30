@@ -126,7 +126,7 @@ public final class JsonOperationsClass {
             jsonNode.forEach(arrayElement->{
                 final Properties properties = new Properties();
                 for (final Map.Entry<String, JsonNode> entry : arrayElement.properties()) {
-                    properties.put(entry.getKey(), entry.getValue());
+                    properties.put(entry.getKey(), entry.getValue().asString());
                 }
                 listProperties.add(properties);
             });
