@@ -71,7 +71,7 @@
         <!-- Dependency versions -->
         <jackson.version>3.2.1</jackson.version>
         <json-schema-validator.version>3.0.6</json-schema-validator.version>
-        <jspecify.version>1.0.0</jspecify.version>
+        <jspecify.version>1.0.1</jspecify.version>
         <jte.version>3.2.4</jte.version>
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <log4j.version>2.26.1</log4j.version>
