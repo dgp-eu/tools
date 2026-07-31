@@ -1,7 +1,7 @@
 /*
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.incubator;
+package io.github.dgp_eu.tools.web;
 
 import java.io.IOException;
 import java.io.InputStream;

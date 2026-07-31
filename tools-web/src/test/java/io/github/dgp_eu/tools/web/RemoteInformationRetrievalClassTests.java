@@ -1,4 +1,4 @@
-package io.github.dgp_eu.tools.incubator;
+package io.github.dgp_eu.tools.web;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

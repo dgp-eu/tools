@@ -9,8 +9,7 @@
 - **tools-databases**: Shared utility library for database access and operations
 - **tools-databases-demo**: CLI app for database access and operations
 - **tools-environment**: CLI app and shared utility library for system environment capture
-- **tools-incubator**: CLI app and shared utility library for experimental features not yet production-ready
-- **tools-json_split**: CLI app for splitting large JSON files using streaming parsing
+- **tools-json**: CLI app for splitting large JSON files using streaming parsing
 - **tools-undertow**: Shared utility library for web server operations using Undertow and JTE
 - **tools-utils**: CLI app for various file system operations
 - **tools-web**: CLI app providing web interface for system information and utilities (Undertow + JTE)
@@ -37,13 +36,7 @@ tools (parent POM)
 ├── tools-environment (io.github.dgp-eu.tools.environment)
 │   └── Depends on: tools-core
 │   └── Depends on: tools-cli
-├── tools-incubator (io.github.dgp-eu.tools.incubator)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
 ├── tools-json (io.github.dgp-eu.tools.json)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
-├── tools-json_split (io.github.dgp-eu.tools.json_split)
 │   └── Depends on: tools-core
 │   └── Depends on: tools-cli
 ├── tools-undertow (io.github.dgp-eu.tools.undertow)
@@ -65,7 +58,7 @@ tools (parent POM)
 - `TimingClass`: ConversionSubClass, LocalizationSubClass
 - `ProjectClass`: ApplicationSubClass, LoaderSubClass, ComponentsSubClass
 
-CLI apps (archiving, json_split, etc.) use **picocli** for command parsing; extend AbstractApplication base class.
+CLI apps (archiving, etc.) use **picocli** for command parsing; extend AbstractApplication base class.
 
 ## Build & Test Workflow
 
@@ -106,9 +99,7 @@ mvn central-publishing:publish
 | `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                          | Database functionality                                                                                                      |
 | `tools-databases-demo/src/main/java/org/dgp-eu/tools/databases/demo/Application.java` | Entry point; picocli @Command                                                                                               |
 | `tools-environment/src/main/java/org/dgp-eu/tools/environment/Application.java`       | Entry point; picocli @Command                                                                                               |
-| `tools-incubator/src/main/java/org/dgp-eu/tools/incubator/Application.java`           | Entry point; picocli @Command                                                                                               |
 | `tools-json/src/main/java/org/dgp-eu/tools/json/Application.java`                     | Entry point; picocli @Command                                                                                               |
-| `tools-json_split/src/main/java/org/dgp-eu/tools/json_split/Application.java`         | Entry point; picocli @Command                                                                                               |
 | `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                      | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
 | `tools-undertow/src/main/resources/undertow.properties`                               | Web server defaults                                                                                                         |
 | `tools-utils/src/main/java/org/dgp-eu/tools/utils/Application.java`                   | Entry point; picocli @Command                                                                                               |
@@ -185,14 +176,14 @@ This avoids creating separate files while maintaining logical grouping.
 
 ## Cross-Module Communication
 
-**tools-archiving & tools-json_split** depend on **tools-core** but do NOT depend on each other.
+**tools-archiving** depend on **tools-core** but do NOT depend on each other.
 - No circular dependencies
 - Each child module creates self-contained JAR with dependencies via maven-assembly-plugin
 - Tools available for reuse: `FileOperationsClass`, `BasicStructuresClass`
 
 ### Common Utility Access Pattern
 ```java
-// In tools-archiving or tools-json_split
+// In tools-archiving
 import io.github.dgp_eu.tools.core.*;
 
 // Use static methods from core utilities
@@ -204,20 +195,21 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 
 | Dependency                                                           | Version  | Used For                                             | Scope   |
 |----------------------------------------------------------------------|----------|------------------------------------------------------|---------|
-| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.0    | JSON parsing and generation (custom build)           | compile |
-| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.0    | XML serialization/deserialization (custom build)     | compile |
-| SQLite JDBC                                                          | 3.53.2.0 | Database operations (sqlite-jdbc) in tools-databases | compile |
+| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.1    | JSON parsing and generation (custom build)           | compile |
+| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.1    | XML serialization/deserialization (custom build)     | compile |
+| SQLite JDBC                                                          | 3.53.2.1 | Database operations (sqlite-jdbc) in tools-databases | compile |
 | Picocli                                                              | 4.7.7    | CLI command parsing and help                         | compile |
 | Undertow Core                                                        | 2.4.2    | Lightweight web server (tools-web Java Web UI)       | compile |
-| OSHI Core FFM                                                        | 7.3.2    | OS info capture (system memory, CPU, etc.)           | compile |
+| OSHI Core FFM                                                        | 7.4.3    | OS info capture (system memory, CPU, etc.)           | compile |
 | JTE                                                                  | 3.2.4    | Java Template Engine (tools-web UI rendering)        | compile |
 | Log4j Core                                                           | 2.26.1   | Logging implementation via SLF4J adapter             | compile |
 | Log4j SLF4J2 Adapter                                                 | 2.26.1   | SLF4J 2.0 API binding to Log4j 2 Core                | compile |
 | Maven Model                                                          | 3.9.16   | POM file parsing (tools-core features)               | compile |
 | Plexus Interpolation                                                 | 1.29     | String interpolation utilities                       | compile |
-| JUnit Jupiter                                                        | 6.1.1    | Testing framework                                    | test    |
+| JUnit Jupiter                                                        | 6.1.2    | Testing framework                                    | test    |
 | JaCoCo                                                               | 0.8.15   | Code coverage measurement                            | test    |
-| JSpecify                                                             | 1.0.0    | Null-safety annotations                              | compile |
+| JSpecify                                                             | 1.0.1    | Null-safety annotations                              | compile |
+| JSON Schema Validator                                                | 3.0.6    | JSON Schema validator                                | compile |
 
 ## Common Workflows for Agent-Assisted Development
 
@@ -228,7 +220,7 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 4. Use `@Nullable`/`@Nonnull` annotations
 5. Run: `mvn -f tools-core/pom.xml clean verify`
 
-### Adding a Feature to tools-archiving or tools-json_split
+### Adding a Feature to tools-archiving
 1. Add picocli @Command subcommand class
 2. Register in Application.java `@Command(subcommands = {NewCommand.class, ...})`
 3. Implement logic using core utilities (`FileOperationsClass`, `BasicStructuresClass`, etc.)
@@ -253,7 +245,7 @@ mvn dependency-check:check
 
 ## Important Notes for AI Agents
 
-- **Module Isolation**: tools-core has NO dependencies on archiving or json_split; keep it generic
+- **Module Isolation**: tools-core has NO dependencies on archiving; keep it generic
 - **Test Execution**: Use `@DisplayName` for debugging; tests require `--add-opens` JVM arg (already configured)
 - **Null Handling**: Return error codes (e.g., -99 for null, -3 for missing) rather than throwing exceptions in utilities
 - **Version Consistency**: Always update root pom.xml `<dependencyManagement>` for new major dependencies

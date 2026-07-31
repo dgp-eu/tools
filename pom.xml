@@ -49,9 +49,7 @@
         <module>tools-databases</module>
         <module>tools-databases-demo</module>
         <module>tools-environment</module>
-        <module>tools-incubator</module>
         <module>tools-json</module>
-        <module>tools-json_split</module>
         <module>tools-utils</module>
         <module>tools-undertow</module>
         <module>tools-web</module>
@@ -76,7 +74,7 @@
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <log4j.version>2.26.1</log4j.version>
         <maven-model.version>3.9.16</maven-model.version>
-        <oshi-core-ffm.version>7.4.2</oshi-core-ffm.version>
+        <oshi-core-ffm.version>7.4.3</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.2.1</sqlite-jdbc.version>
@@ -91,7 +89,6 @@
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <takari-lifecycle-plugin.version>2.3.4</takari-lifecycle-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>

@@ -41,6 +41,10 @@
             <artifactId>tools-undertow</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
