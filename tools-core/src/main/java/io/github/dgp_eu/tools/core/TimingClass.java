@@ -472,11 +472,16 @@ public final class TimingClass {
                 } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
                     zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.of(inputTimeZone));
                 }
-                ZonedDateTime outTime = zonedDateTime;
-                if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
-                    outTime = zonedDateTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
+                if (zonedDateTime == null) {
+                    final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, "ZonedDateTime is null");
+                    LogExposureClass.LOGGER.error(strFeedback);
+                } else {
+                    ZonedDateTime outTime = zonedDateTime;
+                    if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
+                        outTime = zonedDateTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
+                    }
+                    outDate = outTime.format(outTimeFormat);
                 }
-                outDate = outTime.format(outTimeFormat);
             } catch (DateTimeParseException e) {
                 final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
