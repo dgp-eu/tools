@@ -209,17 +209,15 @@ public final class JsonOperationsClass {
     /**
      * Validate JSON file against embeded JSON schema
      * @param fileSchema input embeded JSON validation schema
-     * @param fileData input JSON file to be validated
+     * @param inJsonNode input JSON node to be validated
      */
-    public static void validateJsonFileAgainstEmbededJsonValidationSchema(final String fileSchema, final String fileData) {
+    public static void validateJsonNodeAgainstEmbededJsonValidationSchema(final String fileSchema, final JsonNode inJsonNode) {
         try(InputStream schemaStream = JsonOperationsClass.class.getResourceAsStream(fileSchema)) {
             // Load the JSON Schema
             final SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft202012());
             final Schema schema = schemaRegistry.getSchema(schemaStream);
-            // Load the JSON data
-            JsonNode jsonNode = getJsonFileNodes(Path.of(fileData));
             // Validate
-            final OutputUnit outputUnit = schema.validate(jsonNode, OutputFormat.HIERARCHICAL, executionContext -> {
+            final OutputUnit outputUnit = schema.validate(inJsonNode, OutputFormat.HIERARCHICAL, executionContext -> {
                 executionContext.executionConfig(executionConfig -> executionConfig
                         .annotationCollectionEnabled(true)
                         .annotationCollectionFilter(keyword -> true)
@@ -227,7 +225,7 @@ public final class JsonOperationsClass {
             });
             if (!outputUnit.isValid()) {
                 final String strFeedback = String.format("Errors on data validation on the file %s using %s schema were encountered... %s",
-                        fileData,
+                        inJsonNode,
                         fileSchema,
                         outputUnit);
                 LogExposureClass.LOGGER.debug(strFeedback);
