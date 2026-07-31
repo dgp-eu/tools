@@ -56,6 +56,30 @@ public final class RemoteInformationRetrievalClass {
         }
 
         /**
+         * get Document from inStream
+         * @param inStream Input Stream
+         * @return Document
+         */
+        private static Document getDocumentFromInputStream(final InputStream inStream) {
+            Document doc = null;
+            final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            try {
+                docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                docBuilderFactory.setExpandEntityReferences(false);
+                // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+                docBuilderFactory.setXIncludeAware(false);
+                doc = parseDocumentFromInputStream(inStream, docBuilderFactory);
+            } catch (ParserConfigurationException e) {
+                final String strFeedback = String.format("Parser Configuration Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return doc;
+        }
+
+        /**
          * get latest version if a Maven Package
          * @param inPackage input Maven package
          * @return String as version
@@ -82,6 +106,30 @@ public final class RemoteInformationRetrievalClass {
         }
 
         /**
+         * parse Doc from Input Stream
+         * @param inStream Input Stream
+         * @param docBuilderFactory DocumentBuilderFactory
+         * @return Document
+         */
+        private static Document parseDocumentFromInputStream(final InputStream inStream, final DocumentBuilderFactory docBuilderFactory) {
+            Document doc = null;
+            try {
+                final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+                doc = docBuilder.parse(inStream);
+            } catch (ParserConfigurationException e) {
+                final String strFeedback = String.format("ParserConfigurationException was thrown while attempting to read remote XML from an URL... %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            } catch (SAXException e) {
+                final String strFeedback = String.format("SAXException thrown... DOCTYPE was passed into the XML document... %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            } catch (IOException e) {
+                final String strFeedback = String.format("IOException occurred, XXE may still be possible... %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return doc;
+        }
+
+        /**
          * Construct
          */
         private MavenSubClass() {
@@ -103,11 +151,20 @@ public final class RemoteInformationRetrievalClass {
                 .build();
 
         /**
+         * expose to Logs HTTP response version
+         * @param response version of used HTTP protocol
+         */
+        private static void exposeHttpResponseVersion(final HttpResponse<?> response) {
+            final String strFeedbackErr = String.format("Response protocol version was %s", response.version().toString());
+            LogExposureClass.LOGGER.info(strFeedbackErr);
+        }
+
+        /**
          * gets remote file content
          * @param inBuilder input Builder for HttpRequest
          * @return String with file content
-         * @throws IOException
-         * @throws InterruptedException
+         * @throws IOException error management for I/O
+         * @throws InterruptedException error management for Interruption
          */
         private static String getRemoteFileContent(final String strRemoteFileUrl, final Builder inBuilder) throws IOException, InterruptedException {
             final HttpRequest requestContent = inBuilder
@@ -132,8 +189,8 @@ public final class RemoteInformationRetrievalClass {
          * gets remote file attributes from header request
          * @param inBuilder input Builder for HttpRequest
          * @return Properties with file attributes
-         * @throws IOException
-         * @throws InterruptedException
+         * @throws IOException error management for I/O
+         * @throws InterruptedException error management for Interruption
          */
         private static Properties getRemoteFileHeaderAttributes(final String strRemoteFileUrl, final Builder inBuilder) throws IOException, InterruptedException {
             final Properties outProperties = new Properties();
@@ -193,7 +250,8 @@ public final class RemoteInformationRetrievalClass {
                         break;
                     case BasicStructuresClass.STR_CONTENT:
                         final String fileContent = getRemoteFileContent(strRemoteFileUrl, builder);
-                        if (!fileContent.isBlank()) {
+                        if (fileContent != null
+                                && !fileContent.isBlank()) {
                             fileProperties.put(BasicStructuresClass.STR_CONTENT, fileContent);
                         }
                         break;
@@ -243,63 +301,6 @@ public final class RemoteInformationRetrievalClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return urlReturn;
-    }
-
-    /**
-     * expose to Logs HTTP response version
-     * @param response version of used HTTP protocol
-     */
-    private static void exposeHttpResponseVersion(final HttpResponse<?> response) {
-        final String strFeedbackErr = String.format("Response protocol version was %s", response.version().toString());
-        LogExposureClass.LOGGER.info(strFeedbackErr);
-    }
-
-    /**
-     * get Document from inStream
-     * @param inStream Input Stream
-     * @return Document
-     */
-    private static Document getDocumentFromInputStream(final InputStream inStream) {
-        Document doc = null;
-        final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        try {
-            docBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            docBuilderFactory.setExpandEntityReferences(false);
-            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-            docBuilderFactory.setXIncludeAware(false);
-            doc = parseDocumentFromInputStream(inStream, docBuilderFactory);
-        } catch (ParserConfigurationException e) {
-            final String strFeedback = String.format("Parser Configuration Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        }
-        return doc;
-    }
-
-    /**
-     * parse Doc from Input Stream
-     * @param inStream Input Stream
-     * @param docBuilderFactory DocumentBuilderFactory
-     * @return Document
-     */
-    private static Document parseDocumentFromInputStream(final InputStream inStream, final DocumentBuilderFactory docBuilderFactory) {
-        Document doc = null;
-        try {
-            final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            doc = docBuilder.parse(inStream);
-        } catch (ParserConfigurationException e) {
-            final String strFeedback = String.format("ParserConfigurationException was thrown while attempting to read remote XML from an URL... %s", Arrays.toString(e.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        } catch (SAXException e) {
-            final String strFeedback = String.format("SAXException thrown... DOCTYPE was passed into the XML document... %s", Arrays.toString(e.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        } catch (IOException e) {
-            final String strFeedback = String.format("IOException occurred, XXE may still be possible... %s", Arrays.toString(e.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        }
-        return doc;
     }
 
     // Private constructor to prevent instantiation
