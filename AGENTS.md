@@ -6,11 +6,8 @@
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
 - **tools-cli**: CLI shared utility library for operations
 - **tools-databases**: Shared utility library for database access and operations
-- **tools-environment**: CLI app and shared utility library for system environment capture
 - **tools-json**: CLI app for splitting large JSON files using streaming parsing
 - **tools-undertow**: Shared utility library for web server operations using Undertow and JTE
-- **tools-utils**: CLI app for various file system operations including folder archiving using system executables (7-Zip, RAR, WinRAR)
-- **tools-web**: CLI app providing web interface for system information and utilities (Undertow + JTE)
 
 All modules target **Java 26** and publish to Maven Central Repository.
 
@@ -24,23 +21,11 @@ tools (parent POM)
 │   └── Depends on: tools-core
 ├── tools-databases (io.github.dgp-eu.tools.databases)
 │   └── Depends on: tools-core
-├── tools-environment (io.github.dgp-eu.tools.environment)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
 ├── tools-json (io.github.dgp-eu.tools.json)
 │   └── Depends on: tools-core
 │   └── Depends on: tools-cli
 ├── tools-undertow (io.github.dgp-eu.tools.undertow)
 │   └── Depends on: tools-core
-├── tools-utils (io.github.dgp-eu.tools.utils)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
-└── tools-web (io.github.dgp-eu.tools.web)
-    └── Depends on: tools-core
-    └── Depends on: tools-cli
-    └── Depends on: tools-databases
-    └── Depends on: tools-environment
-│   └── Depends on: tools-json
 ```
 
 **Critical Pattern**: All utilities exposed through public static classes with inner SubClasses:
@@ -88,13 +73,9 @@ mvn central-publishing:publish
 | `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`             | Example JUnit 6 tests                                                                                                       |
 | `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java`                     | Entry point; picocli @Command                                                                                               |
 | `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                              | Database functionality                                                                                                      |
-| `tools-environment/src/main/java/org/dgp-eu/tools/environment/ApplicationEnvironment.java`| Entry point; picocli @Command                                                                                               |
 | `tools-json/src/main/java/org/dgp-eu/tools/json/*`                                        | JSON utility clases                                                                                                         |
 | `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                          | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
 | `tools-undertow/src/main/resources/undertow.properties`                                   | Web server defaults                                                                                                         |
-| `tools-utils/src/main/java/org/dgp-eu/tools/utils/ApplicationUtils.java`                  | Entry point; picocli @Command                                                                                               |
-| `tools-web/src/main/java/org/dgp-eu/tools/web/demo/ApplicationDatabases.java`             | Entry point; picocli @Command                                                                                               |
-| `tools-web/src/main/java/org/dgp-eu/tools/web/ApplicationWeb.java`                        | Entry point; picocli @Command; Undertow web server integration                                                              |
 
 ## Project-Specific Conventions
 
@@ -165,13 +146,6 @@ This avoids creating separate files while maintaining logical grouping.
 - Central Publishing: Sonatype Central Publishing Maven Plugin (autoPublish, waitUntil=published)
 - Environment variable: `MAVEN_GPG_PASSPHRASE` (set at CI/deployment time)
 
-## Cross-Module Communication
-
-**tools-utils** depend on **tools-core** but do NOT depend on each other.
-- No circular dependencies
-- Each child module creates self-contained JAR with dependencies via maven-assembly-plugin
-- Tools available for reuse: `FileOperationsClass`, `BasicStructuresClass`
-
 ### Common Utility Access Pattern
 ```java
 // In tools-utils
@@ -191,7 +165,6 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 | SQLite JDBC                                                          | 3.53.2.1 | Database operations (sqlite-jdbc) in tools-databases | compile |
 | Picocli                                                              | 4.7.7    | CLI command parsing and help                         | compile |
 | Undertow Core                                                        | 2.4.2    | Lightweight web server (tools-web Java Web UI)       | compile |
-| OSHI Core FFM                                                        | 7.4.3    | OS info capture (system memory, CPU, etc.)           | compile |
 | JTE                                                                  | 3.2.4    | Java Template Engine (tools-web UI rendering)        | compile |
 | Log4j Core                                                           | 2.26.1   | Logging implementation via SLF4J adapter             | compile |
 | Log4j SLF4J2 Adapter                                                 | 2.26.1   | SLF4J 2.0 API binding to Log4j 2 Core                | compile |

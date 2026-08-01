@@ -51,7 +51,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.0-SNAPSHOT</revision>
+        <revision>1.2.0</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -69,7 +69,6 @@
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <log4j.version>2.26.1</log4j.version>
         <maven-model.version>3.9.16</maven-model.version>
-        <oshi-core-ffm.version>7.4.3</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.2.1</sqlite-jdbc.version>
@@ -81,7 +80,6 @@
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
-        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
@@ -91,16 +89,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Source: https://github.com/oshi/oshi -->
-            <!-- Binaries: https://repo1.maven.org/maven2/com/github/oshi/oshi-core-ffm -->
-            <!-- Description: A JNA-based (native) operating system information library for Java that aims to provide a cross-platform implementation to retrieve system information, such as version, memory, CPU, disk, battery, etc. -->
-            <!-- oshi-core implementation using FFM -->
-            <dependency>
-                <groupId>com.github.oshi</groupId>
-                <artifactId>oshi-core-ffm</artifactId>
-                <version>${oshi-core-ffm.version}</version>
-                <scope>compile</scope>
-            </dependency>
             <!-- Source: https://github.com/networknt/json-schema-validator -->
             <!-- Binaries: https://repo1.maven.org/maven2/com/networknt/json-schema-validator -->
             <!-- Description: A JSON schema validator that supports draft v4, v6, v7, v2019-09 and v2020-12 -->
@@ -262,28 +250,6 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven-antrun-plugin.version}</version>
                 </plugin>
-                <!-- Source: https://maven.apache.org/plugins/maven-assembly-plugin/download.cgi -->
-                <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-assembly-plugin -->
-                <!-- Description: A Maven plugin to create archives of your project's sources, classes, dependencies etc. from flexible assembly descriptors. -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven-assembly-plugin.version}</version>
-                    <configuration>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>make-assembly</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <!-- Source: https://maven.apache.org/plugins/maven-gpg-plugin/ -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-gpg-plugin -->
                 <!-- Description: Signs the project artifacts with GnuPG. -->
@@ -323,9 +289,10 @@
                         <doclint>none</doclint>
                     </configuration>
                 </plugin>
-                <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
-                <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-surefire-plugin -->
-                <!-- Description: Maven Surefire MOJO in maven-surefire-plugin. -->
+                <!-- Website: https://www.mojohaus.org/flatten-maven-plugin/ -->
+                <!-- Source: https://github.com/mojohaus/flatten-maven-plugin -->
+                <!-- Binaries: https://repo1.maven.org/maven2/org/codehaus/mojo/flatten-maven-plugin/ -->
+                <!-- Description: Plugin to generate flattened POM (reduced and resolved information required for consumers of maven repositories) and to use (install, sign, deploy) it instead of original pom.xml. -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
@@ -422,8 +389,9 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- Binaries: https://repo1.maven.org/maven2/org/sonatype/central/central-publishing-maven-plugin -->
-                <!-- Description: This project is a maven plugin for publishing components in Maven Central, for more details on its usage see https://central.sonatype.org/publish/publish-portal-maven. -->
+                <!-- Website: https://central.sonatype.org/ -->
+                <!-- Binaries: https://repo1.maven.org/maven2/org/sonatype/central/central-publishing-maven-plugin/ -->
+                <!-- Description: This project is a maven plugin for publishing components in Maven Central, for more details on its usage see https://central.sonatype.org/publish/publish-portal-maven -->
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
@@ -435,7 +403,7 @@
                         <waitUntil>published</waitUntil>
                     </configuration>
                 </plugin>
-                <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
+                <!-- Source: https://www.mojohaus.org/versions/ -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/codehaus/mojo/versions-maven-plugin -->
                 <!-- Description: The Versions Maven Plugin is used when you want to manage the versions of artifacts in a project's POM. -->
                 <plugin>
@@ -475,41 +443,5 @@
             <url>https://central.sonatype.com/api/v1/publisher</url>
         </repository>
     </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>local</id>
-            <activation>
-                <property>
-                    <name>!release</name>
-                </property>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-assembly-plugin</artifactId>
-                            <version>${maven-antrun-plugin.version}</version>
-                            <executions>
-                                <execution>
-                                    <id>make-fat-jar</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>single</goal>
-                                    </goals>
-                                    <configuration>
-                                        <descriptorRefs>
-                                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                                        </descriptorRefs>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
