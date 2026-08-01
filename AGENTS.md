@@ -4,14 +4,12 @@
 
 **tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
-- **tools-archiving**: CLI app for folder archiving using system executables (7-Zip, RAR, WinRAR)
 - **tools-cli**: CLI shared utility library for operations
 - **tools-databases**: Shared utility library for database access and operations
-- **tools-databases-demo**: CLI app for database access and operations
 - **tools-environment**: CLI app and shared utility library for system environment capture
 - **tools-json**: CLI app for splitting large JSON files using streaming parsing
 - **tools-undertow**: Shared utility library for web server operations using Undertow and JTE
-- **tools-utils**: CLI app for various file system operations
+- **tools-utils**: CLI app for various file system operations including folder archiving using system executables (7-Zip, RAR, WinRAR)
 - **tools-web**: CLI app providing web interface for system information and utilities (Undertow + JTE)
 
 All modules target **Java 26** and publish to Maven Central Repository.
@@ -22,17 +20,10 @@ All modules target **Java 26** and publish to Maven Central Repository.
 tools (parent POM)
 ├── tools-core (io.github.dgp-eu.tools.core)
 │   └── No dependencies on other modules; contains all core utilities
-├── tools-archiving (io.github.dgp-eu.tools.archiving)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
 ├── tools-cli (io.github.dgp-eu.tools.cli)
 │   └── Depends on: tools-core
 ├── tools-databases (io.github.dgp-eu.tools.databases)
 │   └── Depends on: tools-core
-├── tools-databases-demo (io.github.dgp-eu.tools.databases-demo)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
-│   └── Depends on: tools-json
 ├── tools-environment (io.github.dgp-eu.tools.environment)
 │   └── Depends on: tools-core
 │   └── Depends on: tools-cli
@@ -49,6 +40,7 @@ tools (parent POM)
     └── Depends on: tools-cli
     └── Depends on: tools-databases
     └── Depends on: tools-environment
+│   └── Depends on: tools-json
 ```
 
 **Critical Pattern**: All utilities exposed through public static classes with inner SubClasses:
@@ -58,7 +50,7 @@ tools (parent POM)
 - `TimingClass`: ConversionSubClass, LocalizationSubClass
 - `ProjectClass`: ApplicationSubClass, LoaderSubClass, ComponentsSubClass
 
-CLI apps (archiving, etc.) use **picocli** for command parsing; extend AbstractApplication base class.
+CLI apps use **picocli** for command parsing; extend AbstractApplication base class.
 
 ## Build & Test Workflow
 
@@ -88,27 +80,26 @@ mvn central-publishing:publish
 
 ## Key Files & Packages
 
-| File                                                                                  | Purpose                                                                                                                     |
-|---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `pom.xml` (root)                                                                      | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
-| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                              | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.  |
-| `tools-core/src/main/resources/project.properties`                                    | Windows-specific configuration (System32 paths, PowerShell location)                                                        |
-| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`         | Example JUnit 6 tests                                                                                                       |
-| `tools-archiving/src/main/java/org/dgp-eu/tools/archiving/Application.java`           | Entry point; picocli @Command                                                                                               |
-| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java`                 | Entry point; picocli @Command                                                                                               |
-| `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                          | Database functionality                                                                                                      |
-| `tools-databases-demo/src/main/java/org/dgp-eu/tools/databases/demo/Application.java` | Entry point; picocli @Command                                                                                               |
-| `tools-environment/src/main/java/org/dgp-eu/tools/environment/Application.java`       | Entry point; picocli @Command                                                                                               |
-| `tools-json/src/main/java/org/dgp-eu/tools/json/Application.java`                     | Entry point; picocli @Command                                                                                               |
-| `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                      | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
-| `tools-undertow/src/main/resources/undertow.properties`                               | Web server defaults                                                                                                         |
-| `tools-utils/src/main/java/org/dgp-eu/tools/utils/Application.java`                   | Entry point; picocli @Command                                                                                               |
-| `tools-web/src/main/java/org/dgp-eu/tools/web/Application.java`                       | Entry point; picocli @Command; Undertow web server integration                                                              |
+| File                                                                                      | Purpose                                                                                                                     |
+|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `pom.xml` (root)                                                                          | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
+| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                                  | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.  |
+| `tools-core/src/main/resources/project.properties`                                        | Windows-specific configuration (System32 paths, PowerShell location)                                                        |
+| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`             | Example JUnit 6 tests                                                                                                       |
+| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java`                     | Entry point; picocli @Command                                                                                               |
+| `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                              | Database functionality                                                                                                      |
+| `tools-environment/src/main/java/org/dgp-eu/tools/environment/ApplicationEnvironment.java`| Entry point; picocli @Command                                                                                               |
+| `tools-json/src/main/java/org/dgp-eu/tools/json/*`                                        | JSON utility clases                                                                                                         |
+| `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                          | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
+| `tools-undertow/src/main/resources/undertow.properties`                                   | Web server defaults                                                                                                         |
+| `tools-utils/src/main/java/org/dgp-eu/tools/utils/ApplicationUtils.java`                  | Entry point; picocli @Command                                                                                               |
+| `tools-web/src/main/java/org/dgp-eu/tools/web/demo/ApplicationDatabases.java`             | Entry point; picocli @Command                                                                                               |
+| `tools-web/src/main/java/org/dgp-eu/tools/web/ApplicationWeb.java`                        | Entry point; picocli @Command; Undertow web server integration                                                              |
 
 ## Project-Specific Conventions
 
 ### Null Safety
-- Use `@Nullable` and `@Nonnull` from `org.jspecify` (v1.0.0) for compile-time null checks
+- Use `@Nullable` and `@Nonnull` from `org.jspecify` (v1.0.1) for compile-time null checks
 - No Optional usage in public APIs; explicit nullable annotations preferred
 
 ### CLI Command Structure (Picocli)
@@ -156,7 +147,7 @@ This avoids creating separate files while maintaining logical grouping.
 ### Dependency Management
 - All dependency versions centralized in root `pom.xml` `<dependencyManagement>`
 - Child POMs use version-less `<dependency>` declarations
-- Critical versions: Jackson 3.2.0 (custom build), JUnit Jupiter 6.1.0, Java 26
+- Critical versions: Jackson 3.2.1 (custom build), JUnit Jupiter 6.1.2, Java 26
 
 ### Build Plugin Configuration
 - **takari-lifecycle-plugin**: Generates sources JAR automatically during package phase
@@ -176,14 +167,14 @@ This avoids creating separate files while maintaining logical grouping.
 
 ## Cross-Module Communication
 
-**tools-archiving** depend on **tools-core** but do NOT depend on each other.
+**tools-utils** depend on **tools-core** but do NOT depend on each other.
 - No circular dependencies
 - Each child module creates self-contained JAR with dependencies via maven-assembly-plugin
 - Tools available for reuse: `FileOperationsClass`, `BasicStructuresClass`
 
 ### Common Utility Access Pattern
 ```java
-// In tools-archiving
+// In tools-utils
 import io.github.dgp_eu.tools.core.*;
 
 // Use static methods from core utilities
@@ -220,12 +211,12 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 4. Use `@Nullable`/`@Nonnull` annotations
 5. Run: `mvn -f tools-core/pom.xml clean verify`
 
-### Adding a Feature to tools-archiving
+### Adding a Feature to tools-utils
 1. Add picocli @Command subcommand class
 2. Register in Application.java `@Command(subcommands = {NewCommand.class, ...})`
 3. Implement logic using core utilities (`FileOperationsClass`, `BasicStructuresClass`, etc.)
 4. Create test class in `src/test/java`
-5. Run: `mvn verify` (or module-specific: `mvn -f tools-archiving/pom.xml verify`)
+5. Run: `mvn verify` (or module-specific: `mvn -f tools-utils/pom.xml verify`)
 
 ### Running Security Scan
 ```bash
@@ -245,7 +236,7 @@ mvn dependency-check:check
 
 ## Important Notes for AI Agents
 
-- **Module Isolation**: tools-core has NO dependencies on archiving; keep it generic
+- **Module Isolation**: tools-core has NO dependencies on utils; keep it generic
 - **Test Execution**: Use `@DisplayName` for debugging; tests require `--add-opens` JVM arg (already configured)
 - **Null Handling**: Return error codes (e.g., -99 for null, -3 for missing) rather than throwing exceptions in utilities
 - **Version Consistency**: Always update root pom.xml `<dependencyManagement>` for new major dependencies

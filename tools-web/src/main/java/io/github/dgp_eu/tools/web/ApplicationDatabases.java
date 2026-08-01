@@ -1,7 +1,7 @@
 /*
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.database.demo;
+package io.github.dgp_eu.tools.web;
 
 import java.io.InputStream;
 import java.util.Arrays;
