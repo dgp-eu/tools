@@ -1,7 +1,7 @@
 /*
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.archiving;
+package io.github.dgp_eu.tools.utils;
 
 import java.io.File;
 import java.math.BigDecimal;
