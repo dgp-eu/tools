@@ -10,17 +10,17 @@
         <module name="tools-cli" />
         <module name="tools-undertow" />
         <module name="tools-environment" />
-        <module name="tools-database-demo" />
         <module name="tools-json" />
-        <module name="tools-archiving" />
         <module name="tools-web" />
         <module name="tools-core" />
-        <module name="tools-incubator" />
         <module name="tools-utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="json_split" target="26" />
+      <module name="tools-archiving" target="26" />
+      <module name="tools-database-demo" target="26" />
+      <module name="tools-incubator" target="26" />
     </bytecodeTargetLevel>
   </component>
 </project>
