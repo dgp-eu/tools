@@ -46,11 +46,8 @@
         <module>tools-core</module>
         <module>tools-cli</module>
         <module>tools-databases</module>
-        <module>tools-environment</module>
         <module>tools-json</module>
-        <module>tools-utils</module>
         <module>tools-undertow</module>
-        <module>tools-web</module>
     </modules>
 
     <properties>
