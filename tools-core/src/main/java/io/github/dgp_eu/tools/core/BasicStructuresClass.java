@@ -295,10 +295,15 @@ public final class BasicStructuresClass {
             LogExposureClass.LOGGER.error(strFeedback);
             throw new IllegalArgumentException(strFeedback);
         }
-        final InputStream inputStream = new ByteArrayInputStream(strEnvValue.getBytes(Charset.defaultCharset()));
-        final String strFeedback = String.format("Environment variable %s was found successfully!", inEnvVariable);
-        LogExposureClass.LOGGER.debug(strFeedback);
-        return inputStream;
+        try (InputStream inputStream = new ByteArrayInputStream(strEnvValue.getBytes(Charset.defaultCharset()))) {
+            final String strFeedback = String.format("Environment variable %s was found successfully!", inEnvVariable);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            return inputStream;
+        } catch (IOException ei) {
+            final String strFeedback = String.format("Input/Output exception enountered when attempting to get environment variable %s", inEnvVariable);
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            throw new IllegalArgumentException(strFeedback);
+        }
     }
 
     /**
