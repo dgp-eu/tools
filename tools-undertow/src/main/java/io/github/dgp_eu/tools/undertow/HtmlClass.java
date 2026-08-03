@@ -319,7 +319,7 @@ public final class HtmlClass {
          */
         private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
             final Object valObj = recordMap.get(tblContext.rememberKey);
-            final String valueForTab = valObj == null ? "null" : valObj.toString();
+            final String valueForTab = valObj == null ? BasicStructuresClass.STR_NULL : valObj.toString();
             final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
             if (!valueForTab.equalsIgnoreCase(prev)) {
                 if (tblContext.listTableLines.isEmpty()) {
