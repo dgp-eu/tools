@@ -215,9 +215,7 @@ public final class DatabaseOperationsClass {
      * @return Properties for result-set
      */
     public static Properties packageResultSetProperties(final String strPurpose, final String strQueryToUse, final String strFetchType) {
-        final Properties rsProperties = new Properties();
-        rsProperties.put(STR_PURPOSE, strPurpose);
-        rsProperties.put(STR_QUERY2USE, strQueryToUse);
+        final Properties rsProperties = packageResultSetProperties(strPurpose, strQueryToUse);
         rsProperties.put(STR_FETCH_TYPE, strFetchType);
         return rsProperties;
     }
