@@ -69,11 +69,11 @@ public final class HtmlClass {
      */
     public static String buildFileInfoBox(final Path fileName) {
         final String strThousandSep = "%,d";
-        String fileSize = "unknown size";
+        long fileSize = 0;
         String fileModified = "unknown modified timestamp";
         String fileChecksum = "unknown SHA-256 checksum";
         if (Files.exists(fileName)) {
-            fileSize = String.format(Locale.US, strThousandSep, fileName.toFile().length());
+            fileSize = fileName.toFile().length();
             fileModified = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
             fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256");
         } else {
@@ -88,7 +88,7 @@ public final class HtmlClass {
                     LogExposureClass.LOGGER.error(strFeedback21);
                     throw new IOException(strFeedback21);
                 }
-                fileSize = String.format(Locale.US, strThousandSep, inStream.transferTo(OutputStream.nullOutputStream()));
+                fileSize = inStream.transferTo(OutputStream.nullOutputStream());
                 final URL resourceUrl = HtmlClass.class.getResource(internalFile);
                 final String strFeedback3 = String.format("URI is: %s", resourceUrl);
                 LogExposureClass.LOGGER.debug(strFeedback3);
@@ -106,14 +106,11 @@ public final class HtmlClass {
                 LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
             }
         }
-        final String strTemplate = """
-<div class="infoBox" style="box-shadow: 0px 0px 3px 3px blue;font-size:0.7rem;padding:2px;text-align:left;">
-    File is %s, having as size of %s bytes, last modified time-stamp on %s with a checksum SHA-256 value of %s
-</div>
-""";
-        return String.format(strTemplate,
+        final String rawHtml = FileOperationsClass.ContentReadingSubClass.getFileContentIntoString("/web/HTML/infoBoxFileDetails.html");
+        return String.format(rawHtml,
                 buildStringImportant(fileName.toString()),
-                buildStringImportant(fileSize),
+                buildStringImportant(String.format(Locale.US, strThousandSep, fileSize)),
+                BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary"),
                 buildStringImportant(fileModified),
                 String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), fileChecksum));
     }
