@@ -66,6 +66,7 @@ Various Java classes to be re-used
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
 * [JSON Schema Validator in Java: A Comprehensive Guide](https://www.javaspring.net/blog/json-schema-validator-java/)
 * [Laws of Software Design](https://www.javacodegeeks.com/2011/01/laws-of-software-design.html)
+* [prgrmmng - All Series](https://prgrmmng.com/series)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
 * [Switch as an expression in Java with Lambda-like syntax](https://www.javacodegeeks.com/2020/05/switch-as-an-expression-in-java-with-lambda-like-syntax.html)
 * [Things Every Programmer Should Know](https://www.javacodegeeks.com/2010/12/things-every-programmer-should-know.html)
