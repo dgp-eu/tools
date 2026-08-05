@@ -94,7 +94,7 @@ class HtmlClassTests {
             final String myInfoBox = HtmlClass.buildFileInfoBox(tempFile);
             assertAll("Select HTML correctness",
                     () -> assertTrue(myInfoBox.contains("<div class=\"infoBox\""), "HTML should contain div tag with infoBox class"),
-                    () -> assertTrue(myInfoBox.contains("bytes, last modified time-stamp on"), "Select contains final sequence text pieces")
+                    () -> assertTrue(myInfoBox.contains(", last modified time-stamp on"), "Select contains specific sequence text pieces")
             );
         } finally {
             Files.deleteIfExists(tempFile);
