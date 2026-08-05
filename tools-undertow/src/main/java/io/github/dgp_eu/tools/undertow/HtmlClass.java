@@ -31,10 +31,6 @@ import io.github.dgp_eu.tools.core.ZoneDataServiceClass;
  * HTML generating logic
  */
 public final class HtmlClass {
-    /**
-     * Important string template variable
-     */
-    public static final String STRING_IMPORTANT = "<span style=\"font-weight:bold;text-shadow: 1px 1px 2px #999;\">%s</span>";
 
     /**
      * Application Details
@@ -108,11 +104,11 @@ public final class HtmlClass {
         }
         final String rawHtml = FileOperationsClass.ContentReadingSubClass.getFileContentIntoString("/web/HTML/infoBoxFileDetails.html");
         return String.format(rawHtml,
-                buildStringImportant(fileName.toString()),
-                buildStringImportant(String.format(Locale.US, strThousandSep, fileSize)),
+                fileName.toString(),
+                String.format(Locale.US, strThousandSep, fileSize),
                 BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary"),
-                buildStringImportant(fileModified),
-                String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), fileChecksum));
+                fileModified,
+                fileChecksum);
     }
 
     /**
@@ -127,15 +123,6 @@ public final class HtmlClass {
             }
         });
         return strMenuContent.toString();
-    }
-
-    /**
-     * Build String important
-     * @param inputString given String
-     * @return formatted String
-     */
-    private static String buildStringImportant(final String inputString) {
-        return String.format(STRING_IMPORTANT, inputString);
     }
 
     /**
