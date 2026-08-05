@@ -26,7 +26,6 @@ Various Java classes to be re-used
 
 ### Eclipse
 
-* [Java Dependency Viewer](https://marketplace.eclipse.org/content/java-dependency-viewer)
 * [Understanding Maven Dependency Graph or Tree](https://www.baeldung.com/maven-dependency-graph)
 
 
@@ -46,7 +45,6 @@ Various Java classes to be re-used
 * [OpenJDK by Azul](https://www.azul.com/downloads/?os=windows&package=jdk#zulu)
 * [OpenJDK by Java.Net](https://jdk.java.net/)
 * [OpenJDK by Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
-* [Which JDK Image Should You Use: OpenJDK, Zulu, Eclipse Temurin?](https://devopskit.tech/en/posts/jdk-image-guide/)
 
 
 ### Java Coding
