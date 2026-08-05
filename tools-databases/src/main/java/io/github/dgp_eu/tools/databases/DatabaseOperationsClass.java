@@ -28,7 +28,13 @@ public final class DatabaseOperationsClass {
     public static final String STR_NULL = "NULL";
     /** Regular Expression for Prompt Parameters within SQL Query */
     public static final String STR_QTD_STR_VL = "\"%s\"";
-    /** Values string */
+    /** Constant String for FetchType */
+    public static final String STR_FETCH_TYPE = "FetchType";
+    /** Constant String for Purpose */
+    public static final String STR_PURPOSE = "Purpose";
+    /** Constant String for QueryToUse */
+    public static final String STR_QUERY2USE = "QueryToUse";
+    /** Constant String for Values */
     public static final String STR_VALUES = "Values";
 
     /**
@@ -94,7 +100,6 @@ public final class DatabaseOperationsClass {
 
     /**
      * Execute a custom query w/o any result-set
-     *
      * @param objStatement statement
      * @param strPurpose purpose of query
      * @param strQueryToUse query to use
@@ -190,6 +195,19 @@ public final class DatabaseOperationsClass {
     }
 
     /**
+     * Package 2 String into Properties for result-set
+     * @param strPurpose Which query is needed
+     * @param strQueryToUse relevant query
+     * @return Properties for result-set
+     */
+    public static Properties packageResultSetProperties(final String strPurpose, final String strQueryToUse) {
+        final Properties rsProperties = new Properties();
+        rsProperties.put(STR_PURPOSE, strPurpose);
+        rsProperties.put(STR_QUERY2USE, strQueryToUse);
+        return rsProperties;
+    }
+
+    /**
      * Package 3 String into Properties for result-set
      * @param strPurpose Which query is needed
      * @param strQueryToUse relevant query
@@ -198,9 +216,9 @@ public final class DatabaseOperationsClass {
      */
     public static Properties packageResultSetProperties(final String strPurpose, final String strQueryToUse, final String strFetchType) {
         final Properties rsProperties = new Properties();
-        rsProperties.put("Purpose", strPurpose);
-        rsProperties.put("QueryToUse", strQueryToUse);
-        rsProperties.put("FetchType", strFetchType);
+        rsProperties.put(STR_PURPOSE, strPurpose);
+        rsProperties.put(STR_QUERY2USE, strQueryToUse);
+        rsProperties.put(STR_FETCH_TYPE, strFetchType);
         return rsProperties;
     }
 
@@ -590,9 +608,12 @@ public final class DatabaseOperationsClass {
          */
         public static List<Properties> getResultSetStandardized(final Statement objStatement, final Properties rsProperties, final Properties queryProperties) {
             List<Properties> listReturn = new ArrayList<>();
-            final String strPurpose = rsProperties.get("Purpose").toString();
-            final String strQueryToUse = rsProperties.get("QueryToUse").toString();
-            final String strFetchType = rsProperties.get("FetchType").toString();
+            final String strPurpose = rsProperties.get(STR_PURPOSE).toString();
+            final String strQueryToUse = rsProperties.get(STR_QUERY2USE).toString();
+            if (rsProperties.getOrDefault(DatabaseOperationsClass.STR_FETCH_TYPE, "").toString().isBlank()) {
+                rsProperties.put(DatabaseOperationsClass.STR_FETCH_TYPE, DatabaseOperationsClass.STR_VALUES);
+            }
+            final String strFetchType = rsProperties.get(STR_FETCH_TYPE).toString();
             try (ResultSet rsStandard = executeCustomQuery(objStatement, strPurpose, strQueryToUse, queryProperties)) {
                 assert rsStandard != null;
                 listReturn = switch (strFetchType) {
