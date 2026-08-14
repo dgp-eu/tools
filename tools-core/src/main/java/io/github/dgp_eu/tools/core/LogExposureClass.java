@@ -217,16 +217,16 @@ public final class LogExposureClass {
          * @param strType type of the log
          */
         private static void buildRollingFile(final String strType) {
-            final String logFileName = logFile + strType + ".log";
+            final String logFileName = logFile + "-" + strType + ".log";
             final String filePattern = logFileName.replace(
                 ".log",
-                "%d{yyyy-MM-dd-HH}-%i.log"
+                "-%d{yyyy-MM-dd-HH}-%i.log"
             );
             final ComponentBuilder<?> policy = buildPolicies();
             final String rollingName = switch (strType) {
                 case BasicStructuresClass.STR_ERROR -> "rollingError";
-                case "rest" -> "rollingRest";
-                default -> "rollingAll";
+                case "rest"                         -> "rollingRest";
+                default                             -> "rollingAll";
             };
             final FilterComponentBuilder levelRangeFilter = switch (strType) {
                 case BasicStructuresClass.STR_ERROR -> buildLevelRangeFilter(
