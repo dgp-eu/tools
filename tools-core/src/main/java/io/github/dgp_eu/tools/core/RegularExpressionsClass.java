@@ -15,30 +15,15 @@ import java.util.regex.Pattern;
  */
 public final class RegularExpressionsClass {
     /** Regular Expression for short form Age as Date */
-    private static final String REGEXP_AGE_DATE = "[+-](?<years>\\d{4})"
-            + "-(?<months>(0\\d|1[0-1]))"
-            + "-(?<days>([0-2]\\d|30))";
+    private static final String REGEXP_AGE_DATE = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)";
     /** Regular Expression for short form Age as Time */
-    private static final String REGEXP_AGE_TIME = "[+-](?<hours>([0-1]\\d|2[0-3]))"
-            + "\\:(?<minutes>[0-5]\\d)"
-            + "\\:(?<seconds>[0-5]\\d)";
+    private static final String REGEXP_AGE_TIME = "[+-]([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d";
     /** Regular Expression for short form Age as Time-stamp */
-    private static final String REGEXP_AGE_TS = "[+-](?<yearsTS>\\d{4})"
-            + "-(?<monthsTS>(0\\d|1[0-1]))"
-            + "-(?<daysTS>([0-2]\\d|30))"
-            + "\\s(?<hoursTS>([0-1]\\d|2[0-3]))"
-            + "\\:(?<minutesTS>[0-5]\\d)"
-            + "\\:(?<secondsTS>[0-5]\\d)";
+    private static final String REGEXP_AGE_TS = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)\\s([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d";
     /** Regular Expression for short form Age as Time-stamp full string */
     private static final String REGEXP_AGE_TS9 = "^" + REGEXP_AGE_TS + "$";
     /** Regular Expression for short form Age as Time-stamp with Milliseconds */
-    private static final String REGEXP_AGE_TS_MS = "[+-](?<yearsTsMs>\\d{4})"
-            + "-(?<monthsTsMs>(0\\d|1[0-1]))"
-            + "-(?<daysTsMs>([0-2]\\d|30))"
-            + "\\s(?<hoursTsMs>([0-1]\\d|2[0-3]))"
-            + "\\:(?<minutesTsMs>[0-5]\\d)"
-            + "\\:(?<secondsTsMs>[0-5]\\d)"
-            + "\\.(?<millisecondsTsMs>\\d{1,3})";
+    private static final String REGEXP_AGE_TS_MS = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)\\s([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d\\.\\d{1,3}";
     private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
     /** Regular Expression for full words Aging */
     private static final String REGEXP_AGING_FULL = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
@@ -334,13 +319,17 @@ public final class RegularExpressionsClass {
             final SequencedMap<String, String> sequencedMap = new LinkedHashMap<>();
             switch (lengthAgeString) {
                 case 11:
-                    agePattern = Pattern.compile(REGEXP_AGE_DATE);
+                    agePattern = Pattern.compile("[+-](?<years>\\d{4})"
+                            + "-(?<months>(0\\d|1[0-1]))"
+                            + "-(?<days>([0-2]\\d|30))");
                     sequencedMap.put("years", "year");
                     sequencedMap.put("months", "month");
                     sequencedMap.put("days", "day");
                     break;
                 case 9:
-                    agePattern = Pattern.compile(REGEXP_AGE_TIME);
+                    agePattern = Pattern.compile("[+-](?<hours>([0-1]\\d|2[0-3]))"
+                            + "\\:(?<minutes>[0-5]\\d)"
+                            + "\\:(?<seconds>[0-5]\\d)");
                     sequencedMap.put("hours", "hour");
                     sequencedMap.put("minutes", "minute");
                     sequencedMap.put("seconds", "second");
