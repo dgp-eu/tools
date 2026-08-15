@@ -1,4 +1,4 @@
-package io.github.dgp_eu.tools.cli;
+package io.github.dgp_eu.tools.core;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

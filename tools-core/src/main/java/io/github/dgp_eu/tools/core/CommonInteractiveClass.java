@@ -1,15 +1,11 @@
 /**
  * Copyright 2026 Daniel-Gheorghe Popiniuc
  */
-package io.github.dgp_eu.tools.cli;
+package io.github.dgp_eu.tools.core;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
-import io.github.dgp_eu.tools.core.TimingClass;
 import org.apache.maven.model.Model;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
