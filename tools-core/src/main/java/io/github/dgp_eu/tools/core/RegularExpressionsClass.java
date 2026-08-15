@@ -286,6 +286,33 @@ public final class RegularExpressionsClass {
          * @param ageString input String
          * @return String in human-readable format
          */
+        public static String convertAgingDateOrTime(final Matcher matcher, final SequencedMap<String, String> seqMapDateTime, final String ageString) {
+            final List<String> resultDateOrTime = new ArrayList<>();
+            if (matcher.matches()) {
+                seqMapDateTime.forEach((strPlural, strSingular) -> {
+                    try {
+                        final int intValue = Integer.parseInt(matcher.group(strPlural));
+                        if (intValue != 0) {
+                            resultDateOrTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                        }
+                    } catch (NumberFormatException noFormatException) {
+                        final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA,
+                                strPlural,
+                                Arrays.toString(noFormatException.getStackTrace()));
+                        LogExposureClass.LOGGER.error(strFeedback);
+                    }
+                });
+            } else {
+                resultDateOrTime.add(ageString);
+            }
+            return resultDateOrTime.toString().replaceAll("[\\[\\]]", "");
+        }
+
+        /**
+         * Convert aging Date/Time into human-readable String
+         * @param ageString input String
+         * @return String in human-readable format
+         */
         public static String convertAgingDateOrTimeIntoHumanReadableString(final String ageString) {
             final int lengthAgeString = ageString.length();
             Pattern agePattern = null;
@@ -316,25 +343,7 @@ public final class RegularExpressionsClass {
             final Matcher matcher = agePattern.matcher(ageString);
             final boolean isAgingString = matcher.matches();
             if (isAgingString) {
-                final List<String> resultDateOrTime = new ArrayList<>();
-                if (matcher.matches()) {
-                    sequencedMap.forEach((strPlural, strSingular) -> {
-                        try {
-                            final int intValue = Integer.parseInt(matcher.group(strPlural));
-                            if (intValue != 0) {
-                                resultDateOrTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
-                            }
-                        } catch (NumberFormatException noFormatException) {
-                            final String strFeedback = String.format(BasicStructuresClass.CONVERT_INT_NA,
-                                    strPlural,
-                                    Arrays.toString(noFormatException.getStackTrace()));
-                            LogExposureClass.LOGGER.error(strFeedback);
-                        }
-                    });
-                } else {
-                    resultDateOrTime.add(ageString);
-                }
-                return resultDateOrTime.toString().replaceAll("[\\[\\]]", "");
+                return convertAgingDateOrTime(matcher, sequencedMap, ageString);
             } else {
                 final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging string... %s",
                         ageString,
