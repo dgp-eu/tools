@@ -60,58 +60,6 @@ public final class HtmlClass {
     }
 
     /**
-     * Build Information Box
-     * @return String
-     */
-    public static String buildFileInfoBox(final Path fileName) {
-        final String strThousandSep = "%,d";
-        long fileSize = 0;
-        String fileModified = "unknown modified timestamp";
-        String fileChecksum = "unknown SHA-256 checksum";
-        if (Files.exists(fileName)) {
-            fileSize = fileName.toFile().length();
-            fileModified = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
-            fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256");
-        } else {
-            final String strFeedback = String.format("Given file %s was not found on disk, hence will be looking for it within JAR", fileName);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            final String internalFile = fileName.toString().replace("\\", "/");
-            try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
-                final String strFeedback2 = String.format("Input Stream is: %s", inStream);
-                LogExposureClass.LOGGER.debug(strFeedback2);
-                if (inStream == null) {
-                    final String strFeedback21 = String.format("Resource not found in JAR for checksum: %s", internalFile);
-                    LogExposureClass.LOGGER.error(strFeedback21);
-                    throw new IOException(strFeedback21);
-                }
-                fileSize = inStream.transferTo(OutputStream.nullOutputStream());
-                final URL resourceUrl = HtmlClass.class.getResource(internalFile);
-                final String strFeedback3 = String.format("URI is: %s", resourceUrl);
-                LogExposureClass.LOGGER.debug(strFeedback3);
-                if (resourceUrl == null) {
-                    final String strFeedback4 = String.format("Resource URL not found in JAR: %s", internalFile);
-                    LogExposureClass.LOGGER.error(strFeedback4);
-                    throw new IOException(strFeedback4);
-                }
-                final long lastModified = resourceUrl.openConnection().getLastModified();
-                final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
-                fileModified = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
-                        TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
-                fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksumFromInputStream(inStream, "SHA-256");
-            } catch (IOException ex) {
-                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
-            }
-        }
-        final String rawHtml = FileOperationsClass.ContentReadingSubClass.getFileContentIntoString("/web/HTML/infoBoxFileDetails.html");
-        return String.format(rawHtml,
-                fileName.toString(),
-                String.format(Locale.US, strThousandSep, fileSize),
-                BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary"),
-                fileModified,
-                fileChecksum);
-    }
-
-    /**
      * Building Time-Zone select as String
      * @return String w. TZ select
      */
@@ -138,6 +86,85 @@ public final class HtmlClass {
         selectProps.put("Size", 1);
         selectProps.put("AutoSubmit", 1);
         return SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps);
+    }
+
+    /**
+     * List and Maps management
+     */
+    public static final class FileInfoSubClass {
+        /** Variable for File Checksum */
+        /* default */ private static String fileChecksum = "unknown file hecksum";
+        /** Variable for File Modified Time-stamp */
+        /* default */ private static String fileModifiedTs = "unknown modified timestamp";
+        /** Variable for File size (bytes) */
+        /* default */ private static long fileSizeBytes;
+
+        /**
+         * constructor
+         */
+        private FileInfoSubClass() {
+            // intentionally left blank
+        }
+
+        /**
+         * Build Information Box
+         * @return String
+         */
+        public static String buildFileInfoBox(final Path fileName) {
+            final String rawHtml = "<div class=\"infoBox blueShaddowBorderLeft\">%s</div>";
+            final String fileStatsHtml = gatherFileStatistics(fileName);
+            return String.format(rawHtml, fileStatsHtml);
+        }
+
+        /**
+         * Build Information Box
+         * @return String
+         */
+        public static String gatherFileStatistics(final Path fileName) {
+            if (Files.exists(fileName)) {
+                fileSizeBytes = fileName.toFile().length();
+                fileModifiedTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
+                fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256");
+            } else {
+                final String strFeedback = String.format("Given file %s was not found on disk, hence will be looking for it within JAR", fileName);
+                LogExposureClass.LOGGER.debug(strFeedback);
+                final String internalFile = fileName.toString().replace("\\", "/");
+                try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
+                    final String strFeedback2 = String.format("Input Stream is: %s", inStream);
+                    LogExposureClass.LOGGER.debug(strFeedback2);
+                    if (inStream == null) {
+                        final String strFeedback21 = String.format("Resource not found in JAR for checksum: %s", internalFile);
+                        LogExposureClass.LOGGER.error(strFeedback21);
+                        throw new IOException(strFeedback21);
+                    }
+                    fileSizeBytes = inStream.transferTo(OutputStream.nullOutputStream());
+                    final URL resourceUrl = HtmlClass.class.getResource(internalFile);
+                    final String strFeedback3 = String.format("URI is: %s", resourceUrl);
+                    LogExposureClass.LOGGER.debug(strFeedback3);
+                    if (resourceUrl == null) {
+                        final String strFeedback4 = String.format("Resource URL not found in JAR: %s", internalFile);
+                        LogExposureClass.LOGGER.error(strFeedback4);
+                        throw new IOException(strFeedback4);
+                    }
+                    final long lastModified = resourceUrl.openConnection().getLastModified();
+                    final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
+                    fileModifiedTs = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
+                            TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
+                    fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksumFromInputStream(inStream, "SHA-256");
+                } catch (IOException ex) {
+                    LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+                }
+            }
+            final String rawHtml = "File is <span class=\"importantText\">%s</span>, having as size of <span class=\"importantText\">%s bytes (%s)</span>, last modified time-stamp on <span class=\"importantText\">%s</span> with a checksum SHA-256 value of %s";
+            final String strThousandSep = "%,d";
+            return String.format(rawHtml,
+                    fileName.toString(),
+                    String.format(Locale.US, strThousandSep, fileSizeBytes),
+                    BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSizeBytes, "binary"),
+                    fileModifiedTs,
+                    fileChecksum);
+        }
+
     }
 
     /**

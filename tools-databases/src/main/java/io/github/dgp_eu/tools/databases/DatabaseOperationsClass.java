@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.databases;
 
 import java.sql.Connection;
@@ -168,19 +166,21 @@ public final class DatabaseOperationsClass {
 
     /**
      * Returns standard query
+     * @param strDatabaseType type DB
      * @param strFileName query file name needed
      * @return Query as String
      */
     public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
-        String strRelativeFile = String.format("/SQL/%s/%s", strDatabaseType, strFileName);
-        if (!strRelativeFile.endsWith(".sql")) {
-            strRelativeFile = strRelativeFile + ".sql";
+        final StringBuilder strRelativeFile = new StringBuilder(100);
+        strRelativeFile.append("/SQL/").append(strDatabaseType).append('/').append(strFileName);
+        if (!strRelativeFile.toString().endsWith(".sql")) {
+            strRelativeFile.append(".sql");
         }
-        boolean isExecutionFromJar = false;
+        boolean isJarExecution = false;
         if (BasicStructuresClass.isRunningFromJar()) {
-            isExecutionFromJar = true;
+            isJarExecution = true;
         }
-        final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strRelativeFile, isExecutionFromJar);
+        final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strRelativeFile.toString(), isJarExecution);
         final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strRelativeFile, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
         final long fileSizeLimit = 10;
@@ -188,10 +188,13 @@ public final class DatabaseOperationsClass {
             final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFileName, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             throw new UnsupportedOperationException(strFeedbackErr);
         }
-        if (!isExecutionFromJar) {
-            strRelativeFile = BasicStructuresClass.getCurrentFolder() + "/src/main/resources" + strRelativeFile;
+        if (!isJarExecution) {
+            final String oldRelativeFile = strRelativeFile.toString();
+            strRelativeFile.setLength(0);
+            final String crtFolder = BasicStructuresClass.getCurrentFolder();
+            strRelativeFile.append(crtFolder).append("/src/main/resources").append(oldRelativeFile);
         }
-        return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile);
+        return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile.toString());
     }
 
     /**
@@ -608,8 +611,8 @@ public final class DatabaseOperationsClass {
             List<Properties> listReturn = new ArrayList<>();
             final String strPurpose = rsProperties.get(STR_PURPOSE).toString();
             final String strQueryToUse = rsProperties.get(STR_QUERY2USE).toString();
-            if (rsProperties.getOrDefault(DatabaseOperationsClass.STR_FETCH_TYPE, "").toString().isBlank()) {
-                rsProperties.put(DatabaseOperationsClass.STR_FETCH_TYPE, DatabaseOperationsClass.STR_VALUES);
+            if (rsProperties.getOrDefault(STR_FETCH_TYPE, "").toString().isBlank()) {
+                rsProperties.put(STR_FETCH_TYPE, STR_VALUES);
             }
             final String strFetchType = rsProperties.get(STR_FETCH_TYPE).toString();
             try (ResultSet rsStandard = executeCustomQuery(objStatement, strPurpose, strQueryToUse, queryProperties)) {
@@ -695,4 +698,5 @@ public final class DatabaseOperationsClass {
     private DatabaseOperationsClass() {
         // intentionally blank
     }
+
 }

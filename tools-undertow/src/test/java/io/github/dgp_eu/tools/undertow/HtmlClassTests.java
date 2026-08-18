@@ -91,7 +91,7 @@ class HtmlClassTests {
     void buildFileInfoBox() throws IOException {
         final Path tempFile = Files.createTempFile("fileops-test-file-", ".txt");
         try {
-            final String myInfoBox = HtmlClass.buildFileInfoBox(tempFile);
+            final String myInfoBox = HtmlClass.FileInfoSubClass.buildFileInfoBox(tempFile);
             assertAll("Select HTML correctness",
                     () -> assertTrue(myInfoBox.contains("<div class="), "HTML should contain div tag with class"),
                     () -> assertTrue(myInfoBox.contains("infoBox"), "HTML should contain infoBox class"),

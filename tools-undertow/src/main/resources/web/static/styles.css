@@ -45,6 +45,20 @@ header {
     z-index: 900;
 }
 
+.appCopyright {
+    bottom: 0rem;
+}
+
+.appDetails {
+    bottom: 0.55rem;
+}
+
+.appCopyright, .appDetails {
+    font-size: 0.5rem;
+    position: fixed;
+    right: 0.25rem;
+}
+
 .blueShaddowBorderLeft {
     box-shadow: 0px 0px 3px 3px blue;
     padding: 2px;
@@ -65,6 +79,30 @@ header {
     top: 3.5rem;
     width: 30%;
     z-index: 990;
+}
+
+.infoContextClass {
+    border: 1px blue dotted;
+    border-radius: 0px 10px;
+    font-size: 0.8rem;
+    position: fixed;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    width: 13rem;
+    z-index: 990;
+}
+
+.nowClass {
+    top: 0rem;
+    font-size: 0.5rem;
+    position: fixed;
+    right: 0.25rem;
+}
+
+.timeZoneFormClass {
+    float: left;
+    font-size: 0.8rem;
+    margin: 0rem 0.5rem 0rem 15rem;
 }
 
 main {

@@ -29,6 +29,13 @@ public final class SpecificSnowflakeClass {
     private static String strConnection;
     /** username variable */
     private static String strUserName;
+    /** connection user variable */
+    private static String connectionUser;
+
+    static {
+        loadSnowflakeDriver();
+        loadUsernameForConnection();
+    }
 
     /**
      * building Snowflake connection String
@@ -64,7 +71,6 @@ public final class SpecificSnowflakeClass {
      * @return Connection
      */
     public static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
-        loadSnowflakeDriver();
         final String idConnection = propInstance.getProperty("ConnectionIdentifier");
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
         Connection connection = null;
@@ -145,7 +151,7 @@ public final class SpecificSnowflakeClass {
      */
     private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
         final Properties properties = new Properties();
-        properties.put("user", getUsernameForConnection());
+        properties.put("user", connectionUser);
         properties.put("db", strDatabase);
         properties.put("allowUnderscoresInHost", "true");
         properties.put("JDBC_QUERY_RESULT_FORMAT", "JSON"); // overwrite default values which is Arrow
@@ -163,10 +169,9 @@ public final class SpecificSnowflakeClass {
     }
 
     /**
-     * Logic to retrieve relevant user-name for Snowflake connection
-     * @return String with user-name
+     * Logic to set relevant user for Snowflake connection
      */
-    private static String getUsernameForConnection() {
+    private static void loadUsernameForConnection() {
         String currentUser = strUserName;
         if (currentUser == null) {
             final String resolvedUser = ShellingClass.getCurrentUserAccount();
@@ -176,7 +181,7 @@ public final class SpecificSnowflakeClass {
                 || currentUser.isEmpty()) {
             currentUser = "UNKNOWN_USER";
         }
-        return currentUser;
+        connectionUser = currentUser;
     }
 
     /**
