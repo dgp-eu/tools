@@ -147,6 +147,15 @@ public final class TimingClass {
     }
 
     /**
+     * Current local DateTime w. TZ as String
+     * @return String
+     */
+    public static String getCurrentDateTimeLocal(final String inTimeZone) {
+        return DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS_ABRV, Locale.US)
+                .format(ZonedDateTime.now(ZoneId.of(inTimeZone)));
+    }
+
+    /**
      * Current DateTime UTC
      * @return String
      */

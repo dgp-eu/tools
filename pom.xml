@@ -44,9 +44,7 @@
 
     <modules>
         <module>tools-core</module>
-        <module>tools-databases</module>
-        <module>tools-json</module>
-        <module>tools-undertow</module>
+        <module>tools-dynamic</module>
     </modules>
 
     <properties>
