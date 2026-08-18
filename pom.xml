@@ -50,7 +50,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.4-SNAPSHOT</revision>
+        <revision>1.2.4</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -74,7 +74,6 @@
         <undertow-core.version>2.4.2.Final</undertow-core.version>
         <!-- Build Plugin versions -->
         <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
-        <cyclonedx-maven-plugin.version>2.9.3</cyclonedx-maven-plugin.version>
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
@@ -319,27 +318,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- Source: https://github.com/CycloneDX/cyclonedx-maven-plugin -->
-                <!-- Binaries: https://repo1.maven.org/maven2/org/cyclonedx/cyclonedx-maven-plugin -->
-                <!-- Description: CycloneDX Maven plugin generates CycloneDX Software Bill of Materials (SBOM) containing the aggregate of all direct and transitive dependencies of a project. CycloneDX is a full-stack SBOM standard designed for use in application security contexts and supply chain component analysis -->
-                <plugin>
-                    <groupId>org.cyclonedx</groupId>
-                    <artifactId>cyclonedx-maven-plugin</artifactId>
-                    <version>${cyclonedx-maven-plugin.version}</version>
-                    <inherited>true</inherited>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>makeBom</goal>
-                            </goals>
-                            <configuration>
-                                <!-- to be removed when https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/597 is fixed-->
-                                <skipNotDeployed>false</skipNotDeployed>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
                 <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-surefire-plugin -->
                 <!-- Description: Maven Surefire MOJO in maven-surefire-plugin. -->
@@ -474,10 +452,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.cyclonedx</groupId>
-                <artifactId>cyclonedx-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
