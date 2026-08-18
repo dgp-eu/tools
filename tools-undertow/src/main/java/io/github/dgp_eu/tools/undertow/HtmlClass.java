@@ -20,7 +20,6 @@ import java.util.Properties;
 import java.util.SequencedMap;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
-import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
@@ -92,8 +91,6 @@ public final class HtmlClass {
      * List and Maps management
      */
     public static final class FileInfoSubClass {
-        /** Variable for File Checksum */
-        /* default */ private static String fileChecksum = "unknown file hecksum";
         /** Variable for File Modified Time-stamp */
         /* default */ private static String fileModifiedTs = "unknown modified timestamp";
         /** Variable for File size (bytes) */
@@ -124,7 +121,6 @@ public final class HtmlClass {
             if (Files.exists(fileName)) {
                 fileSizeBytes = fileName.toFile().length();
                 fileModifiedTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
-                fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256");
             } else {
                 final String strFeedback = String.format("Given file %s was not found on disk, hence will be looking for it within JAR", fileName);
                 LogExposureClass.LOGGER.debug(strFeedback);
@@ -150,19 +146,17 @@ public final class HtmlClass {
                     final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
                     fileModifiedTs = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
                             TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
-                    fileChecksum = FileOperationsClass.StatisticsSubClass.computeSingleChecksumFromInputStream(inStream, "SHA-256");
                 } catch (IOException ex) {
                     LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
                 }
             }
-            final String rawHtml = "File is <span class=\"importantText\">%s</span>, having as size of <span class=\"importantText\">%s bytes (%s)</span>, last modified time-stamp on <span class=\"importantText\">%s</span> with a checksum SHA-256 value of %s";
+            final String rawHtml = "File is <span class=\"importantText\">%s</span>, having as size of <span class=\"importantText\">%s bytes (%s)</span>, last modified time-stamp on <span class=\"importantText\">%s</span>";
             final String strThousandSep = "%,d";
             return String.format(rawHtml,
-                    fileName.toString(),
+                    fileName.getFileName().toString(),
                     String.format(Locale.US, strThousandSep, fileSizeBytes),
                     BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSizeBytes, "binary"),
-                    fileModifiedTs,
-                    fileChecksum);
+                    fileModifiedTs);
         }
 
     }
