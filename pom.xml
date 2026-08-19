@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.4</revision>
+        <revision>1.2.5-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -67,7 +67,7 @@
         <log4j.version>2.26.1</log4j.version>
         <maven-model.version>3.9.16</maven-model.version>
         <picocli.version>4.7.7</picocli.version>
-        <plexus-interpolation.version>1.29</plexus-interpolation.version>
+        <plexus-interpolation.version>1.30.0</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.2.1</sqlite-jdbc.version>
         <undertow-core.version>2.4.2.Final</undertow-core.version>
         <!-- Build Plugin versions -->

@@ -4,10 +4,7 @@
 
 **tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
-- **tools-cli**: CLI shared utility library for operations
-- **tools-databases**: Shared utility library for database access and operations
-- **tools-json**: CLI app for splitting large JSON files using streaming parsing
-- **tools-undertow**: Shared utility library for web server operations using Undertow and JTE
+- **tools-dynamic**: Shared utility library for database access and JSON operations and a library for web server operations using Undertow and JTE
 
 All modules target **Java 26** and publish to Maven Central Repository.
 
@@ -17,15 +14,8 @@ All modules target **Java 26** and publish to Maven Central Repository.
 tools (parent POM)
 ├── tools-core (io.github.dgp-eu.tools.core)
 │   └── No dependencies on other modules; contains all core utilities
-├── tools-cli (io.github.dgp-eu.tools.cli)
-│   └── Depends on: tools-core
-├── tools-databases (io.github.dgp-eu.tools.databases)
-│   └── Depends on: tools-core
-├── tools-json (io.github.dgp-eu.tools.json)
-│   └── Depends on: tools-core
-│   └── Depends on: tools-cli
-├── tools-undertow (io.github.dgp-eu.tools.undertow)
-│   └── Depends on: tools-core
+├── tools-dynamic (io.github.dgp-eu.tools.dynamic)
+│   └── Depends on: tools-dynamic
 ```
 
 **Critical Pattern**: All utilities exposed through public static classes with inner SubClasses:
@@ -65,17 +55,14 @@ mvn central-publishing:publish
 
 ## Key Files & Packages
 
-| File                                                                                      | Purpose                                                                                                                     |
-|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| `pom.xml` (root)                                                                          | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies |
-| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                                  | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.  |
-| `tools-core/src/main/resources/project.properties`                                        | Windows-specific configuration (System32 paths, PowerShell location)                                                        |
-| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`             | Example JUnit 6 tests                                                                                                       |
-| `tools-cli/src/main/java/org/dgp-eu/tools/cli/CommonApplication.java`                     | Entry point; picocli @Command                                                                                               |
-| `tools-databases/src/main/java/org/dgp-eu/tools/databases/*`                              | Database functionality                                                                                                      |
-| `tools-json/src/main/java/org/dgp-eu/tools/json/*`                                        | JSON utility clases                                                                                                         |
-| `tools-undertow/src/main/java/io/github/dgp-eu/tools/undertow/*`                          | Undertow and JTE wrapper classes for web server operations (utility library, no CLI)                                        |
-| `tools-undertow/src/main/resources/undertow.properties`                                   | Web server defaults                                                                                                         |
+| File                                                                           | Purpose                                                                                                                              |
+|--------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `pom.xml` (root)                                                               | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies          |
+| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                       | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.           |
+| `tools-core/src/main/resources/project.properties`                             | Windows-specific configuration (System32 paths, PowerShell location)                                                                 |
+| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`  | Example JUnit 6 tests                                                                                                                |
+| `tools-dynamic/src/main/java/org/dgp-eu/tools/dynamic/*`                       | Database functionality, JSON utility clases and Undertow + JTE wrapper classes for web server operations (utility library, no CLI)   |
+| `tools-dynamic/src/main/resources/undertow.properties`                         | Web server defaults                                                                                                                  |
 
 ## Project-Specific Conventions
 
@@ -109,7 +96,7 @@ This avoids creating separate files while maintaining logical grouping.
 ### Testing Patterns
 - Use `@DisplayName("human-readable description")` for test clarity
 - Test edge cases explicitly (null, non-existent paths, permission errors)
-- Use `assertEquals`, `assertTrue` from JUnit 5 static assertions
+- Use `assertEquals`, `assertTrue` from JUnit 6 static assertions
 - Temp files: use `Path.of(System.getProperty("java.io.tmpdir"), uniqueName)` to avoid conflicts
 
 ### Logging
@@ -121,21 +108,21 @@ This avoids creating separate files while maintaining logical grouping.
 - **tools-core/src/main/resources/project.properties**: Contains Windows-specific paths and web server defaults
   - System32 path: `C:\Windows\System32`
   - PowerShell executable: `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
-  - Web server binding IP: `0.0.0.0`
+  - Web server binding IP: `127.0.0.1`
   - Web server protocol: `http`
 - Agents should be aware of these defaults when extending tools-web or tools-core functionality
 
 ### Dependency Management
 - All dependency versions centralized in root `pom.xml` `<dependencyManagement>`
 - Child POMs use version-less `<dependency>` declarations
-- Critical versions: Jackson 3.2.1 (custom build), JUnit Jupiter 6.1.2, Java 26
+- Critical versions: Jackson 3.2.2 (custom build), JUnit Jupiter 6.1.3, Java 26
 
 ### Build Plugin Configuration
 - **takari-lifecycle-plugin**: Generates sources JAR automatically during package phase
 - **flatten-maven-plugin**: Resolves CI-friendly versions (uses resolveCiFriendliesOnly mode)
 - **maven-assembly-plugin**: Creates fat JAR (`*-jar-with-dependencies.jar`) for CLI applications
 - **maven-javadoc-plugin**: Generates Javadoc with doclint disabled
-- **maven-surefire-plugin**: Configured with JUnit Jupiter 6.1.0 and `--enable-native-access=ALL-UNNAMED` for FFM module access
+- **maven-surefire-plugin**: Configured with JUnit Jupiter 6.1.3 and `--enable-native-access=ALL-UNNAMED` for FFM module access
 - **jacoco-maven-plugin**: Code coverage with bundle-level rules check
 - **central-publishing-maven-plugin**: Configured for auto-publish to Maven Central with waitUntil=published
 - **versions-maven-plugin**: Used for dependency updates and version management
@@ -160,8 +147,8 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 
 | Dependency                                                           | Version  | Used For                                             | Scope   |
 |----------------------------------------------------------------------|----------|------------------------------------------------------|---------|
-| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.1    | JSON parsing and generation (custom build)           | compile |
-| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.1    | XML serialization/deserialization (custom build)     | compile |
+| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.2    | JSON parsing and generation (custom build)           | compile |
+| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.2    | XML serialization/deserialization (custom build)     | compile |
 | SQLite JDBC                                                          | 3.53.2.1 | Database operations (sqlite-jdbc) in tools-databases | compile |
 | Picocli                                                              | 4.7.7    | CLI command parsing and help                         | compile |
 | Undertow Core                                                        | 2.4.2    | Lightweight web server (tools-web Java Web UI)       | compile |
@@ -170,7 +157,7 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 | Log4j SLF4J2 Adapter                                                 | 2.26.1   | SLF4J 2.0 API binding to Log4j 2 Core                | compile |
 | Maven Model                                                          | 3.9.16   | POM file parsing (tools-core features)               | compile |
 | Plexus Interpolation                                                 | 1.29     | String interpolation utilities                       | compile |
-| JUnit Jupiter                                                        | 6.1.2    | Testing framework                                    | test    |
+| JUnit Jupiter                                                        | 6.1.3    | Testing framework                                    | test    |
 | JaCoCo                                                               | 0.8.15   | Code coverage measurement                            | test    |
 | JSpecify                                                             | 1.0.1    | Null-safety annotations                              | compile |
 | JSON Schema Validator                                                | 3.0.6    | JSON Schema validator                                | compile |
