@@ -89,9 +89,10 @@ public final class TimingClass {
      * composing Aging as words from Integer components
      * @param inAgeComponents age components as List of Integer values
      * @param negative true or false
+     * @param strZeroValue return value if all parts are empty
      * @return String with words for aging
      */
-    public static String composeAgingInWordsFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final boolean negative) {
+    public static String composeAgingInWordsFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final boolean negative, final String strZeroValue) {
         final List<String> parts = new ArrayList<>();
         appendIfNotZero(parts, inAgeComponents.intYears, "year");
         appendIfNotZero(parts, inAgeComponents.intMonths, "month");
@@ -101,7 +102,7 @@ public final class TimingClass {
         appendIfNotZero(parts, inAgeComponents.intSeconds, "second");
         appendIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
         if (parts.isEmpty()) {
-            return "INSTANT (less than 1 millisecond)";
+            return strZeroValue;
         }
         return (negative ? "-" : "") + String.join(", ", parts);
     }
@@ -143,7 +144,7 @@ public final class TimingClass {
         int intMinutes = (int) minutes;
         int intSeconds = (int) seconds;
         final AgingInfoRecord ageComponents = new AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
-        return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative);
+        return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative, "INSTANT (less than 1 millisecond)");
     }
 
     /**
