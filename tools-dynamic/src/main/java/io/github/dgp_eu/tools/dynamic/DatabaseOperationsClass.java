@@ -49,7 +49,7 @@ public final class DatabaseOperationsClass {
             final String strKey = (String) obj;
             final String strOriginalValue = queryProperties.getProperty(strKey);
             String strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue);
-            if (strOriginalValue.matches(STR_NULL)) {
+            if (STR_NULL.equalsIgnoreCase(strOriginalValue)) {
                 strValueToUse = strOriginalValue;
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
                 strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue.replaceAll("([\"'])", ""));
