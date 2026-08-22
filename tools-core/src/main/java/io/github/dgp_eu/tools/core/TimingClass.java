@@ -54,7 +54,7 @@ public final class TimingClass {
     public static final String ISO_DATE_LONG = "EEEE, dd MMMM yyyy";
     /** String constant */
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-    /** Map with predefined time format patterns used for duration and time-stamp formatting. */
+    /** Map w. predefined time format patterns used for duration/time-stamp formatting. */
     private static final Map<String, String> TIME_FORMATS;
     /** Record for Aging Components */
     /* default */ public record AgingInfoRecord(
@@ -116,7 +116,7 @@ public final class TimingClass {
     public static String computeAging(ZonedDateTime startTimestamp, ZonedDateTime finishTimestamp) {
         final boolean negative = finishTimestamp.isBefore(startTimestamp); 
         if (negative) {
-            ZonedDateTime tmp = startTimestamp;
+            final ZonedDateTime tmp = startTimestamp;
             startTimestamp = finishTimestamp;
             finishTimestamp = tmp;
         }
@@ -133,16 +133,16 @@ public final class TimingClass {
         final int months = period.getMonths();
         final int days   = period.getDays();
         // duration components
-        long hours   = duration.toHours();
+        final long hours   = duration.toHours();
         duration     = duration.minusHours(hours);
-        long minutes = duration.toMinutes();
+        final long minutes = duration.toMinutes();
         duration     = duration.minusMinutes(minutes);
-        long seconds = duration.getSeconds();
-        int mili     = duration.toMillisPart();
+        final long seconds = duration.getSeconds();
+        final int mili     = duration.toMillisPart();
         // assemble for word composition
-        int intHours   = (int) hours;
-        int intMinutes = (int) minutes;
-        int intSeconds = (int) seconds;
+        final int intHours   = (int) hours;
+        final int intMinutes = (int) minutes;
+        final int intSeconds = (int) seconds;
         final AgingInfoRecord ageComponents = new AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
         return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative, "INSTANT (less than 1 millisecond)");
     }
@@ -152,7 +152,7 @@ public final class TimingClass {
      * @return String
      */
     public static String getCurrentDateTimeLocal(final String inTimeZone) {
-        return DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS_ABRV, Locale.US)
+        return DateTimeFormatter.ofPattern(DATE_TIME_MS_ABRV, Locale.US)
                 .format(ZonedDateTime.now(ZoneId.of(inTimeZone)));
     }
 

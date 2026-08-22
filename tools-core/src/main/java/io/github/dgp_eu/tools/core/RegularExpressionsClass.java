@@ -373,6 +373,7 @@ public final class RegularExpressionsClass {
                     case "byteSize"                         -> REGEXP_BYTE_SIZE;
                     case "decimal"                          -> REGEXP_NO_DECIMAL;
                     case "fullAging"                        -> REGEXP_AGING_FULL;
+                    case "integer"                          -> REGEXP_NO_LONG;
                     case "long"                             -> REGEXP_NO_LONG;
                     case "numeric"                          -> REGEXP_NO_NUMERIC;
                     case REGEXP_LONG_TS_MS                  -> REGEXP_LONG_TS_MS;

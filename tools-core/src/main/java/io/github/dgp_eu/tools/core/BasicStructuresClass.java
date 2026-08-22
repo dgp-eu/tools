@@ -947,6 +947,15 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * Format Decimal String with Thousand separator
+         * @param strOriginal Original string
+         * @return String
+         */
+        public static String formatStringWithDecimalContentWithThousandDecimalSeparator(final String strOriginal) {
+            return String.format(Locale.US, "%,.2f", new BigDecimal(strOriginal));
+        }
+
+        /**
          * Ensures no password exposure
          * @param inProps input Properties
          * @return Properties with certain things obfuscated

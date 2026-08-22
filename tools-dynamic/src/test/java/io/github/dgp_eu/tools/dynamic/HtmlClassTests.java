@@ -1,10 +1,6 @@
 package io.github.dgp_eu.tools.dynamic;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -170,13 +166,6 @@ class HtmlClassTests {
                 () -> assertTrue(html.contains("<th>#</th>"), "Counter column header should be present when Counter feature is used"),
                 () -> assertTrue(html.contains("</tbody></table>"), "Table should be properly closed")
         );
-    }
-
-    /**
-     * Constructor
-     */
-    HtmlClassTests() {
-        // intentionally blank
     }
 
 }

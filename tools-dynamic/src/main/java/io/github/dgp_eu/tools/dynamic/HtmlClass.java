@@ -4,7 +4,6 @@ package io.github.dgp_eu.tools.dynamic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +12,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -128,20 +129,10 @@ public final class HtmlClass {
                 try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
                     final String strFeedback2 = String.format("Input Stream is: %s", inStream);
                     LogExposureClass.LOGGER.debug(strFeedback2);
-                    if (inStream == null) {
-                        final String strFeedback21 = String.format("Resource not found in JAR for checksum: %s", internalFile);
-                        LogExposureClass.LOGGER.error(strFeedback21);
-                        throw new IOException(strFeedback21);
-                    }
                     fileSizeBytes = inStream.transferTo(OutputStream.nullOutputStream());
                     final URL resourceUrl = HtmlClass.class.getResource(internalFile);
                     final String strFeedback3 = String.format("URI is: %s", resourceUrl);
                     LogExposureClass.LOGGER.debug(strFeedback3);
-                    if (resourceUrl == null) {
-                        final String strFeedback4 = String.format("Resource URL not found in JAR: %s", internalFile);
-                        LogExposureClass.LOGGER.error(strFeedback4);
-                        throw new IOException(strFeedback4);
-                    }
                     final long lastModified = resourceUrl.openConnection().getLastModified();
                     final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
                     fileModifiedTs = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
@@ -251,7 +242,7 @@ public final class HtmlClass {
      */
     public static final class TableSubClass {
         /** CSS to align text to right */
-        private static final String CSS_TEXT_RIGHT = "text-align:right;";
+        private static final String CSS_TEXT_RIGHT_NW = "text-align:right;white-space:nowrap;";
         /** Minimum string length threshold for time-zone pattern replacement */
         private static final long LARGE_STRING = 20;
         /** Time Zone variable */
@@ -260,7 +251,7 @@ public final class HtmlClass {
         private static String strOutTimeZone;
 
         /** Per-call mutable context to avoid shared static state. */
-        private static final class TableBuildContext {
+        private static final class TableBuildContextSubClass {
             /** Variable for current Tab */
             private String currentTabValue;
             /** Variable for lines within Table */
@@ -273,6 +264,195 @@ public final class HtmlClass {
             private String strTableHeader = "";
             /** Variable for counter inclusion (true/false) */
             private boolean useCounter;
+
+            /**
+             * ensuring Table Header is appended
+             */
+            private static void ensureHeaderAppended(final TableBuildContextSubClass tblContext) {
+                if (tblContext.listTableLines.isEmpty()) {
+                    tblContext.listTableLines.add(tblContext.strTableHeader);
+                    tblContext.rowCounter = 0;
+                }
+            }
+
+            /**
+             * final
+             */
+            private void finish(final TableBuildContextSubClass tblContext) {
+                if (!tblContext.strTableHeader.isEmpty()) {
+                    tblContext.listTableLines.add("</tbody></table>");
+                    if (!tblContext.rememberKey.isEmpty()) {
+                        tblContext.listTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", tblContext.currentTabValue));
+                    }
+                }
+            }
+
+            /**
+             * handle Tab switch
+             * @param recordMap properties of the record to be transformed into HTML row
+             */
+            private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
+                final Object valObj = recordMap.get(tblContext.rememberKey);
+                final String valueForTab = valObj == null ? BasicStructuresClass.STR_NULL : valObj.toString();
+                final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
+                if (!valueForTab.equalsIgnoreCase(prev)) {
+                    if (tblContext.listTableLines.isEmpty()) {
+                        // first tab: open tab container
+                        tblContext.listTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
+                    } else if (tblContext.currentTabValue != null) {
+                        // close previous tab's table
+                        tblContext.listTableLines.add(String.format("</tbody></table></div><!-- %s -->", tblContext.currentTabValue));
+                    }
+                    // open new tab with header
+                    tblContext.listTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, tblContext.strTableHeader));
+                    tblContext.currentTabValue = valueForTab;
+                    tblContext.rowCounter = 0;
+                }
+            }
+
+            /**
+             * process each record
+             * @param recordMap map with record content
+             */
+            private static void processRecord(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
+                HeaderSubSubClass.ensureHeaderExists(recordMap, tblContext);
+                if (tblContext.rememberKey.isEmpty()) {
+                    ensureHeaderAppended(tblContext);
+                } else {
+                    handleTabSwitch(recordMap, tblContext);
+                }
+                if (tblContext.useCounter) {
+                    tblContext.rowCounter++;
+                    recordMap.put("#", String.valueOf(tblContext.rowCounter));
+                }
+                final String crtRow = RowSubSubSubClass.buildTableBodyRow(recordMap, tblContext);
+                tblContext.listTableLines.add(crtRow);
+            }
+
+            /**
+             * Rows logic
+             */
+            private static final class RowSubSubSubClass {
+                /** Variable for specialValues */
+                private static SequencedMap<String, SpValuesRecord> specialValues = new LinkedHashMap<>();
+                /** Record for ZoneInfo */
+                /* default */ public record SpValuesRecord(
+                    String newValue,
+                    String newStyle) {}
+
+                static {
+                    loadPredefinedValuesAndTheirStyles();
+                }
+
+                /**
+                 * Table Body row logic
+                 * @param recordMap properties of the record to be transformed into HTML row
+                 * @return String
+                 */
+                private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
+                    final StringBuilder strTableRow = new StringBuilder(1000);
+                    strTableRow.append("<tr>");
+                    recordMap.forEach((strKey, objValue) -> {
+                        if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
+                                && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
+                            final StringBuilder cellStyle = new StringBuilder(100);
+                            if (recordMap.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
+                                cellStyle.append(recordMap.get(BasicStructuresClass.STR_ROW_STYLE).toString());
+                            }
+                            final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
+                            final String strValue = mapSmartLogic.get("value");
+                            if (!mapSmartLogic.get(BasicStructuresClass.STR_STYLE).isEmpty()) {
+                                cellStyle.append(mapSmartLogic.get(BasicStructuresClass.STR_STYLE));
+                            }
+                            if (cellStyle.isEmpty()) {
+                                strTableRow.append(String.format("<td>%s</td>", strValue));
+                            } else {
+                                strTableRow.append(String.format("<td style=\"%s\">%s</td>", cellStyle, strValue));
+                            }
+                        }
+                    });
+                    strTableRow.append("</tr>");
+                    return strTableRow.toString();
+                }
+
+                /**
+                 * loading special Values and CSS style
+                 */
+                private static void loadPredefinedValuesAndTheirStyles() {
+                    specialValues.put(BasicStructuresClass.STR_NULL, new SpValuesRecord("&lt;NULL&gt;", "color:LightGrey;font-style:italic;"));
+                    specialValues.put("", new SpValuesRecord("&lt;blank&gt;", "color:Grey;font-style:italic;"));
+                }
+
+                /**
+                 * Manage Cell Style and Value
+                 * @param inValue input value
+                 * @return Map
+                 */
+                private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
+                    String cellStyle = "";
+                    String strValue = inValue.toString();
+                    if (specialValues.containsKey(inValue)) {
+                        cellStyle = specialValues.get(strValue).newStyle;
+                        strValue = specialValues.get(strValue).newValue;
+                    } else {
+                        final String tempValue = transformValueByPatternMatch(strValue);
+                        if (tempValue != null) {
+                            cellStyle = CSS_TEXT_RIGHT_NW;
+                            strValue = tempValue;
+                        } else if (strValue.length() >= LARGE_STRING) {
+                            strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
+                        }
+                    }
+                    return Map.of(
+                            BasicStructuresClass.STR_STYLE,
+                            cellStyle,
+                            "value",
+                            strValue);
+                }
+
+                /**
+                 * Transform 1 value by Given Pattern
+                 * @param inputString input value
+                 * @param crtPattern matching pattern
+                 * @return String
+                 */
+                private static String transformSingleValueByPattern(final String inputString, final String crtPattern) {
+                    return switch (crtPattern) {
+                        case "decimal"                          -> BasicStructuresClass.StringTransformationSubClass.formatStringWithDecimalContentWithThousandDecimalSeparator(inputString);
+                        case "integer"                          -> String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoInteger(inputString));
+                        case "long"                             -> String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoLong(inputString));
+                        case BasicStructuresClass.STR_JUST_DATE -> TimingClass.LocalizationSubClass.formatDateFriendly(inputString, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
+                        case BasicStructuresClass.STR_TIMESTAMP -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV);
+                        case BasicStructuresClass.STR_TS_MSEC   -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_ABRV);
+                        case "byteSize", "fullAging"            -> inputString;
+                        default                                 -> "";
+                    };
+                }
+
+                /**
+                 * Transform 1 value by Given Pattern
+                 * @param inputString input value
+                 * @param crtPattern matching pattern
+                 * @return String
+                 */
+                private static String transformValueByPatternMatch(final String inputString) {
+                    String outputString = null;
+                    final List<String> arrayPatterns = List.of("decimal", "integer", "long", BasicStructuresClass.STR_TS_MSEC, BasicStructuresClass.STR_TIMESTAMP, BasicStructuresClass.STR_JUST_DATE, "byteSize", "fullAging");
+                    final Iterator<String> itArray = arrayPatterns.iterator();
+                    boolean needsToContinue = true;
+                    while (itArray.hasNext()
+                            && needsToContinue) {
+                        final String crtPattern = itArray.next();
+                        if (RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, crtPattern)) {
+                            outputString = transformSingleValueByPattern(inputString, crtPattern);
+                            needsToContinue = false;
+                        }
+                    }
+                    return outputString;
+                }
+
+            }
+
         }
 
         /**
@@ -281,34 +461,21 @@ public final class HtmlClass {
          * @return String
          */
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
-            final TableBuildContext ctx = new TableBuildContext();
+            final TableBuildContextSubClass ctx = new TableBuildContextSubClass();
             if (strInTimeZone == null) {
                 setInTimeZone(System.getProperty("user.timezone"));
             }
             if (strOutTimeZone == null) {
                 setOutTimeZone(System.getProperty("user.timezone"));
             }
-            ctx.listTableLines.clear();
             ctx.strTableHeader = "";
             ctx.rememberKey = getRememberKey(objFeatures);
             ctx.useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
             for (final SequencedMap<Object, Object> recordMap : inList) {
-                processRecord(recordMap, ctx);
+                TableBuildContextSubClass.processRecord(recordMap, ctx);
             }
-            finish(ctx);
+            ctx.finish(ctx);
             return String.join("", ctx.listTableLines);
-        }
-
-        /**
-         * final
-         */
-        private static void finish(final TableBuildContext tblContext) {
-            if (!tblContext.strTableHeader.isEmpty()) {
-                tblContext.listTableLines.add("</tbody></table>");
-                if (!tblContext.rememberKey.isEmpty()) {
-                    tblContext.listTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", tblContext.currentTabValue));
-                }
-            }
         }
 
         /**
@@ -322,47 +489,6 @@ public final class HtmlClass {
                 strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
             }
             return strRememberKey;
-        }
-
-        /**
-         * handle Tab switch
-         * @param recordMap properties of the record to be transformed into HTML row
-         */
-        private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
-            final Object valObj = recordMap.get(tblContext.rememberKey);
-            final String valueForTab = valObj == null ? BasicStructuresClass.STR_NULL : valObj.toString();
-            final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
-            if (!valueForTab.equalsIgnoreCase(prev)) {
-                if (tblContext.listTableLines.isEmpty()) {
-                    // first tab: open tab container
-                    tblContext.listTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
-                } else if (tblContext.currentTabValue != null) {
-                    // close previous tab's table
-                    tblContext.listTableLines.add(String.format("</tbody></table></div><!-- %s -->", tblContext.currentTabValue));
-                }
-                // open new tab with header
-                tblContext.listTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, tblContext.strTableHeader));
-                tblContext.currentTabValue = valueForTab;
-                tblContext.rowCounter = 0;
-            }
-        }
-
-        /**
-         * process each record
-         * @param recordMap map with record content
-         */
-        private static void processRecord(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
-            HeaderSubSubClass.ensureHeaderExists(recordMap, tblContext);
-            if (tblContext.rememberKey.isEmpty()) {
-                HeaderSubSubClass.ensureHeaderAppended(tblContext);
-            } else {
-                handleTabSwitch(recordMap, tblContext);
-            }
-            if (tblContext.useCounter) {
-                tblContext.rowCounter++;
-                recordMap.put("#", String.valueOf(tblContext.rowCounter));
-            }
-            tblContext.listTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap, tblContext));
         }
 
         /**
@@ -386,122 +512,6 @@ public final class HtmlClass {
         /**
          * Rows logic
          */
-        private static final class RowSubSubClass {
-
-            /**
-             * Table Body row logic
-             * @param recordMap properties of the record to be transformed into HTML row
-             * @return String
-             */
-            private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
-                final StringBuilder strTableRow = new StringBuilder(1000);
-                strTableRow.append("<tr>");
-                recordMap.forEach((strKey, objValue) -> {
-                    if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
-                            && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                        final StringBuilder cellStyle = new StringBuilder(100);
-                        if (recordMap.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
-                            cellStyle.append(recordMap.get(BasicStructuresClass.STR_ROW_STYLE).toString());
-                        }
-                        final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
-                        final String strValue = mapSmartLogic.get("value");
-                        if (!mapSmartLogic.get(BasicStructuresClass.STR_STYLE).isEmpty()) {
-                            cellStyle.append(mapSmartLogic.get(BasicStructuresClass.STR_STYLE));
-                        }
-                        if (cellStyle.isEmpty()) {
-                            strTableRow.append(String.format("<td>%s</td>", strValue));
-                        } else {
-                            strTableRow.append(String.format("<td style=\"%s\">%s</td>", cellStyle, strValue));
-                        }
-                    }
-                });
-                strTableRow.append("</tr>");
-                return strTableRow.toString();
-            }
-
-            /**
-             * right Style if Value is full Aging
-             * @param inCellStyle input cell style
-             * @param inValue input value
-             * @return String new style if matches
-             */
-            private static String checkValueIfMatchesFullAging(final String inCellStyle, final String inValue) {
-                String outCellStyle = inCellStyle;
-                final boolean isFullAging = RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inValue, "fullAging");
-                if (isFullAging) {
-                    outCellStyle = CSS_TEXT_RIGHT + "white-space:nowrap;";
-                }
-                return outCellStyle;
-            }
-
-            /**
-             * right Style if Value is byte or multiple of
-             * @param inCellStyle input cell style
-             * @param inValue input value
-             * @return String new style if matches
-             */
-            private static String checkValueIfMatchesByteSizes(final String inCellStyle, final String inValue) {
-                String outCellStyle = inCellStyle;
-                final boolean isByteSize = RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inValue, "byteSize");
-                if (isByteSize) {
-                    outCellStyle = CSS_TEXT_RIGHT;
-                }
-                return outCellStyle;
-            }
-
-            /**
-             * Manage Cell Style and Value
-             * @param inValue input value
-             * @return Map
-             */
-            private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
-                String cellStyle = "";
-                String strValue = inValue.toString();
-                if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue)) {
-                    cellStyle = "color:LightGrey;font-style:italic;";
-                    strValue = "&lt;NULL&gt;";
-                } else if (strValue.isBlank()) {
-                    cellStyle = "color:Grey;font-style:italic;";
-                    strValue = "&lt;blank&gt;";
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDecimal(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue));
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyInteger(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoInteger(strValue));
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyLong(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoLong(strValue));
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_ABRV);
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV);
-                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(strValue)) {
-                    cellStyle = CSS_TEXT_RIGHT;
-                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
-                } else if (strValue.length() >= LARGE_STRING) {
-                    strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
-                }
-                if (cellStyle.isBlank()) {
-                    cellStyle = checkValueIfMatchesByteSizes(cellStyle, strValue); // check for disk size
-                }
-                if (cellStyle.isBlank()) {
-                    cellStyle = checkValueIfMatchesFullAging(cellStyle, strValue); // check for full Aging
-                }
-                return Map.of(
-                        BasicStructuresClass.STR_STYLE,
-                        cellStyle,
-                        "value",
-                        strValue);
-            }
-
-        }
-
-        /**
-         * Rows logic
-         */
         private static final class HeaderSubSubClass {
 
             /**
@@ -509,7 +519,7 @@ public final class HtmlClass {
              * @param recordMap properties of the record to be transformed into HTML row
              * @return String
              */
-            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
+            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 final StringBuilder strBuilder = new StringBuilder(100);
                 strBuilder.append("<table><thead>");
                 recordMap.forEach((strKey, _) -> {
@@ -526,20 +536,10 @@ public final class HtmlClass {
             }
 
             /**
-             * ensuring Table Header is appended
-             */
-            private static void ensureHeaderAppended(final TableBuildContext tblContext) {
-                if (tblContext.listTableLines.isEmpty()) {
-                    tblContext.listTableLines.add(tblContext.strTableHeader);
-                    tblContext.rowCounter = 0;
-                }
-            }
-
-            /**
              * initiating Table Header
              * @param recordMap records to parse
              */
-            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap, final TableBuildContext tblContext) {
+            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 if (tblContext.strTableHeader.isEmpty()) {
                     tblContext.strTableHeader = buildTableHeader(recordMap, tblContext);
                 }

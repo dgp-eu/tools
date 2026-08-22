@@ -68,6 +68,7 @@
         <maven-model.version>3.9.16</maven-model.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.30.0</plexus-interpolation.version>
+        <pmd.version>7.26.0</pmd.version>
         <sqlite-jdbc.version>3.53.2.1</sqlite-jdbc.version>
         <undertow-core.version>2.4.2.Final</undertow-core.version>
         <!-- Build Plugin versions -->
@@ -79,6 +80,7 @@
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <takari-lifecycle-plugin.version>2.3.4</takari-lifecycle-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
@@ -286,6 +288,26 @@
                         <doclint>none</doclint>
                     </configuration>
                 </plugin>
+                <!-- Source: https://github.com/apache/maven-pmd-plugin/ -->
+                <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-pmd-plugin -->
+                <!-- Description: A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste fragments, as well as being able to fail the build based on these metrics. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-core</artifactId>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-java</artifactId>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
                 <!-- Website: https://www.mojohaus.org/flatten-maven-plugin/ -->
                 <!-- Source: https://github.com/mojohaus/flatten-maven-plugin -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/codehaus/mojo/flatten-maven-plugin/ -->
@@ -452,6 +474,18 @@
                 <artifactId>maven-gpg-plugin</artifactId>
             </plugin>
             <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <printFailingErrors>true</printFailingErrors>
+                    <linkXRef>false</linkXRef>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
             </plugin>
@@ -462,6 +496,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+                <configuration>
+                    <rulesets>
+                        <ruleset>pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <inherited>false</inherited> <!-- don't run aggregate in child modules -->
+                        <reports>
+                            <report>aggregate-pmd</report>
+                            <report>aggregate-cpd</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>pmd</report>
+                            <report>cpd</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <distributionManagement>
         <repository>
