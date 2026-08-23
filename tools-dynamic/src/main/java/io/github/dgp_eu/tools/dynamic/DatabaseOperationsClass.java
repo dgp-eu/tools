@@ -52,7 +52,7 @@ public final class DatabaseOperationsClass {
             if (STR_NULL.equalsIgnoreCase(strOriginalValue)) {
                 strValueToUse = strOriginalValue;
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue.replaceAll("([\"'])", ""));
+                strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue.replace("\"", "").replace("'", ""));
                 if (strOriginalValue.isEmpty()) {
                     strValueToUse = STR_NULL;
                 }
