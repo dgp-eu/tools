@@ -170,14 +170,18 @@ public final class BasicStructuresClass {
         /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
         /** One as string */
         /* default */ public static final String ARITY_ONLY_ONE = "1";
+        /** frequently expression used to catch conversion error  */
+        public static final String CONVERT_INT_NA = "Could not convert value %s into Integer... %s";
         /** default Locale */
         public static final String DEFAULT_LOCALE = "en-US";
         /** "Active Pixels" constant */
         public static final String STR_ACTV_PXLS = "Active Pixels";
+        /** binary constant */
+        public static final String STR_BINARY = "binary";
         /** Content constant */
         public static final String STR_CONTENT = "Content";
-        /** frequently expression used to catch conversion error  */
-        public static final String CONVERT_INT_NA = "Could not convert value %s into Integer... %s";
+        /** decimal constant */
+        public static final String STR_DECIMAL = "decimal";
         /** Dependencies constant */
         public static final String STR_DEPENDENCIES = "Dependencies";
         /** String for internal ETL */
@@ -539,22 +543,16 @@ public final class BasicStructuresClass {
          */
         public static String convertUnits(final long inBytes, final String strStyle) {
             String outString = "";
-            final List<String> knownStyles = Arrays.asList("binary", "decimal");
+            final List<String> knownStyles = Arrays.asList(ConfigurationSubClass.STR_BINARY, ConfigurationSubClass.STR_DECIMAL);
             if (knownStyles.contains(strStyle)) {
-                long[] arrayNumbers = null;
-                String[] arraySymbols = null;
-                switch (strStyle) {
-                    case "decimal":
-                        arrayNumbers = ARRAY_DEC_NO;
-                        arraySymbols = ARRAY_DEC_UNITS;
-                        break;
-                    case "binary":
-                        arrayNumbers = ARRAY_BIN_NO;
-                        arraySymbols = ARRAY_BIN_UNITS;
-                        break;
-                    default:
-                        // intentionally left blank
-                        break;
+                long[] arrayNumbers = {1L};
+                String[] arraySymbols = {"byte"};
+                if (ConfigurationSubClass.STR_DECIMAL.equalsIgnoreCase(strStyle)) {
+                    arrayNumbers = ARRAY_DEC_NO;
+                    arraySymbols = ARRAY_DEC_UNITS;
+                } else if (ConfigurationSubClass.STR_BINARY.equalsIgnoreCase(strStyle)) {
+                    arrayNumbers = ARRAY_BIN_NO;
+                    arraySymbols = ARRAY_BIN_UNITS;
                 }
                 if (inBytes == arrayNumbers[0]) { // bytes
                     outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[0]);
@@ -813,7 +811,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyDecimal(final String inputString) {
-            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "decimal");
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, ConfigurationSubClass.STR_DECIMAL);
         }
 
         /**
