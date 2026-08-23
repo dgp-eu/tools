@@ -58,10 +58,10 @@ public final class JsonOperationsClass {
     /**
      * Load all JSON nodes from String
      * 
-     * @param strJson Input stream as source
+     * @param strJson Input String as source
      * @return JsonNode
      */
-    public static JsonNode getJsonFileNodes(final InputStream strJson) {
+    public static JsonNode getJsonFileNodes(final String strJson) {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.apache.maven.model.Model;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -129,7 +130,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldDst", "--folderDestination"},
                 description = "Destination Folder where archives will be created (required, only one)",
-                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONLY_ONE,
                 required = true)
         private String strDestFolder;
 
@@ -159,7 +160,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldNm", "--folderName"},
                 description = "Folder Name in scope (required, one or more)",
-                arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONE_OR_MORE,
                 required = true)
         private String[] strFolderNames;
 
@@ -189,7 +190,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-if", "--inFileName"},
                 description = "Input file(s) to consider",
-                arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONE_OR_MORE,
                 required = true)
         private String[] strInFileNames;
 
@@ -219,7 +220,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-ldb", "--localDatabaseFile"},
                 description = "Local Database File",
-                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONLY_ONE,
                 required = true)
         private String strLocalDbFile;
 
@@ -249,7 +250,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-of", "--outFileName"},
                 description = "Destination file to write information into",
-                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONLY_ONE,
                 required = true)
         private String strOutFileName;
 
@@ -279,7 +280,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-p", "--port"},
                 description = "Port Number for web user interface",
-                arity = BasicStructuresClass.ARITY_ONLY_ONE,
+                arity = BasicStructuresClass.ConfigurationSubClass.ARITY_ONLY_ONE,
                 required = true)
         private long portNumber;
 

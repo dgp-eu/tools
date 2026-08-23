@@ -6,12 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="tools-databases" />
-        <module name="tools-cli" />
-        <module name="tools-undertow" />
-        <module name="tools-json" />
         <module name="tools-core" />
+        <module name="tools-dynamic" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="tools-cli" target="26" />
+      <module name="tools-databases" target="26" />
+      <module name="tools-json" target="26" />
+      <module name="tools-undertow" target="26" />
+    </bytecodeTargetLevel>
   </component>
 </project>

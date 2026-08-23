@@ -70,16 +70,22 @@ public final class TimingClass {
         // Initialize the concurrent map
         final Map<String, String> tempMap = new ConcurrentHashMap<>();
         tempMap.put("DotAndNineDigitNumber", ".%09d");
-        tempMap.put(BasicStructuresClass.STR_DOT_THREE, ".%03d");
-        tempMap.put(BasicStructuresClass.STR_TM_FRM_SP, " %d %s");
-        tempMap.put(BasicStructuresClass.STR_SLMN_TWO, ":%02d");
-        tempMap.put(BasicStructuresClass.STR_TWO, "%02d");
-        tempMap.put(BasicStructuresClass.STR_TWO_NON_ZERO, "%02d");
+        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_DOT_THREE, ".%03d");
+        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP, " %d %s");
+        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO, ":%02d");
+        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TWO, "%02d");
+        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, "%02d");
         // Make the map unmodifiable
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
     }
 
-    private static void appendIfNotZero(List<String> parts, long value, String unit) {
+    /**
+     * append if value is not 0
+     * @param parts input list to alter
+     * @param value input value to evaluate
+     * @param unit unit of the value
+     */
+    private static void appendIfNotZero(final List<String> parts, final long value, final String unit) {
         if (value != 0) {
             parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
         }
@@ -101,10 +107,11 @@ public final class TimingClass {
         appendIfNotZero(parts, inAgeComponents.intMinutes, "minute");
         appendIfNotZero(parts, inAgeComponents.intSeconds, "second");
         appendIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
-        if (parts.isEmpty()) {
-            return strZeroValue;
+        String strReturn = strZeroValue;
+        if (!parts.isEmpty()) {
+            strReturn = (negative ? "-" : "") + String.join(", ", parts);
         }
-        return (negative ? "-" : "") + String.join(", ", parts);
+        return strReturn;
     }
 
     /**
@@ -113,13 +120,7 @@ public final class TimingClass {
      * @param finishTimestamp ending ZonedDateTime
      * @return Aging
      */
-    public static String computeAging(ZonedDateTime startTimestamp, ZonedDateTime finishTimestamp) {
-        final boolean negative = finishTimestamp.isBefore(startTimestamp); 
-        if (negative) {
-            final ZonedDateTime tmp = startTimestamp;
-            startTimestamp = finishTimestamp;
-            finishTimestamp = tmp;
-        }
+    public static String computeAging(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp, final boolean negative) {
         ZonedDateTime cursor = startTimestamp;
         Period period = Period.between(cursor.toLocalDate(), finishTimestamp.toLocalDate());
         cursor = cursor.plus(period);
@@ -258,7 +259,7 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, BasicStructuresClass.STR_TM_HUMAN_MS)
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN_MS)
             , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
@@ -281,24 +282,24 @@ public final class TimingClass {
             String strFinalOne = null;
             String strEmptyValue = "?";
             switch (strRule) {
-                case BasicStructuresClass.STR_TM_HUMAN:
-                    final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
+                case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN:
+                    final String strFinalRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                     strFinalOne = "Nanosecond";
                     strEmptyValue = "INSTANT (less than a nanosecond)";
                     break;
-                case BasicStructuresClass.STR_TM_HUMAN_MS:
-                    final String strMilliRule = BasicStructuresClass.STR_TM_FRM_SP;
+                case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN_MS:
+                    final String strMilliRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
                     arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
-                    strFinalOne = BasicStructuresClass.STR_MILLISECOND;
+                    strFinalOne = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
                     strEmptyValue = "INSTANT (less than a millisecond)";
                     break;
                 case "TimeClockClassic":
-                    arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
+                    arrayStrings = new String[] {BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, BasicStructuresClass.ConfigurationSubClass.STR_TWO, BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO};
                     break;
                 case "TimeClock":
-                    arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO, BasicStructuresClass.STR_DOT_THREE};
-                    strFinalOne = BasicStructuresClass.STR_MILLISECOND;
+                    arrayStrings = new String[] {BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, BasicStructuresClass.ConfigurationSubClass.STR_TWO, BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO, BasicStructuresClass.ConfigurationSubClass.STR_DOT_THREE};
+                    strFinalOne = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
                     break;
                 default:
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -311,7 +312,7 @@ public final class TimingClass {
             String strReturn = strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
                     .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
                     .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
-                    .append(getDurationWithCustomRules(duration, BasicStructuresClass.STR_SECOND, arrayStrings[2]))
+                    .append(getDurationWithCustomRules(duration, BasicStructuresClass.ConfigurationSubClass.STR_SECOND, arrayStrings[2]))
                     .append(strFinalPart)
                     .toString()
                     .trim();
@@ -332,10 +333,10 @@ public final class TimingClass {
             return switch (strWhichPart) {
                 case "Day"                                -> duration.toDaysPart();
                 case "Hour"                               -> duration.toHoursPart();
-                case BasicStructuresClass.STR_MILLISECOND -> duration.toMillisPart();
+                case BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND -> duration.toMillisPart();
                 case "Minute"                             -> duration.toMinutesPart();
                 case "Nanosecond"                         -> duration.toNanosPart();
-                case BasicStructuresClass.STR_SECOND      -> duration.toSecondsPart();
+                case BasicStructuresClass.ConfigurationSubClass.STR_SECOND      -> duration.toSecondsPart();
                 default -> {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     throw new UnsupportedOperationException(strFeedbackErr);
@@ -362,7 +363,7 @@ public final class TimingClass {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     throw new UnsupportedOperationException(strFeedbackErr);
                 }
-                if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
+                if (BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
                     final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
                     strReturn = String.format(strFormats, lngNumber, strPart);
                 } else {
@@ -386,9 +387,13 @@ public final class TimingClass {
      */
     public static final class LocalizationSubClass {
         /** Input time zone variable */
-        private static volatile String inputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
+        private static String inputTimeZone;
         /** Output time zone variable */
-        private static volatile String outputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
+        private static String outputTimeZone;
+
+        static {
+        	loadTimeZones();
+        }
 
         /**
          * File time related logic
@@ -429,8 +434,17 @@ public final class TimingClass {
              */
             public static String getFileLastModifiedAging(@NonNull final Path file) {
                 final ZonedDateTime zStartTimeStamp = getFileLastModifiedZonedDateTime(file);
-                final ZonedDateTime zStopTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
-                return computeAging(zStartTimeStamp, zStopTimeStamp);
+                String strReturn = "";
+                if (zStartTimeStamp != null) {
+                    final ZonedDateTime zStopTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
+                    final boolean negative = zStopTimeStamp.isBefore(zStartTimeStamp);
+                    if (negative) {
+                        strReturn = computeAging(zStartTimeStamp, zStopTimeStamp, true);
+                    } else {
+                        strReturn = computeAging(zStopTimeStamp, zStartTimeStamp, false);
+                    }
+                }
+                return strReturn;
             }
 
             /**
@@ -557,6 +571,14 @@ public final class TimingClass {
             final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat, Locale.US));
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
             return outDate.format(formatter);
+        }
+
+        /**
+         * loading Input/Output time zones
+         */
+        private static void loadTimeZones() {
+            inputTimeZone = System.getProperty("user.timezone", ZoneId.systemDefault().toString());
+            outputTimeZone = System.getProperty("user.timezone", ZoneId.systemDefault().toString());
         }
 
         /**

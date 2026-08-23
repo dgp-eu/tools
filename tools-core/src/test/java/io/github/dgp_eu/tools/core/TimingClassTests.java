@@ -3,6 +3,7 @@ package io.github.dgp_eu.tools.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,14 +27,14 @@ class TimingClassTests {
     /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
     /** fixed Clock for predictable results */
-    private static final java.time.Clock CLOCK_FIXED = java.time.Clock.fixed(Instant.parse("2022-12-12T22:22:22Z"), java.time.ZoneId.of("UTC"));
+    private static final Clock CLOCK_FIXED = Clock.fixed(Instant.parse("2022-12-12T22:22:22Z"), ZoneId.of("UTC"));
 
     @Test
     void testAgingNegative() {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, ZoneId.systemDefault());
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MILLIS), ZoneId.systemDefault());
-        final String handled = TimingClass.computeAging(startDateTime, finishDateTime);
+        final String handled = TimingClass.computeAging(finishDateTime, startDateTime, true);
         final String expected = "-3 hours, 4 milliseconds";
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
@@ -42,7 +44,7 @@ class TimingClassTests {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, ZoneId.systemDefault());
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.plus(3, ChronoUnit.DAYS), ZoneId.systemDefault());
-        final String handled = TimingClass.computeAging(startDateTime, finishDateTime);
+        final String handled = TimingClass.computeAging(startDateTime, finishDateTime, false);
         final String expected = "3 days";
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
@@ -70,40 +72,6 @@ class TimingClassTests {
         final String strExpected = "2026wk06";
         final String handled = TimingClass.getIsoYearWeek(strOriginal);
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
-    }
-
-    @Test
-    void testGetDaysAgoWithMillisecondsPrecision() {
-        final Instant startNow = Instant.now(CLOCK_FIXED);
-        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECONDS).toEpochMilli();
-        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
-    }
-
-    @Test
-    void testGetDaysAgoWithMillisecondsPrecisionZeroDays() {
-        final Instant startNow = Instant.now(CLOCK_FIXED);
-        final long expected = startNow.toEpochMilli();
-        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 0);
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
-    }
-
-    @Test
-    void testGetDaysAgoWithMillisecondsPrecisionNegativeDays() {
-        final Instant startNow = Instant.now(CLOCK_FIXED);
-        final int intDaysLimit = -1;
-        final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECONDS * intDaysLimit).toEpochMilli();
-        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
-    }
-
-    @Test
-    void testGetDaysAgoWithMillisecondsPrecisionLargeDays() {
-        final Instant startNow = Instant.now(CLOCK_FIXED);
-        final int intDaysLimit = 30;
-        final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECONDS * intDaysLimit).toEpochMilli();
-        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
 
     @Test
@@ -144,10 +112,46 @@ class TimingClassTests {
     }
 
     /**
-     * Constructor
+     * Test for StringCleaningClass
      */
-    TimingClassTests() {
-        // intentionally blank
+    @Nested
+    /* default */ @DisplayName("getDaysAgoWithMillisecondsPrecision testing...")
+    class TestDaysAgoSubClass {
+
+        @Test
+        void testGetDaysAgoWithMillisecondsPrecision() {
+            final Instant startNow = Instant.now(CLOCK_FIXED);
+            final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECONDS).toEpochMilli();
+            final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);
+            assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        }
+
+        @Test
+        void testGetDaysAgoWithMillisecondsPrecisionZeroDays() {
+            final Instant startNow = Instant.now(CLOCK_FIXED);
+            final long expected = startNow.toEpochMilli();
+            final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 0);
+            assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        }
+
+        @Test
+        void testGetDaysAgoWithMillisecondsPrecisionNegativeDays() {
+            final Instant startNow = Instant.now(CLOCK_FIXED);
+            final int intDaysLimit = -1;
+            final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECONDS * intDaysLimit).toEpochMilli();
+            final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
+            assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        }
+
+        @Test
+        void testGetDaysAgoWithMillisecondsPrecisionLargeDays() {
+            final Instant startNow = Instant.now(CLOCK_FIXED);
+            final int intDaysLimit = 30;
+            final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECONDS * intDaysLimit).toEpochMilli();
+            final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
+            assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        }
+
     }
 
 }

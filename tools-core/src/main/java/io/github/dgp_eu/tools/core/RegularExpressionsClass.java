@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  * Regular Expressions things
  */
 public final class RegularExpressionsClass {
+    /** Map for Date/Timestamp/TimestampWithMilliseconds id/validation/conversion */
+    private static final Map<String, DateTimeInfoRec> MAP_PATTERNS = new ConcurrentHashMap<>();
     /** Regular Expression for short form Age as Date */
     private static final String REGEXP_AGE_DATE = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)";
     /** Regular Expression for short form Age as Date exact */
@@ -28,6 +30,7 @@ public final class RegularExpressionsClass {
     private static final String REGEXP_AGE_TS9 = "^" + REGEXP_AGE_TS + "$";
     /** Regular Expression for short form Age as Time-stamp with Milliseconds */
     private static final String REGEXP_AGE_TS_MS = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)\\s([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d\\.\\d{1,3}";
+    /** Regular Expression for short form Age as Time-stamp with Milliseconds fixed */
     private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
     /** Regular Expression for full words Aging */
     private static final String REGEXP_AGING_FULL = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
@@ -86,8 +89,6 @@ public final class RegularExpressionsClass {
         String outputLong,
         String outputAbbreviated,
         String regularExpression) {}
-    /** Patterns Map for Date/Timestamp/TimestampWithMilliseconds identification/validation/conversion */
-    private static final Map<String, DateTimeInfoRec> MAP_PATTERNS = new ConcurrentHashMap<>();
 
     static {
         loadDateTimePatternsIntoMap();
@@ -114,9 +115,9 @@ public final class RegularExpressionsClass {
         sortedRegExp.put(STR_AGING_TS, REGEXP_AGE_TS);
         sortedRegExp.put(STR_AGING_DATE, REGEXP_AGE_DATE);
         sortedRegExp.put(STR_AGING_TIME, REGEXP_AGE_TIME);
-        sortedRegExp.put(BasicStructuresClass.STR_TS_MSEC, "");
-        sortedRegExp.put(BasicStructuresClass.STR_TIMESTAMP, "");
-        sortedRegExp.put(BasicStructuresClass.STR_JUST_DATE, "");
+        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC, "");
+        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP, "");
+        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE, "");
         final StringJoiner sjRegExp = new StringJoiner("|");
         sortedRegExp.forEach((key, value) -> {
             if (value.isBlank()) {
@@ -168,7 +169,7 @@ public final class RegularExpressionsClass {
      * @return double numeric value
      */
     public static double dmsToDecimal(final String part, final boolean isLon) {
-        final Pattern inPattern = Pattern.compile((isLon ? REGEXP_LONGITUDE : REGEXP_LATITUDE));
+        final Pattern inPattern = Pattern.compile(isLon ? REGEXP_LONGITUDE : REGEXP_LATITUDE);
         final Matcher matched = inPattern.matcher(part);
         double decToReturn = 0.0;
         if (matched.matches()) {
@@ -208,9 +209,9 @@ public final class RegularExpressionsClass {
                 STR_AGING_TS,
                 STR_AGING_TS_MS,
                 STR_AGING_DATE,
-                BasicStructuresClass.STR_TS_MSEC,
-                BasicStructuresClass.STR_TIMESTAMP,
-                BasicStructuresClass.STR_JUST_DATE);
+                BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC,
+                BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP,
+                BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE);
         return capturedGroups.stream()
                 .filter(groupName -> result.group(groupName) != null)
                 .findFirst()
@@ -229,9 +230,12 @@ public final class RegularExpressionsClass {
      * Populates MAP_PATTERNS list
      */
     private static void loadDateTimePatternsIntoMap() {
-        MAP_PATTERNS.put(BasicStructuresClass.STR_TS_MSEC, new DateTimeInfoRec(TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_LONG, TimingClass.DATE_TIME_MS_ABRV, REGEXP_TS_MS));
-        MAP_PATTERNS.put(BasicStructuresClass.STR_TIMESTAMP, new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
-        MAP_PATTERNS.put(BasicStructuresClass.STR_JUST_DATE, new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
+        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC,
+                new DateTimeInfoRec(TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_LONG, TimingClass.DATE_TIME_MS_ABRV, REGEXP_TS_MS));
+        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP,
+                new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
+        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE,
+                new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
     }
 
     /**
@@ -258,7 +262,7 @@ public final class RegularExpressionsClass {
                         }
                     }
                     case STR_AGING_TS_MS, STR_AGING_TS, STR_AGING_TIME, STR_AGING_DATE -> {
-                        final boolean isNegative = text.substring(0, 1).contentEquals("-");
+                        final boolean isNegative = text.startsWith("-");
                         final TimingClass.AgingInfoRecord ageComponents = ConversionSubClass.convertAgingTimestampStringIntoAgingComponents(text);
                         String strZeroValue = "INSTANT (less than 1 millisecond)";
                         if (STR_AGING_DATE.equalsIgnoreCase(matchedGroup)) {
@@ -291,21 +295,9 @@ public final class RegularExpressionsClass {
          * @return
          */
         public static TimingClass.AgingInfoRecord convertAgingTimestampStringIntoAgingComponents(final String inString) {
-            final int strLength = inString.length();
-            final String agingRegExp = switch (strLength) {
-                case 9  -> REGEXP_AGE_TIME9;
-                case 11 -> REGEXP_AGE_DATE9;
-                case 20 -> REGEXP_AGE_TS9;
-                case 24 -> REGEXP_AGE_TS_MS9;
-                default -> {
-                    final String strFeedbackErr = String.format("An Aging Timestamp String is expected to have either 20 or 24 characters but given one %s has %s number of characters... %s",
-                            inString,
-                            strLength,
-                            StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                    throw new UnsupportedOperationException(strFeedbackErr);
-                }
-            };
-            final Pattern pattern = Pattern.compile(agingRegExp);
+            final int strLength         = inString.length();
+            final String agingRegExp    = establishRelevantRegularExpression(inString, strLength);
+            final Pattern pattern       = Pattern.compile(agingRegExp);
             final boolean isAgingString = pattern.matcher(inString).matches();
             if (isAgingString) {
                 int years      = 0;
@@ -348,6 +340,28 @@ public final class RegularExpressionsClass {
             }
         }
 
+        /**
+         * Establish RegExp for Aging conversion
+         * @param inString
+         * @param inputLength
+         * @return
+         */
+        private static String establishRelevantRegularExpression(final String inString, final int inputLength) {
+            return switch (inputLength) {
+                case 9  -> REGEXP_AGE_TIME9;
+                case 11 -> REGEXP_AGE_DATE9;
+                case 20 -> REGEXP_AGE_TS9;
+                case 24 -> REGEXP_AGE_TS_MS9;
+                default -> {
+                    final String strFeedbackErr = String.format("An Aging Timestamp String is expected to have either 20 or 24 characters but given one %s has %s number of characters... %s",
+                        inString,
+                        inputLength,
+                        StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+                }
+            };
+        }
+
         // Private constructor to prevent instantiation
         private ConversionSubClass() {
             // intentionally blank
@@ -359,6 +373,12 @@ public final class RegularExpressionsClass {
      * Validation logic using Regular Expressions
      */
     public static final class ValidationSubClass {
+        /** Variable for Regular Expression patterns */
+        private static final Properties REG_EXP_PROPS = new Properties();
+
+        static {
+            loadRegularExpressionProperties();
+        }
 
         /**
          * Check if String is actually Date
@@ -369,24 +389,9 @@ public final class RegularExpressionsClass {
         public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
             boolean bolReturn = false;
             if (inputString != null) {
-                final String regularExpression = switch (mapIdentifier) {
-                    case "byteSize"                         -> REGEXP_BYTE_SIZE;
-                    case "decimal"                          -> REGEXP_NO_DECIMAL;
-                    case "fullAging"                        -> REGEXP_AGING_FULL;
-                    case "integer"                          -> REGEXP_NO_LONG;
-                    case "long"                             -> REGEXP_NO_LONG;
-                    case "numeric"                          -> REGEXP_NO_NUMERIC;
-                    case REGEXP_LONG_TS_MS                  -> REGEXP_LONG_TS_MS;
-                    case STR_AGING_TS_MS                    -> REGEXP_AGE_TS_MS9;
-                    case STR_AGING_TS                       -> REGEXP_AGE_TS9;
-                    case STR_AGING_TIME                     -> REGEXP_AGE_TIME9;
-                    case STR_AGING_DATE                     -> REGEXP_AGE_DATE9;
-                    case BasicStructuresClass.STR_TIMESTAMP -> REGEXP_TS;
-                    case BasicStructuresClass.STR_TS_MSEC   -> REGEXP_TS_MS;
-                    case BasicStructuresClass.STR_JUST_DATE -> REGEXP_DATE;
-                    case "version"                          -> REGEXP_VERSION;
-                    default                                 -> MAP_PATTERNS.get(mapIdentifier).regularExpression;
-                };
+                final String regularExpression = REG_EXP_PROPS.containsKey(mapIdentifier)
+                        ? REG_EXP_PROPS.getProperty(mapIdentifier)
+                                : MAP_PATTERNS.get(mapIdentifier).regularExpression;
                 final Pattern pattern = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
                 bolReturn = pattern.matcher(inputString).matches();
             }
@@ -410,6 +415,27 @@ public final class RegularExpressionsClass {
                 validFileName = false;
             }
             return validFileName;
+        }
+
+        /**
+         * loading Regular Expression Properties 
+         */
+        private static void loadRegularExpressionProperties() {
+            REG_EXP_PROPS.put("byteSize", REGEXP_BYTE_SIZE);
+            REG_EXP_PROPS.put("decimal", REGEXP_NO_DECIMAL);
+            REG_EXP_PROPS.put("fullAging", REGEXP_AGING_FULL);
+            REG_EXP_PROPS.put("integer", REGEXP_NO_LONG);
+            REG_EXP_PROPS.put("long", REGEXP_NO_LONG);
+            REG_EXP_PROPS.put("numeric", REGEXP_NO_NUMERIC);
+            REG_EXP_PROPS.put(REGEXP_LONG_TS_MS, REGEXP_LONG_TS_MS);
+            REG_EXP_PROPS.put(STR_AGING_TS_MS, REGEXP_AGE_TS_MS9);
+            REG_EXP_PROPS.put(STR_AGING_TS, REGEXP_AGE_TS9);
+            REG_EXP_PROPS.put(STR_AGING_TIME, REGEXP_AGE_TIME9);
+            REG_EXP_PROPS.put(STR_AGING_DATE, REGEXP_AGE_DATE9);
+            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP, REGEXP_TS);
+            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC, REGEXP_TS_MS);
+            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE, REGEXP_DATE);
+            REG_EXP_PROPS.put("version", REGEXP_VERSION);
         }
 
         // Private constructor to prevent instantiation

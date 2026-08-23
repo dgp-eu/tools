@@ -3,14 +3,12 @@
  */
 package io.github.dgp_eu.tools.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -34,124 +32,6 @@ import java.util.stream.Collectors;
  * Handling basic structures: numbers, lists, maps, strings
  */
 public final class BasicStructuresClass {
-    /** Constant for non or single/one */
-	/* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
-    /** arity one or more */
-    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
-    /** One as string */
-    /* default */ public static final String ARITY_ONLY_ONE = "1";
-    /** default Locale */
-    public static final String DEFAULT_LOCALE = "en-US";
-    /** "Active Pixels" constant */
-    public static final String STR_ACTV_PXLS = "Active Pixels";
-    /** Content constant */
-    public static final String STR_CONTENT = "Content";
-    /** frequently expression used to catch conversion error  */
-    public static final String CONVERT_INT_NA = "Could not convert value %s into Integer... %s";
-    /** Dependencies constant */
-    public static final String STR_DEPENDENCIES = "Dependencies";
-    /** String for internal ETL */
-    public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
-    /** String for internal Environment */
-    public static final String STR_ENV = "Environment";
-    /** String for internal Environment Details */
-    public static final String STR_ENV_DTLS = "EnvironmentDetails";
-    /** Constant for error */
-    public static final String STR_ERROR = "error";
-    /** String for internal Executing query successful */
-    public static final String STR_EXEC_QRY_OK = "Executing %s query was successful!";
-    /** Constant for File Hashing */
-    public static final String STR_FILE_HASHING = "FileHashing";
-    /** Firmware string */
-    public static final String STR_FIRMWARE = "Firmware";
-    /** HumanReadableTime constant */
-    public static final String STR_TM_HUMAN = "HumanReadableTime";
-    /** HumanReadableTimeWithMilliseconds constant */
-    public static final String STR_TM_HUMAN_MS = "HumanReadableTimeWithMilliseconds";
-    /** Icon string */
-    public static final String STR_ICON = "icon";
-    /** Index string */
-    public static final String STR_INDEX = "index";
-    /** Input string */
-    public static final String STR_INPUT = "Input";
-    /** Just Date string */
-    public static final String STR_JUST_DATE = "justDate";
-    /** Locale constant */
-    public static final String STR_LOCALE = "Locale";
-    /** Localization constant */
-    public static final String STR_LOCALIZATION = "Localization";
-    /** Mainboard constant */
-    public static final String STR_MAINBOARD = "Mainboard";
-    /** Manufacturer string */
-    public static final String STR_MANUFACTURER = "Manufacturer";
-    /** Menu string */
-    public static final String STR_MENU = "menu";
-    /** Model string constant */
-    public static final String STR_MODEL = "Model";
-    /** Millisecond string constant */
-    public static final String STR_MILLISECOND = "Millisecond";
-    /** string constant */
-    public static final String STR_MONITOR_NAME = "Monitor Name";
-    /** Multiple constant */
-    public static final String STR_MULTIPLE = "multiple";
-    /** Name constant */
-    public static final String STR_NAME = "Name";
-    /** NULL constant */
-    public static final String STR_NULL = "NULL";
-    /** NamedParameter constant */
-    public static final String STR_NAMED_PARAM = "NamedParameter";
-    /** new tab and table feature */
-    public static final String STR_NEW_TAB = "New Tab and Table on column value change";
-    /** Output Long constant */
-    public static final String STR_OUTPUT_LONG = "Output Long";
-    /** Output Short constant */
-    public static final String STR_OUTPUT_SHORT = "Output Short";
-    /** "Physical Dimensions" constant */
-    public static final String STR_PHYSC_DIM = "Physical Dimensions";
-    /** "Preferred Timing Clock" constant */
-    public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
-    /** "Range Limits" constant */
-    public static final String STR_RANGE_LMTS = "Range Limits";
-    /** "RowStyle" constant */
-    public static final String STR_ROW_STYLE = "RowStyle";
-    /** String for Second */
-    public static final String STR_SECOND = "Second";
-    /** String for internal ETL */
-    public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
-    /** Database Snowflake */
-    public static final String STR_SNOWFLAKE = "Snowflake";
-    /** Constant for Software Releases */
-    public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
-    /** "Serial Number" constant */
-    public static final String STR_SRL_NUM = "Serial Number";
-    /** Database SQLite */
-    public static final String STR_SQLITE = "SQLite";
-    /** internal rule constant for timing computation */
-    public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
-    /** System constant */
-    public static final String STR_SYSTEM = "System";
-    /** Style constant */
-    public static final String STR_STYLE = "style";
-    /** Table constant */
-    public static final String STR_TABLE = "Table";
-    /** Table Statistics constant */
-    public static final String STR_TS = "TableStatistics";
-    /** Time-stamp constant */
-    public static final String STR_TIMESTAMP = "timestamp";
-    /** Time-stamp constant */
-    public static final String STR_TS_MSEC = "timestampWithMilliseconds";
-    /** Title constant */
-    public static final String STR_TITLE = "title";
-    /** String for internal ETL */
-    public static final String STR_TWO = "TwoDigitNumber";
-    /** String for internal ETL */
-    public static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
-    /** Vendor string */
-    public static final String STR_VENDOR = "Vendor";
-    /** Version string */
-    public static final String STR_VERSION = "Version";
-    /** Yes string */
-    public static final String STR_YES = "YES";
 
     /**
      * Safely computes percentage
@@ -171,7 +51,7 @@ public final class BasicStructuresClass {
                             .orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
         } else {
-            percentageExact = percentageExact.divide(new BigDecimal(denominator)).multiply(new BigDecimal(100L));
+            percentageExact = percentageExact.divide(new BigDecimal(denominator), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100L));
         }
         return percentageExact.setScale(2, RoundingMode.HALF_UP);
     }
@@ -183,8 +63,7 @@ public final class BasicStructuresClass {
      */
     public static BigDecimal convertStringIntoBigDecimal(final String strNumber) {
         BigDecimal noToReturn = null;
-        final boolean isNumeric = StringEvaluationSubClass.isStringActuallyNumeric(strNumber);
-        if (isNumeric) {
+        if (StringEvaluationSubClass.isStringActuallyNumeric(strNumber)) {
             noToReturn = new BigDecimal(strNumber).stripTrailingZeros();
         }
         return noToReturn;
@@ -220,7 +99,7 @@ public final class BasicStructuresClass {
             try {
                 noToReturn = Integer.parseInt(strNumber);
             } catch (NumberFormatException noFormatException) {
-                final String strFeedback = String.format(CONVERT_INT_NA, strNumber,
+                final String strFeedback = String.format(ConfigurationSubClass.CONVERT_INT_NA, strNumber,
                         Arrays.toString(noFormatException.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
@@ -240,7 +119,7 @@ public final class BasicStructuresClass {
             try {
                 noToReturn = Long.parseLong(strNumber);
             } catch (NumberFormatException noFormatException) {
-                final String strFeedback = String.format(CONVERT_INT_NA, strNumber,
+                final String strFeedback = String.format(ConfigurationSubClass.CONVERT_INT_NA, strNumber,
                         Arrays.toString(noFormatException.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
@@ -267,58 +146,196 @@ public final class BasicStructuresClass {
     }
 
     /**
-     * Getting current project folder
-     * @return application folder
-     */
-    public static String getCurrentFolder() {
-        String strAppFolder = "";
-        final File directory = new File(""); // parameter is empty
-        try {
-            strAppFolder = directory.getCanonicalPath();
-        } catch (IOException ex) {
-            final String strFeedback = String.format("Error encountered in getting folder... %s",
-                    Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        }
-        return strAppFolder;
-    }
-
-    /**
-     * reads Environment Variable into InputStream
-     * @param inEnvVariable input Environment Variable name
-     * @return String with value found
-     */
-    public static InputStream getEnvironmentVariableIntoInputStream(final String inEnvVariable) {
-        final String strEnvValue = System.getenv(inEnvVariable);
-        if (strEnvValue == null) {
-            final String strFeedback = String.format("Environment variable %s not found!", inEnvVariable);
-            LogExposureClass.LOGGER.error(strFeedback);
-            throw new IllegalArgumentException(strFeedback);
-        }
-        try (InputStream inputStream = new ByteArrayInputStream(strEnvValue.getBytes(Charset.defaultCharset()))) {
-            final String strFeedback = String.format("Environment variable %s was found successfully!", inEnvVariable);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            return inputStream;
-        } catch (IOException ei) {
-            final String strFeedback = String.format("Input/Output exception enountered when attempting to get environment variable %s", inEnvVariable);
-            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-            throw new IllegalArgumentException(strFeedback);
-        }
-    }
-
-    /**
      * detects if current execution is from JAR or not
      * @return boolean
      */
     public static boolean isRunningFromJar() {
         // Get the URL of the current class's byte-code
-        final URL classUrl = ProjectClass.class.getResource("BasicStructuresClass.class");
+        final URL classUrl = BasicStructuresClass.class.getResource("BasicStructuresClass.class");
         if (classUrl == null) {
             throw new IllegalStateException("Class resource not found");
         }
         // Check if the protocol is "jar" (JAR execution) or "file" (IDE execution)
         final String protocol = classUrl.getProtocol();
         return "jar".equals(protocol);
+    }
+
+    /**
+     * Configuration strings management
+     */
+    public static final class ConfigurationSubClass {
+        /** Constant for non or single/one */
+        /* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
+        /** arity one or more */
+        /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
+        /** One as string */
+        /* default */ public static final String ARITY_ONLY_ONE = "1";
+        /** default Locale */
+        public static final String DEFAULT_LOCALE = "en-US";
+        /** "Active Pixels" constant */
+        public static final String STR_ACTV_PXLS = "Active Pixels";
+        /** Content constant */
+        public static final String STR_CONTENT = "Content";
+        /** frequently expression used to catch conversion error  */
+        public static final String CONVERT_INT_NA = "Could not convert value %s into Integer... %s";
+        /** Dependencies constant */
+        public static final String STR_DEPENDENCIES = "Dependencies";
+        /** String for internal ETL */
+        public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
+        /** String for internal Environment */
+        public static final String STR_ENV = "Environment";
+        /** String for internal Environment Details */
+        public static final String STR_ENV_DTLS = "EnvironmentDetails";
+        /** Constant for error */
+        public static final String STR_ERROR = "error";
+        /** String for internal Executing query successful */
+        public static final String STR_EXEC_QRY_OK = "Executing %s query was successful!";
+        /** Constant for File Hashing */
+        public static final String STR_FILE_HASHING = "FileHashing";
+        /** Firmware string */
+        public static final String STR_FIRMWARE = "Firmware";
+        /** HumanReadableTime constant */
+        public static final String STR_TM_HUMAN = "HumanReadableTime";
+        /** HumanReadableTimeWithMilliseconds constant */
+        public static final String STR_TM_HUMAN_MS = "HumanReadableTimeWithMilliseconds";
+        /** Icon string */
+        public static final String STR_ICON = "icon";
+        /** Index string */
+        public static final String STR_INDEX = "index";
+        /** Input string */
+        public static final String STR_INPUT = "Input";
+        /** Just Date string */
+        public static final String STR_JUST_DATE = "justDate";
+        /** Locale constant */
+        public static final String STR_LOCALE = "Locale";
+        /** Localization constant */
+        public static final String STR_LOCALIZATION = "Localization";
+        /** Mainboard constant */
+        public static final String STR_MAINBOARD = "Mainboard";
+        /** Manufacturer string */
+        public static final String STR_MANUFACTURER = "Manufacturer";
+        /** Menu string */
+        public static final String STR_MENU = "menu";
+        /** Model string constant */
+        public static final String STR_MODEL = "Model";
+        /** Millisecond string constant */
+        public static final String STR_MILLISECOND = "Millisecond";
+        /** string constant */
+        public static final String STR_MONITOR_NAME = "Monitor Name";
+        /** Multiple constant */
+        public static final String STR_MULTIPLE = "multiple";
+        /** Name constant */
+        public static final String STR_NAME = "Name";
+        /** NULL constant */
+        public static final String STR_NULL = "NULL";
+        /** NamedParameter constant */
+        public static final String STR_NAMED_PARAM = "NamedParameter";
+        /** new tab and table feature */
+        public static final String STR_NEW_TAB = "New Tab and Table on column value change";
+        /** Output Long constant */
+        public static final String STR_OUTPUT_LONG = "Output Long";
+        /** Output Short constant */
+        public static final String STR_OUTPUT_SHORT = "Output Short";
+        /** "Physical Dimensions" constant */
+        public static final String STR_PHYSC_DIM = "Physical Dimensions";
+        /** "Preferred Timing Clock" constant */
+        public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
+        /** "Range Limits" constant */
+        public static final String STR_RANGE_LMTS = "Range Limits";
+        /** "RowStyle" constant */
+        public static final String STR_ROW_STYLE = "RowStyle";
+        /** String for Second */
+        public static final String STR_SECOND = "Second";
+        /** String for internal ETL */
+        public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
+        /** Database Snowflake */
+        public static final String STR_SNOWFLAKE = "Snowflake";
+        /** Constant for Software Releases */
+        public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
+        /** "Serial Number" constant */
+        public static final String STR_SRL_NUM = "Serial Number";
+        /** Database SQLite */
+        public static final String STR_SQLITE = "SQLite";
+        /** internal rule constant for timing computation */
+        public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+        /** System constant */
+        public static final String STR_SYSTEM = "System";
+        /** Style constant */
+        public static final String STR_STYLE = "style";
+        /** Table constant */
+        public static final String STR_TABLE = "Table";
+        /** Table Statistics constant */
+        public static final String STR_TS = "TableStatistics";
+        /** Time-stamp constant */
+        public static final String STR_TIMESTAMP = "timestamp";
+        /** Time-stamp constant */
+        public static final String STR_TS_MSEC = "timestampWithMilliseconds";
+        /** Title constant */
+        public static final String STR_TITLE = "title";
+        /** String for internal ETL */
+        public static final String STR_TWO = "TwoDigitNumber";
+        /** String for internal ETL */
+        public static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
+        /** Vendor string */
+        public static final String STR_VENDOR = "Vendor";
+        /** Version string */
+        public static final String STR_VERSION = "Version";
+        /** Yes string */
+        public static final String STR_YES = "YES";
+        /** Variable for Current Folder */
+        private static String currentFolder;
+
+        static {
+            loadCurrentFolder();
+        }
+
+        /**
+         * Getting current project folder
+         * @return application folder
+         */
+        private static void loadCurrentFolder() {
+            String strAppFolder = "";
+            final File directory = new File(""); // parameter is empty
+            try {
+                strAppFolder = directory.getCanonicalPath();
+            } catch (IOException ex) {
+                final String strFeedback = String.format("Error encountered in getting folder... %s",
+                        Arrays.toString(ex.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            currentFolder = strAppFolder;
+        }
+
+        /**
+         * Getter for currentFolder
+         * @return String
+         */
+        public static String getCurrentFolder() {
+            return currentFolder;
+        }
+
+        /**
+         * reads Environment Variable into String
+         * @param inEnvVariable input Environment Variable name
+         * @return String with value found
+         */
+        public static String getEnvironmentVariableValue(final String inEnvVariable) {
+            final String strEnvValue = System.getenv(inEnvVariable);
+            if (strEnvValue == null) {
+                final String strFeedback = String.format("Environment variable %s not found!", inEnvVariable);
+                LogExposureClass.LOGGER.error(strFeedback);
+                throw new IllegalArgumentException(strFeedback);
+            }
+            final String strFeedback = String.format("Environment variable %s was found successfully!", inEnvVariable);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            return strEnvValue;
+        }
+
+        // Private constructor to prevent instantiation
+        private ConfigurationSubClass() {
+            super();
+        }
+
     }
 
     /**
@@ -505,49 +522,75 @@ public final class BasicStructuresClass {
      * Conversion things
      */
     public static final class NumberConversionSubClass {
+        /** Cached time zones */
+        private static final Map<String, ConvertionRecord> MAP_CONVERTION = new ConcurrentHashMap<>();
+        /** Record for ZoneInfo */
+        /* default */ public record ConvertionRecord(
+                long[] arrayNumbers,
+                String[] arrayUnits) {}
+
+        static {
+            loadConvertionMap();
+        }
 
         /**
          * Format bytes into a rounded string representation using IEC standard
          * @param inBytes input Bytes value
+         * @param strStyle conversion style
          * @return Rounded string representation of the byte size
          */
         public static String convertUnits(final long inBytes, final String strStyle) {
-              long[] arrayNumbers = null;
-              String[] arraySymbols = null;
-              switch (strStyle) {
-                  case "decimal":
-                      arrayNumbers = new long[]{1L, 1_000L, 1_000_000L, 1_000_000_000L, 1_000_000_000_000L, 1_000_000_000_000_000L, 1_000_000_000_000_000_000L};
-                      arraySymbols = new String[]{"byte", "bytes", "KB", "MB", "GB", "TB", "PB", "EB"};
-                      break;
-                  case "binary":
-                      arrayNumbers = new long[]{1L, 1L << 10, 1L << 20, 1L << 30, 1L << 40, 1L << 50, 1L << 60};
-                      arraySymbols = new String[]{"byte", "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
-                      break;
-                  default:
-                      // intentionally left blank
-                      break;
-              }
-              String outString = "";
-              if (arrayNumbers == null) {
-                  outString = ""; 
-              } else if (inBytes == arrayNumbers[0]) { // bytes
-                  outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[0]);
-              } else if (inBytes < arrayNumbers[1]) { // bytes
-                  outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[1]);
-              } else if (inBytes < arrayNumbers[2]) { // KiB
-                  outString = formatValue(inBytes, arrayNumbers[1], arraySymbols[2]);
-              } else if (inBytes < arrayNumbers[3]) { // MiB
-                  outString = formatValue(inBytes, arrayNumbers[2], arraySymbols[3]);
-              } else if (inBytes < arrayNumbers[4]) { // GiB
-                  outString = formatValue(inBytes, arrayNumbers[3], arraySymbols[4]);
-              } else if (inBytes < arrayNumbers[5]) { // TiB
-                  outString = formatValue(inBytes, arrayNumbers[4], arraySymbols[5]);
-              } else if (inBytes < arrayNumbers[6]) { // PiB
-                  outString = formatValue(inBytes, arrayNumbers[5], arraySymbols[6]);
-              } else { // EiB
-                  outString = formatValue(inBytes, arrayNumbers[6], arraySymbols[7]);
-              }
-              return outString;
+            String outString = "";
+            if (MAP_CONVERTION.containsKey(strStyle)) {
+                final long[] arrayNumbers = getArrayNumbers(strStyle);
+                final String[] arraySymbols = getArrayUnits(strStyle);
+                if (inBytes == arrayNumbers[0]) { // bytes
+                    outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[0]);
+                } else {
+                    outString = convertHigherThatSingleUnitNumber(inBytes, strStyle);
+                }
+                if (outString.isBlank()) {
+                    outString = formatValue(inBytes, arrayNumbers[6], arraySymbols[7]);
+                }
+            }
+            return outString;
+        }
+
+        /**
+         * Format bytes into a rounded string representation using IEC standard, part 2
+         * @param inBytes input Bytes value
+         * @param strStyle conversion style
+         * @return String
+         */
+        private static String convertHigherThatSingleUnitNumber(final long inBytes, final String strStyle) {
+            String outString = "";
+            final long[] arrayNumbers = getArrayNumbers(strStyle);
+            final String[] arraySymbols = getArrayUnits(strStyle);
+            final long symbolsLength = arraySymbols.length - 1L;
+            for (int iCounter = 1; iCounter < symbolsLength; iCounter++) {
+                if (inBytes < arrayNumbers[iCounter]) {
+                    outString = formatValue(inBytes, arrayNumbers[iCounter - 1], arraySymbols[iCounter]);
+                }
+            }
+            return outString;
+        }
+
+        /**
+         * Getter for Numbers
+         * @param strStyle conversion style
+         * @return array of Numbers
+         */
+        private static long[] getArrayNumbers(final String strStyle) {
+            return MAP_CONVERTION.get(strStyle).arrayNumbers;
+        }
+
+        /**
+         * Getter for Units
+         * @param strStyle conversion style
+         * @return array of Units
+         */
+        private static String[] getArrayUnits(final String strStyle) {
+            return MAP_CONVERTION.get(strStyle).arrayUnits;
         }
 
         /**
@@ -559,10 +602,21 @@ public final class BasicStructuresClass {
          * @return string with formatted value
          */
         private static String formatValue(final long inValue, final long inDivider, final String outSymbol) {
-            if (inValue % inDivider == 0) {
-                return String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol);
-            }
-            return String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
+            return inValue % inDivider == 0
+                    ? String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol)
+                            : String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
+        }
+
+        /**
+         * Loader for MAP_CONVERTION
+         */
+        private static void loadConvertionMap() {
+            MAP_CONVERTION.put("decimal",
+                    new ConvertionRecord(new long[]{1L, 1_000L, 1_000_000L, 1_000_000_000L, 1_000_000_000_000L, 1_000_000_000_000_000L, 1_000_000_000_000_000_000L},
+                            new String[]{"byte", "bytes", "KB", "MB", "GB", "TB", "PB", "EB"}));
+            MAP_CONVERTION.put("binary",
+                    new ConvertionRecord(new long[]{1L, 1L << 10, 1L << 20, 1L << 30, 1L << 40, 1L << 50, 1L << 60},
+                            new String[]{"byte", "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"}));
         }
 
         // Private constructor to prevent instantiation
@@ -695,7 +749,7 @@ public final class BasicStructuresClass {
                 for (final String currentPrmtName : listMatches) {
                     strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
                 }
-            } else if (STR_NAMED_PARAM.equalsIgnoreCase(type)) {
+            } else if (ConfigurationSubClass.STR_NAMED_PARAM.equalsIgnoreCase(type)) {
                 for (final String currentPrmtName : listMatches) {
                     strFinalQ = strFinalQ.replace(currentPrmtName, convertSinglePromptParameterIntoNamedParameter(currentPrmtName));
                 }
@@ -711,7 +765,7 @@ public final class BasicStructuresClass {
          * @return query with named parameters
          */
         public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-            return convertPromptParameters(strOriginalQ, STR_NAMED_PARAM);
+            return convertPromptParameters(strOriginalQ, ConfigurationSubClass.STR_NAMED_PARAM);
         }
 
         /**
@@ -769,7 +823,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Date
          */
         public static boolean isStringActuallyDate(final String inputString) {
-            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_JUST_DATE);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, ConfigurationSubClass.STR_JUST_DATE);
         }
 
         /**
@@ -798,7 +852,7 @@ public final class BasicStructuresClass {
                         evaluation = false;
                     }
                 } catch (NumberFormatException noFormatException) {
-                    final String strFeedback = String.format(CONVERT_INT_NA, inputString, Arrays.toString(noFormatException.getStackTrace()));
+                    final String strFeedback = String.format(ConfigurationSubClass.CONVERT_INT_NA, inputString, Arrays.toString(noFormatException.getStackTrace()));
                     LogExposureClass.LOGGER.error(strFeedback);
                     evaluation = false;
                 }
@@ -844,7 +898,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp
          */
         public static boolean isStringActuallyTimestamp(final String inputString) {
-            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, ConfigurationSubClass.STR_TIMESTAMP);
         }
 
         /**
@@ -854,7 +908,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp w. milliseconds
          */
         public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
-            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_TS_MSEC);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, ConfigurationSubClass.STR_TS_MSEC);
         }
 
         /**

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
@@ -60,9 +61,9 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Simple test to verify that 2026 is not the same as converted value from String 01.01.2026")
     void testConvertStringIntoBigDecimalInvalid() {
-        final BigDecimal expected = new BigDecimal("01.2026");
-        final BigDecimal handled = BasicStructuresClass.convertStringIntoBigDecimal("01.01.2026");
-        assertNotEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        final String strOriginal = "01.01.2026";
+        final BigDecimal handled = BasicStructuresClass.convertStringIntoBigDecimal(strOriginal);
+        assertNull(handled, String.format("Given String %s cannot be converted into BigDecimal due to incompatibility", strOriginal));
     }
 
     @Test

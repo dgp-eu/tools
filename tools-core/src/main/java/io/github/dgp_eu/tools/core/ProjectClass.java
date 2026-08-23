@@ -86,10 +86,6 @@ public final class ProjectClass {
      * @return String with groupId
      */
     public static String getProjectGroupId() {
-        if (prjGroupId == null) {
-            final Model projectModel = getProjectModel();
-            prjGroupId = projectModel.getGroupId() == null ? projectModel.getParent().getGroupId() : projectModel.getGroupId();
-        }
         return prjGroupId;
     }
 
@@ -98,9 +94,6 @@ public final class ProjectClass {
      * @return Model
      */
     public static Model getProjectModel() {
-        if (prjModel == null) {
-            loadProjectModel();
-        }
         return prjModel;
     }
 
@@ -130,6 +123,10 @@ public final class ProjectClass {
         return model;
     }
 
+    /**
+     * getter for Project Name
+     * @return String
+     */
     public static String getProjectName() {
         return prjModel.getName();
     }
@@ -178,9 +175,6 @@ public final class ProjectClass {
      * @return String with version
      */
     public static String getProjectVersion() {
-        if (prjVersion == null) {
-            prjVersion = getProjectVersion(getProjectModel());
-        }
         return prjVersion;
     }
 
@@ -207,14 +201,14 @@ public final class ProjectClass {
     /**
      * Load POM for current project
      */
-    public static void loadProjectModel() {
+    private static void loadProjectModel() {
         final MavenXpp3Reader reader = new MavenXpp3Reader();
         prjModel = getProjectModelContent(reader, pomFile);
         prjParentModel = getProjectModelContent(reader, pomParentFile);
         prjGroupId = prjModel.getGroupId() == null ? prjModel.getParent().getGroupId() : prjModel.getGroupId();
         LoaderSubClass.loadComponents();
-        final String projectVersion = getProjectVersion();
-        grpArtifactVers = String.format("\"%s:%s\":\"%s\"", prjGroupId, prjModel.getArtifactId(), projectVersion);
+        prjVersion = getProjectVersion(getProjectModel());
+        grpArtifactVers = String.format("\"%s:%s\":\"%s\"", prjGroupId, prjModel.getArtifactId(), prjVersion);
     }
 
     /**
@@ -229,6 +223,7 @@ public final class ProjectClass {
             final String strFeedback = String.format("Parent Project Object Model set %s", pomParentFile);
             LogExposureClass.LOGGER.debug(strFeedback);
         }
+        loadProjectModel();
     }
 
     /**
@@ -253,7 +248,7 @@ public final class ProjectClass {
             final StringBuilder strJsonString = new StringBuilder(100);
             strJsonString.append("\"Application\":{")
                     .append(grpArtifactVers);
-            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
                         .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projDependencies));
@@ -291,7 +286,7 @@ public final class ProjectClass {
                     + prjGroupId
                     + ":" + prjModel.getArtifactId(),
                     getProjectVersion());
-            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 projDependencies.forEach((strKey, objValue) -> appDetails.put("Direct Dependency - " + strKey, objValue));
             }
@@ -332,7 +327,7 @@ public final class ProjectClass {
                         .append(crtModulePom.replace("\\", "\\\\"))
                         .append("\",")
                         .append(grpArtifactVers);
-                final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+                final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
                             .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(mdlDependencies));
@@ -442,7 +437,7 @@ public final class ProjectClass {
                         mapToReturn = getBuildPlugins();
                     }
                     break;
-                case BasicStructuresClass.STR_DEPENDENCIES:
+                case BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES:
                     if (prjModel.getDependencies() != null) {
                         mapToReturn = getDependencies();
                     }

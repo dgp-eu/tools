@@ -714,15 +714,7 @@ public final class FileOperationsClass {
             } else {
                 final File fileGiven = new File(strFileName);
                 if (fileGiven.exists()) {
-                    if (fileGiven.isFile()) {
-                        if (fileGiven.canRead()) {
-                            fileSize = fileGiven.length();
-                        } else {
-                            fileSize = -1;
-                        }
-                    } else {
-                        fileSize = -2;
-                    }
+                    fileSize = getFileSizeAfterEnsuringItExists(fileGiven);
                 } else {
                     fileSize = -3;
                 }
@@ -731,16 +723,38 @@ public final class FileOperationsClass {
         }
 
         /**
+         * Gets file size if exits and is readable
+         * @param fileGiven file name
+         * @return long
+         */
+        private static long getFileSizeAfterEnsuringItExists(final File fileGiven) {
+            final long fileSize;
+            if (fileGiven.isFile()) {
+                if (fileGiven.canRead()) {
+                    fileSize = fileGiven.length();
+                } else {
+                    fileSize = -1;
+                }
+            } else {
+                fileSize = -2;
+            }
+            return fileSize;
+        }
+
+        /**
          * get internal file size from Disk or inside Jar
-         * @param strFilePath  input Path
+         * @param strFilePath   input Path
+         * @param isExecFromJar is execution from Jar
          * @return size of the file
          */
-        public static long getInternalFileSize(final String strFilePath, final boolean isExecutionFromJar) {
-            final String strFilePathDisk = BasicStructuresClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
+        public static long getInternalFileSize(final String strFilePath, final boolean isExecFromJar) {
+            final String strFilePathDisk = BasicStructuresClass.ConfigurationSubClass.getCurrentFolder()
+                    + "/src/main/resources" + strFilePath;
             long fileSizeActual = getFileSizeIfFileExistsAndIsReadable(strFilePathDisk);
-            if (isExecutionFromJar
+            if (isExecFromJar
                     || fileSizeActual < 0) {
-                try (InputStream inStream = Objects.requireNonNull(RetrievingSubClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
+                try (InputStream inStream = Objects.requireNonNull(RetrievingSubClass.class.getResourceAsStream(strFilePath),
+                        "Resource not found: " + strFilePath)) {
                     // transferTo returns the number of bytes transferred (Java 9+)
                     fileSizeActual = inStream.transferTo(OutputStream.nullOutputStream());
                 } catch (IOException ei) {

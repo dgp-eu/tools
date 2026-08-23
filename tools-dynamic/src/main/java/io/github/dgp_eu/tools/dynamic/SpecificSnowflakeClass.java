@@ -111,7 +111,6 @@ public final class SpecificSnowflakeClass {
             vJdbcVersion = moduleMap.get(vSnowflakeId).toString();
             vFoundIn = "Modules";
         } else {
-            ProjectClass.loadProjectModel();
             ProjectClass.LoaderSubClass.loadComponents();
             final Map<String, Object> projDependencies = ProjectClass.ComponentsSubClass.getProjectModelComponent("Dependencies");
             if (projDependencies.containsKey(vSnowflakeId)) {

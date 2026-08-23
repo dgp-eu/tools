@@ -82,7 +82,7 @@ public final class DatabaseOperationsClass {
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                final String strFeedbackOk = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strPurpose);
+                final String strFeedbackOk = String.format(BasicStructuresClass.ConfigurationSubClass.STR_EXEC_QRY_OK, strPurpose);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
                 ResultSettingSubClass.digestCustomQueryProperties(strPurpose, resultSet, objProperties);
             } catch (SQLException e) {
@@ -113,7 +113,7 @@ public final class DatabaseOperationsClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                final String strFeedback = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strPurpose);
+                final String strFeedback = String.format(BasicStructuresClass.ConfigurationSubClass.STR_EXEC_QRY_OK, strPurpose);
                 LogExposureClass.LOGGER.info(strFeedback);
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format("SQL query execution for %s purpose has failed: %s... %s", strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
@@ -191,7 +191,7 @@ public final class DatabaseOperationsClass {
         if (!isJarExecution) {
             final String oldRelativeFile = strRelativeFile.toString();
             strRelativeFile.setLength(0);
-            final String crtFolder = BasicStructuresClass.getCurrentFolder();
+            final String crtFolder = BasicStructuresClass.ConfigurationSubClass.getCurrentFolder();
             strRelativeFile.append(crtFolder).append("/src/main/resources").append(oldRelativeFile);
         }
         return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile.toString());
@@ -333,7 +333,7 @@ public final class DatabaseOperationsClass {
                             final int index = intParameter + 1;
                             final String strKey = mapParameterOrder.get(intParameter);
                             final String strOriginalValue = currentProps.getProperty(strKey);
-                            properties.put(BasicStructuresClass.STR_INDEX, index);
+                            properties.put(BasicStructuresClass.ConfigurationSubClass.STR_INDEX, index);
                             properties.put("strKey", strKey);
                             properties.put("strOriginalValue", strOriginalValue);
                             properties.put("strQuery", strQuery);
@@ -345,7 +345,7 @@ public final class DatabaseOperationsClass {
                         if ((crtRow % batchSize == 0)
                                 || (crtRow == intRows)) { // each batchSize rows OR final one
                             preparedStatement.executeLargeBatch();
-                            final String strFeedback = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strQueryPurpose + " record " + crtRow);
+                            final String strFeedback = String.format(BasicStructuresClass.ConfigurationSubClass.STR_EXEC_QRY_OK, strQueryPurpose + " record " + crtRow);
                             LogExposureClass.LOGGER.info(strFeedback);
                         }
                     }
@@ -362,7 +362,7 @@ public final class DatabaseOperationsClass {
          * @param properties properties with relevant components
          */
         private static void bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties) {
-            final String strIndex = properties.get(BasicStructuresClass.STR_INDEX).toString();
+            final String strIndex = properties.get(BasicStructuresClass.ConfigurationSubClass.STR_INDEX).toString();
             final int index = BasicStructuresClass.convertStringIntoInteger(strIndex);
             final String strKey = properties.get("strKey").toString();
             final String strQuery = properties.get("strQuery").toString();
