@@ -522,16 +522,14 @@ public final class BasicStructuresClass {
      * Conversion things
      */
     public static final class NumberConversionSubClass {
-        /** Cached time zones */
-        private static final Map<String, ConvertionRecord> MAP_CONVERTION = new ConcurrentHashMap<>();
-        /** Record for ZoneInfo */
-        /* default */ public record ConvertionRecord(
-                long[] arrayNumbers,
-                String[] arrayUnits) {}
-
-        static {
-            loadConvertionMap();
-        }
+        /** array with Decimal values */
+        private static final long[] ARRAY_DEC_NO = {1L, 1_000L, 1_000_000L, 1_000_000_000L, 1_000_000_000_000L, 1_000_000_000_000_000L, 1_000_000_000_000_000_000L};
+        /** array with Decimal units */
+        private static final String[] ARRAY_DEC_UNITS = {"byte", "bytes", "KB", "MB", "GB", "TB", "PB", "EB"};
+        /** array with Decimal values */
+        private static final long[] ARRAY_BIN_NO = {1L, 1L << 10, 1L << 20, 1L << 30, 1L << 40, 1L << 50, 1L << 60};
+        /** array with Decimal units */
+        private static final String[] ARRAY_BIN_UNITS = {"byte", "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
 
         /**
          * Format bytes into a rounded string representation using IEC standard
@@ -541,13 +539,27 @@ public final class BasicStructuresClass {
          */
         public static String convertUnits(final long inBytes, final String strStyle) {
             String outString = "";
-            if (MAP_CONVERTION.containsKey(strStyle)) {
-                final long[] arrayNumbers = getArrayNumbers(strStyle);
-                final String[] arraySymbols = getArrayUnits(strStyle);
+            final List<String> knownStyles = Arrays.asList("binary", "decimal");
+            if (knownStyles.contains(strStyle)) {
+                long[] arrayNumbers = null;
+                String[] arraySymbols = null;
+                switch (strStyle) {
+                    case "decimal":
+                        arrayNumbers = ARRAY_DEC_NO;
+                        arraySymbols = ARRAY_DEC_UNITS;
+                        break;
+                    case "binary":
+                        arrayNumbers = ARRAY_BIN_NO;
+                        arraySymbols = ARRAY_BIN_UNITS;
+                        break;
+                    default:
+                        // intentionally left blank
+                        break;
+                }
                 if (inBytes == arrayNumbers[0]) { // bytes
                     outString = formatValue(inBytes, arrayNumbers[0], arraySymbols[0]);
                 } else {
-                    outString = convertHigherThatSingleUnitNumber(inBytes, strStyle);
+                    outString = convertHigherThatSingleUnitNumber(inBytes, arrayNumbers, arraySymbols);
                 }
                 if (outString.isBlank()) {
                     outString = formatValue(inBytes, arrayNumbers[6], arraySymbols[7]);
@@ -562,10 +574,8 @@ public final class BasicStructuresClass {
          * @param strStyle conversion style
          * @return String
          */
-        private static String convertHigherThatSingleUnitNumber(final long inBytes, final String strStyle) {
+        private static String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final String... arraySymbols) {
             String outString = "";
-            final long[] arrayNumbers = getArrayNumbers(strStyle);
-            final String[] arraySymbols = getArrayUnits(strStyle);
             final long symbolsLength = arraySymbols.length - 1L;
             for (int iCounter = 1; iCounter < symbolsLength; iCounter++) {
                 if (inBytes < arrayNumbers[iCounter]) {
@@ -573,24 +583,6 @@ public final class BasicStructuresClass {
                 }
             }
             return outString;
-        }
-
-        /**
-         * Getter for Numbers
-         * @param strStyle conversion style
-         * @return array of Numbers
-         */
-        private static long[] getArrayNumbers(final String strStyle) {
-            return MAP_CONVERTION.get(strStyle).arrayNumbers;
-        }
-
-        /**
-         * Getter for Units
-         * @param strStyle conversion style
-         * @return array of Units
-         */
-        private static String[] getArrayUnits(final String strStyle) {
-            return MAP_CONVERTION.get(strStyle).arrayUnits;
         }
 
         /**
@@ -605,18 +597,6 @@ public final class BasicStructuresClass {
             return inValue % inDivider == 0
                     ? String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol)
                             : String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
-        }
-
-        /**
-         * Loader for MAP_CONVERTION
-         */
-        private static void loadConvertionMap() {
-            MAP_CONVERTION.put("decimal",
-                    new ConvertionRecord(new long[]{1L, 1_000L, 1_000_000L, 1_000_000_000L, 1_000_000_000_000L, 1_000_000_000_000_000L, 1_000_000_000_000_000_000L},
-                            new String[]{"byte", "bytes", "KB", "MB", "GB", "TB", "PB", "EB"}));
-            MAP_CONVERTION.put("binary",
-                    new ConvertionRecord(new long[]{1L, 1L << 10, 1L << 20, 1L << 30, 1L << 40, 1L << 50, 1L << 60},
-                            new String[]{"byte", "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"}));
         }
 
         // Private constructor to prevent instantiation
