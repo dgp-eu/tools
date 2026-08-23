@@ -126,8 +126,8 @@ public final class TimingClass {
         cursor = cursor.plus(period);
         Duration duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
         if (duration.isNegative()) {
-            period = period.minusDays(1);
-            cursor = startTimestamp.plus(period);
+            period   = period.minusDays(1);
+            cursor   = startTimestamp.plus(period);
             duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
         }
         final int years  = period.getYears();
@@ -279,19 +279,19 @@ public final class TimingClass {
         public static String convertNanosecondsIntoSomething(@NonNull final Duration duration, @NonNull final String strRule) {
             final StringBuilder strFinalString = new StringBuilder(100);
             final String[] arrayStrings;
-            String strFinalOne = null;
+            String strFinalOne   = null;
             String strEmptyValue = "?";
             switch (strRule) {
                 case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN:
                     final String strFinalRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
-                    arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
-                    strFinalOne = "Nanosecond";
+                    arrayStrings  = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
+                    strFinalOne   = "Nanosecond";
                     strEmptyValue = "INSTANT (less than a nanosecond)";
                     break;
                 case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN_MS:
                     final String strMilliRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
-                    arrayStrings = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
-                    strFinalOne = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
+                    arrayStrings  = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
+                    strFinalOne   = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
                     strEmptyValue = "INSTANT (less than a millisecond)";
                     break;
                 case "TimeClockClassic":
@@ -299,7 +299,7 @@ public final class TimingClass {
                     break;
                 case "TimeClock":
                     arrayStrings = new String[] {BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, BasicStructuresClass.ConfigurationSubClass.STR_TWO, BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO, BasicStructuresClass.ConfigurationSubClass.STR_DOT_THREE};
-                    strFinalOne = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
+                    strFinalOne  = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
                     break;
                 default:
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -331,11 +331,11 @@ public final class TimingClass {
          */
         private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
             return switch (strWhichPart) {
-                case "Day"                                -> duration.toDaysPart();
-                case "Hour"                               -> duration.toHoursPart();
+                case "Day"                                                      -> duration.toDaysPart();
+                case "Hour"                                                     -> duration.toHoursPart();
                 case BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND -> duration.toMillisPart();
-                case "Minute"                             -> duration.toMinutesPart();
-                case "Nanosecond"                         -> duration.toNanosPart();
+                case "Minute"                                                   -> duration.toMinutesPart();
+                case "Nanosecond"                                               -> duration.toNanosPart();
                 case BasicStructuresClass.ConfigurationSubClass.STR_SECOND      -> duration.toSecondsPart();
                 default -> {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -436,12 +436,12 @@ public final class TimingClass {
                 final ZonedDateTime zStartTimeStamp = getFileLastModifiedZonedDateTime(file);
                 String strReturn = "";
                 if (zStartTimeStamp != null) {
-                    final ZonedDateTime zStopTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
-                    final boolean negative = zStopTimeStamp.isBefore(zStartTimeStamp);
+                    final ZonedDateTime zFinishTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
+                    final boolean negative = zFinishTimeStamp.isBefore(zStartTimeStamp);
                     if (negative) {
-                        strReturn = computeAging(zStartTimeStamp, zStopTimeStamp, true);
+                        strReturn = computeAging(zFinishTimeStamp, zStartTimeStamp, true);
                     } else {
-                        strReturn = computeAging(zStopTimeStamp, zStartTimeStamp, false);
+                        strReturn = computeAging(zStartTimeStamp, zFinishTimeStamp, false);
                     }
                 }
                 return strReturn;

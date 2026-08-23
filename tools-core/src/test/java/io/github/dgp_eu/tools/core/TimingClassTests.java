@@ -27,7 +27,7 @@ class TimingClassTests {
     /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
     /** fixed Clock for predictable results */
-    private static final Clock CLOCK_FIXED = Clock.fixed(Instant.parse("2022-12-12T22:22:22Z"), ZoneId.of("UTC"));
+    private static final Clock CLOCK_FIXED = Clock.fixed(Instant.parse("2022-12-12T17:20:02Z"), ZoneId.of("UTC"));
 
     @Test
     void testAgingNegative() {
@@ -36,6 +36,16 @@ class TimingClassTests {
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MILLIS), ZoneId.systemDefault());
         final String handled = TimingClass.computeAging(finishDateTime, startDateTime, true);
         final String expected = "-3 hours, 4 milliseconds";
+        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+    }
+
+    @Test
+    void testAgingNegative2() {
+        final Instant startNow = Instant.now(CLOCK_FIXED);
+        final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, ZoneId.systemDefault());
+        final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(59, ChronoUnit.DAYS).plus(4, ChronoUnit.HOURS), ZoneId.systemDefault());
+        final String handled = TimingClass.computeAging(finishDateTime, startDateTime, true);
+        final String expected = "-1 month, 27 days, 19 hours";
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
 

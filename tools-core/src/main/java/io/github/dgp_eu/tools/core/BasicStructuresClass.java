@@ -575,10 +575,15 @@ public final class BasicStructuresClass {
         private static String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final String... arraySymbols) {
             String outString = "";
             final int symbolsLength = Math.toIntExact(arraySymbols.length - 1L);
-            for (int iCounter = 1; iCounter < symbolsLength; iCounter++) {
+            int iCounter = 1;
+            boolean needsToContinue = true;
+            while (iCounter < symbolsLength
+                    && needsToContinue) {
                 if (inBytes < arrayNumbers[iCounter]) {
                     outString = formatValue(inBytes, arrayNumbers[iCounter - 1], arraySymbols[iCounter]);
+                    needsToContinue = false;
                 }
+                iCounter++;
             }
             return outString;
         }
