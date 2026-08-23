@@ -54,7 +54,8 @@ public final class FileOperationsClass {
                     try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
                         String line = reader.readLine();  // Initialize the variable outside the loop
                         long lineCounter = 0;
-                        while (Objects.nonNull(line) && (lineCounter < 100)) {
+                        while (Objects.nonNull(line)
+                                && (lineCounter < 100)) {
                             if (line.startsWith(strImport)) {
                                 writer.write(crtFileName.getParent().toString()
                                         + ';' + crtFileName.getFileName().toString()
