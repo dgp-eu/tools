@@ -574,7 +574,7 @@ public final class BasicStructuresClass {
          */
         private static String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final String... arraySymbols) {
             String outString = "";
-            final long symbolsLength = arraySymbols.length - 1L;
+            final int symbolsLength = Math.toIntExact(arraySymbols.length - 1L);
             for (int iCounter = 1; iCounter < symbolsLength; iCounter++) {
                 if (inBytes < arrayNumbers[iCounter]) {
                     outString = formatValue(inBytes, arrayNumbers[iCounter - 1], arraySymbols[iCounter]);
