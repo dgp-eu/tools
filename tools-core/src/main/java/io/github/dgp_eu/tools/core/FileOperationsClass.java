@@ -1049,7 +1049,8 @@ public final class FileOperationsClass {
          * @param strFolderName input folder name
          */
         private static void gatherFileStatisticsFromFolderIntoFile(final String strFolderName, final BufferedWriter writer) {
-            final List<Properties> crtFileStatistics = getFileStatisticsIntoListOfProperties(strFolderName);
+            final ZonedDateTime refTimeStamp = ZonedDateTime.now(ZoneId.systemDefault());
+            final List<Properties> crtFileStatistics = getFileStatisticsIntoListOfProperties(strFolderName, refTimeStamp);
             crtFileStatistics.forEach(fileProperties -> {
                 try {
                     writer.write(fileProperties.get("Folder").toString()
@@ -1071,10 +1072,11 @@ public final class FileOperationsClass {
          * performs statistics for all files within a given folder
          * @param strFolderName input folder name
          */
-        public static List<Properties> getFileStatisticsIntoListOfProperties(final String strFolderName) {
+        public static List<Properties> getFileStatisticsIntoListOfProperties(final String strFolderName, final ZonedDateTime inRefTimeStamp) {
             if (!FILE_STATISTICS.isEmpty()) {
                 FILE_STATISTICS.clear();
             }
+            TimingClass.LocalizationSubClass.FileSubSubClass.setReferenceTimeStampValueForAgingCalculation(inRefTimeStamp);
             gatherFileStatisticsFromFolder(strFolderName);
             return FILE_STATISTICS;
         }
@@ -1124,22 +1126,20 @@ public final class FileOperationsClass {
          * @return Properties with relevant statistics
          */
         private static Properties getSingleFileStatistic(final Path file) {
+            final String strFeedback = String.format("Will process file %s for multiple statistics", file);
+            LogExposureClass.LOGGER.debug(strFeedback);
             final Properties fileProperties = new Properties();
-            fileProperties.put("Folder",
-                    file.getParent().toString());
-            fileProperties.put("File",
-                    file.getFileName().toString());
+            fileProperties.put("Folder", file.getParent().toString());
+            fileProperties.put("File", file.getFileName().toString());
             final long fileSize = file.toFile().length();
-            fileProperties.put("Size [bytes]",
-                    fileSize);
-            fileProperties.put("Size",
-                    BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary"));
+            fileProperties.put("Size [bytes]", fileSize);
+            final String fileSizeDynamic = BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary");
+            fileProperties.put("Size", fileSizeDynamic);
             final String lastModifTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
                     TimingClass.DATE_TIME_MS);
-            fileProperties.put("Last Modified Timestamp",
-                    lastModifTs);
-            fileProperties.put("Last Modified Aging",
-                    TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedAging(file));
+            fileProperties.put("Last Modified Timestamp", lastModifTs);
+            final String lastModifAging = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedAging(file);
+            fileProperties.put("Last Modified Aging", lastModifAging);
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
             return fileProperties;
         }

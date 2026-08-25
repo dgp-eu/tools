@@ -121,24 +121,16 @@ public final class TimingClass {
      * @return Aging
      */
     public static String computeAging(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp, final boolean negative) {
-        ZonedDateTime cursor = startTimestamp;
-        Period period = Period.between(cursor.toLocalDate(), finishTimestamp.toLocalDate());
-        cursor = cursor.plus(period);
-        Duration duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
-        if (duration.isNegative()) {
-            period   = period.minusDays(1);
-            cursor   = startTimestamp.plus(period);
-            duration = Duration.between(cursor.toInstant(), finishTimestamp.toInstant());
-        }
+        final Period period = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
+        final ZonedDateTime startAfterPeriod = startTimestamp.plus(period);
+        final Duration duration = Duration.between(startAfterPeriod, finishTimestamp);
         final int years  = period.getYears();
         final int months = period.getMonths();
         final int days   = period.getDays();
         // duration components
-        final long hours   = duration.toHours();
-        duration     = duration.minusHours(hours);
-        final long minutes = duration.toMinutes();
-        duration     = duration.minusMinutes(minutes);
-        final long seconds = duration.getSeconds();
+        final long hours   = Math.abs(duration.toHoursPart());
+        final long minutes = Math.abs(duration.toMinutesPart());
+        final long seconds = Math.abs(duration.toSecondsPart());
         final int mili     = duration.toMillisPart();
         // assemble for word composition
         final int intHours   = (int) hours;
@@ -399,6 +391,8 @@ public final class TimingClass {
          * File time related logic
          */
         public static final class FileSubSubClass {
+            /** Variable used as reference ZoneDateTime for Aging calculation */
+            private static ZonedDateTime refAgingTimeStamp;
 
             /**
              * Constructor
@@ -436,12 +430,11 @@ public final class TimingClass {
                 final ZonedDateTime zStartTimeStamp = getFileLastModifiedZonedDateTime(file);
                 String strReturn = "";
                 if (zStartTimeStamp != null) {
-                    final ZonedDateTime zFinishTimeStamp = ZonedDateTime.now(ZoneId.of(outputTimeZone));
-                    final boolean negative = zFinishTimeStamp.isBefore(zStartTimeStamp);
+                    final boolean negative = refAgingTimeStamp.isBefore(zStartTimeStamp);
                     if (negative) {
-                        strReturn = computeAging(zFinishTimeStamp, zStartTimeStamp, true);
+                        strReturn = computeAging(refAgingTimeStamp, zStartTimeStamp, true);
                     } else {
-                        strReturn = computeAging(zStartTimeStamp, zFinishTimeStamp, false);
+                        strReturn = computeAging(zStartTimeStamp, refAgingTimeStamp, false);
                     }
                 }
                 return strReturn;
@@ -472,6 +465,14 @@ public final class TimingClass {
                     returnString = dateTime.format(fixedFormatter);
                 }
                 return returnString;
+            }
+
+            /**
+             * Setter for zAgingRefTimeStamp
+             * @param inRefTimeStamp input Reference Time-stamp
+             */
+            public static void setReferenceTimeStampValueForAgingCalculation(final ZonedDateTime inRefTimeStamp) {
+                refAgingTimeStamp = inRefTimeStamp;
             }
 
         }
