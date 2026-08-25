@@ -248,7 +248,7 @@ public final class ProjectClass {
             final StringBuilder strJsonString = new StringBuilder(100);
             strJsonString.append("\"Application\":{")
                     .append(grpArtifactVers);
-            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(ConfigurationClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
                         .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projDependencies));
@@ -286,7 +286,7 @@ public final class ProjectClass {
                     + prjGroupId
                     + ":" + prjModel.getArtifactId(),
                     getProjectVersion());
-            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(ConfigurationClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 projDependencies.forEach((strKey, objValue) -> appDetails.put("Direct Dependency - " + strKey, objValue));
             }
@@ -327,7 +327,7 @@ public final class ProjectClass {
                         .append(crtModulePom.replace("\\", "\\\\"))
                         .append("\",")
                         .append(grpArtifactVers);
-                final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES);
+                final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(ConfigurationClass.STR_DEPENDENCIES);
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
                             .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(mdlDependencies));
@@ -437,7 +437,7 @@ public final class ProjectClass {
                         mapToReturn = getBuildPlugins();
                     }
                     break;
-                case BasicStructuresClass.ConfigurationSubClass.STR_DEPENDENCIES:
+                case ConfigurationClass.STR_DEPENDENCIES:
                     if (prjModel.getDependencies() != null) {
                         mapToReturn = getDependencies();
                     }

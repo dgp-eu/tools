@@ -115,9 +115,9 @@ public final class RegularExpressionsClass {
         sortedRegExp.put(STR_AGING_TS, REGEXP_AGE_TS);
         sortedRegExp.put(STR_AGING_DATE, REGEXP_AGE_DATE);
         sortedRegExp.put(STR_AGING_TIME, REGEXP_AGE_TIME);
-        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC, "");
-        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP, "");
-        sortedRegExp.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE, "");
+        sortedRegExp.put(ConfigurationClass.STR_TS_MSEC, "");
+        sortedRegExp.put(ConfigurationClass.STR_TIMESTAMP, "");
+        sortedRegExp.put(ConfigurationClass.STR_JUST_DATE, "");
         final StringJoiner sjRegExp = new StringJoiner("|");
         sortedRegExp.forEach((key, value) -> {
             if (value.isBlank()) {
@@ -209,9 +209,9 @@ public final class RegularExpressionsClass {
                 STR_AGING_TS,
                 STR_AGING_TS_MS,
                 STR_AGING_DATE,
-                BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC,
-                BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP,
-                BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE);
+                ConfigurationClass.STR_TS_MSEC,
+                ConfigurationClass.STR_TIMESTAMP,
+                ConfigurationClass.STR_JUST_DATE);
         return capturedGroups.stream()
                 .filter(groupName -> result.group(groupName) != null)
                 .findFirst()
@@ -230,11 +230,11 @@ public final class RegularExpressionsClass {
      * Populates MAP_PATTERNS list
      */
     private static void loadDateTimePatternsIntoMap() {
-        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC,
+        MAP_PATTERNS.put(ConfigurationClass.STR_TS_MSEC,
                 new DateTimeInfoRec(TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_LONG, TimingClass.DATE_TIME_MS_ABRV, REGEXP_TS_MS));
-        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP,
+        MAP_PATTERNS.put(ConfigurationClass.STR_TIMESTAMP,
                 new DateTimeInfoRec(TimingClass.DATE_TIME, TimingClass.DATE_TIME_LONG, TimingClass.DATE_TIME_ABRV, REGEXP_TS));
-        MAP_PATTERNS.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE,
+        MAP_PATTERNS.put(ConfigurationClass.STR_JUST_DATE,
                 new DateTimeInfoRec(TimingClass.ISO_DATE, TimingClass.ISO_DATE_LONG, TimingClass.ISO_DATE_ABRV, REGEXP_DATE));
     }
 
@@ -432,9 +432,9 @@ public final class RegularExpressionsClass {
             REG_EXP_PROPS.put(STR_AGING_TS, REGEXP_AGE_TS9);
             REG_EXP_PROPS.put(STR_AGING_TIME, REGEXP_AGE_TIME9);
             REG_EXP_PROPS.put(STR_AGING_DATE, REGEXP_AGE_DATE9);
-            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP, REGEXP_TS);
-            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC, REGEXP_TS_MS);
-            REG_EXP_PROPS.put(BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE, REGEXP_DATE);
+            REG_EXP_PROPS.put(ConfigurationClass.STR_TIMESTAMP, REGEXP_TS);
+            REG_EXP_PROPS.put(ConfigurationClass.STR_TS_MSEC, REGEXP_TS_MS);
+            REG_EXP_PROPS.put(ConfigurationClass.STR_JUST_DATE, REGEXP_DATE);
             REG_EXP_PROPS.put("version", REGEXP_VERSION);
         }
 

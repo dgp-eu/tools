@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.SequencedMap;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
@@ -66,8 +67,8 @@ public final class HtmlClass {
     public static String buildMenuString(final SequencedMap<String, Map<String, String>> inMapMenu) {
         final StringBuilder strMenuContent = new StringBuilder(1000);
         inMapMenu.forEach((strKey, mapValue) -> {
-            if (!mapValue.getOrDefault(BasicStructuresClass.ConfigurationSubClass.STR_MENU, "").isEmpty()) {
-                strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.ConfigurationSubClass.STR_ICON), mapValue.get(BasicStructuresClass.ConfigurationSubClass.STR_MENU)));
+            if (!mapValue.getOrDefault(ConfigurationClass.STR_MENU, "").isEmpty()) {
+                strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(ConfigurationClass.STR_ICON), mapValue.get(ConfigurationClass.STR_MENU)));
             }
         });
         return strMenuContent.toString();
@@ -172,7 +173,7 @@ public final class HtmlClass {
          */
         private static String buildLabelTag(final Properties objFeatures) {
             final String strLabel = objFeatures.getOrDefault("Label", "").toString()
-                    + (objFeatures.getOrDefault(BasicStructuresClass.ConfigurationSubClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
+                    + (objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
             final String tagLabelRaw = "<label for=\"%s\"%s>%s:</label>";
             final String strLabelStyle = objFeatures.getOrDefault("Label Style", "").toString().isEmpty() ? "" : " style=\"" + objFeatures.get("Label Style").toString() + "\"";
             return String.format(tagLabelRaw, objFeatures.get("Id"), strLabelStyle, strLabel)
@@ -212,11 +213,11 @@ public final class HtmlClass {
         private static void manageAdditionalAttributesAndDefaults(final Properties objFeatures) {
             final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
             String[] defaultVals = {defaultValue};
-            if (!objFeatures.getOrDefault(BasicStructuresClass.ConfigurationSubClass.STR_MULTIPLE, "").toString().isEmpty()) {
+            if (!objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty()) {
                 if (!defaultValue.isEmpty()) {
                     defaultVals = defaultValue.split(",");
                 }
-                additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.ConfigurationSubClass.STR_MULTIPLE));
+                additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(ConfigurationClass.STR_MULTIPLE));
             }
             if (!objFeatures.getOrDefault("Size", "").toString().isEmpty()) {
                 additionalAttrib = String.format(" size=\"%s\"", objFeatures.get("Size"));
@@ -293,7 +294,7 @@ public final class HtmlClass {
              */
             private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 final Object valObj = recordMap.get(tblContext.rememberKey);
-                final String valueForTab = valObj == null ? BasicStructuresClass.ConfigurationSubClass.STR_NULL : valObj.toString();
+                final String valueForTab = valObj == null ? ConfigurationClass.STR_NULL : valObj.toString();
                 final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
                 if (!valueForTab.equalsIgnoreCase(prev)) {
                     if (tblContext.listTableLines.isEmpty()) {
@@ -354,15 +355,15 @@ public final class HtmlClass {
                     strTableRow.append("<tr>");
                     recordMap.forEach((strKey, objValue) -> {
                         if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
-                                && !BasicStructuresClass.ConfigurationSubClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
+                                && !ConfigurationClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
                             final StringBuilder cellStyle = new StringBuilder(100);
-                            if (recordMap.containsKey(BasicStructuresClass.ConfigurationSubClass.STR_ROW_STYLE)) {
-                                cellStyle.append(recordMap.get(BasicStructuresClass.ConfigurationSubClass.STR_ROW_STYLE).toString());
+                            if (recordMap.containsKey(ConfigurationClass.STR_ROW_STYLE)) {
+                                cellStyle.append(recordMap.get(ConfigurationClass.STR_ROW_STYLE).toString());
                             }
                             final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
                             final String strValue = mapSmartLogic.get("value");
-                            if (!mapSmartLogic.get(BasicStructuresClass.ConfigurationSubClass.STR_STYLE).isEmpty()) {
-                                cellStyle.append(mapSmartLogic.get(BasicStructuresClass.ConfigurationSubClass.STR_STYLE));
+                            if (!mapSmartLogic.get(ConfigurationClass.STR_STYLE).isEmpty()) {
+                                cellStyle.append(mapSmartLogic.get(ConfigurationClass.STR_STYLE));
                             }
                             if (cellStyle.isEmpty()) {
                                 strTableRow.append(String.format("<td>%s</td>", strValue));
@@ -379,7 +380,7 @@ public final class HtmlClass {
                  * loading special Values and CSS style
                  */
                 private static void loadPredefinedValuesAndTheirStyles() {
-                    specialValues.put(BasicStructuresClass.ConfigurationSubClass.STR_NULL, new SpValuesRecord("&lt;NULL&gt;", "color:LightGrey;font-style:italic;"));
+                    specialValues.put(ConfigurationClass.STR_NULL, new SpValuesRecord("&lt;NULL&gt;", "color:LightGrey;font-style:italic;"));
                     specialValues.put("", new SpValuesRecord("&lt;blank&gt;", "color:Grey;font-style:italic;"));
                 }
 
@@ -404,7 +405,7 @@ public final class HtmlClass {
                         }
                     }
                     return Map.of(
-                            BasicStructuresClass.ConfigurationSubClass.STR_STYLE,
+                            ConfigurationClass.STR_STYLE,
                             cellStyle,
                             "value",
                             strValue);
@@ -421,9 +422,9 @@ public final class HtmlClass {
                         case "decimal"                          -> BasicStructuresClass.StringTransformationSubClass.formatStringWithDecimalContentWithThousandDecimalSeparator(inputString);
                         case "integer"                          -> String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoInteger(inputString));
                         case "long"                             -> String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoLong(inputString));
-                        case BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE -> TimingClass.LocalizationSubClass.formatDateFriendly(inputString, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
-                        case BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV);
-                        case BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC   -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_ABRV);
+                        case ConfigurationClass.STR_JUST_DATE -> TimingClass.LocalizationSubClass.formatDateFriendly(inputString, TimingClass.ISO_DATE, TimingClass.ISO_DATE_ABRV);
+                        case ConfigurationClass.STR_TIMESTAMP -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME, TimingClass.DATE_TIME_ABRV);
+                        case ConfigurationClass.STR_TS_MSEC   -> TimingClass.LocalizationSubClass.convertTimestampFriendly(inputString, TimingClass.DATE_TIME_MS, TimingClass.DATE_TIME_MS_ABRV);
                         case "byteSize", "fullAging"            -> inputString;
                         default                                 -> "";
                     };
@@ -437,7 +438,7 @@ public final class HtmlClass {
                  */
                 private static String transformValueByPatternMatch(final String inputString) {
                     String outputString = null;
-                    final List<String> arrayPatterns = List.of("decimal", "integer", "long", BasicStructuresClass.ConfigurationSubClass.STR_TS_MSEC, BasicStructuresClass.ConfigurationSubClass.STR_TIMESTAMP, BasicStructuresClass.ConfigurationSubClass.STR_JUST_DATE, "byteSize", "fullAging");
+                    final List<String> arrayPatterns = List.of("decimal", "integer", "long", ConfigurationClass.STR_TS_MSEC, ConfigurationClass.STR_TIMESTAMP, ConfigurationClass.STR_JUST_DATE, "byteSize", "fullAging");
                     final Iterator<String> itArray = arrayPatterns.iterator();
                     boolean needsToContinue = true;
                     while (itArray.hasNext()
@@ -485,8 +486,8 @@ public final class HtmlClass {
          */
         private static String getRememberKey(final Properties objFeatures) {
             String strRememberKey = "";
-            if (objFeatures.containsKey(BasicStructuresClass.ConfigurationSubClass.STR_NEW_TAB)) {
-                strRememberKey = objFeatures.get(BasicStructuresClass.ConfigurationSubClass.STR_NEW_TAB).toString();
+            if (objFeatures.containsKey(ConfigurationClass.STR_NEW_TAB)) {
+                strRememberKey = objFeatures.get(ConfigurationClass.STR_NEW_TAB).toString();
             }
             return strRememberKey;
         }
@@ -524,7 +525,7 @@ public final class HtmlClass {
                 strBuilder.append("<table><thead>");
                 recordMap.forEach((strKey, _) -> {
                     if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
-                            && !BasicStructuresClass.ConfigurationSubClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
+                            && !ConfigurationClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
                         strBuilder.append(String.format("<th>%s</th>", strKey));
                     }
                 });

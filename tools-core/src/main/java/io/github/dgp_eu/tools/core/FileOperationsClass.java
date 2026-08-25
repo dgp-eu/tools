@@ -749,7 +749,7 @@ public final class FileOperationsClass {
          * @return size of the file
          */
         public static long getInternalFileSize(final String strFilePath, final boolean isExecFromJar) {
-            final String strFilePathDisk = BasicStructuresClass.ConfigurationSubClass.getCurrentFolder()
+            final String strFilePathDisk = ConfigurationClass.getCurrentFolder()
                     + "/src/main/resources" + strFilePath;
             long fileSizeActual = getFileSizeIfFileExistsAndIsReadable(strFilePathDisk);
             if (isExecFromJar

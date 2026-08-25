@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.sqlite.Function;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
@@ -90,12 +91,12 @@ public final class SpecificSqLiteClass {
      */
     public static Connection getSqLiteConnection() {
         final String strConnection = "jdbc:sqlite:" + internalDatabase.replace("\\", "/");
-        final String strFeedbackAtmpt = String.format("Will attempt to create a %s connection to database %s using %s as connection string", BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, internalDatabase, strConnection);
+        final String strFeedbackAtmpt = String.format("Will attempt to create a %s connection to database %s using %s as connection string", ConfigurationClass.STR_SQLITE, internalDatabase, strConnection);
         LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
-            final String strFeedbackOk = String.format("%s connection to database %s was successfully established!", BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, internalDatabase);
+            final String strFeedbackOk = String.format("%s connection to database %s was successfully established!", ConfigurationClass.STR_SQLITE, internalDatabase);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
@@ -115,7 +116,7 @@ public final class SpecificSqLiteClass {
                 }
             });
         } catch(SQLException e) {
-            final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, e.getLocalizedMessage());
+            final String strFeedbackErr = String.format("%s connection has failed %s", ConfigurationClass.STR_SQLITE, e.getLocalizedMessage());
             LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
         return connection;
@@ -132,13 +133,13 @@ public final class SpecificSqLiteClass {
         List<Properties> listReturn = new ArrayList<>();
         try (Connection objConnection = getSqLiteConnection()) {
             assert objConnection != null;
-            try (Statement objStatement = ConnectivitySubClass.createSqlStatement(BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, objConnection);
+            try (Statement objStatement = ConnectivitySubClass.createSqlStatement(ConfigurationClass.STR_SQLITE, objConnection);
                 ResultSet rsCols = DatabaseOperationsClass.executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
                 assert rsCols != null;
                 listReturn = ResultSettingSubClass.getResultSetColumnValues(rsCols);
             }
         } catch(SQLException e){
-            final String strFeedback = String.format("%s connection has failed at %s: %s", BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)), e.getLocalizedMessage());
+            final String strFeedback = String.format("%s connection has failed at %s: %s", ConfigurationClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)), e.getLocalizedMessage());
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return listReturn;
@@ -189,7 +190,7 @@ public final class SpecificSqLiteClass {
          * @return StringBuilder
          */
         private static StringBuilder buildTableRecordCounting() {
-            final String strQueryCount = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, "StatisticsTableRecordCounting");
+            final String strQueryCount = DatabaseOperationsClass.getPreDefinedQuery(ConfigurationClass.STR_SQLITE, "StatisticsTableRecordCounting");
             final StringBuilder strQueryRaw = new StringBuilder(1000);
             final List<Properties> resultTables = getTablesAndTheirSequence();
             resultTables.forEach(objProperty -> {
@@ -197,9 +198,9 @@ public final class SpecificSqLiteClass {
                     strQueryRaw.append(" UNION ALL ");
                 }
                 strQueryRaw.append(String.format(strQueryCount,
-                        objProperty.get(BasicStructuresClass.ConfigurationSubClass.STR_TABLE),
+                        objProperty.get(ConfigurationClass.STR_TABLE),
                         objProperty.get("Sequence"),
-                        objProperty.get(BasicStructuresClass.ConfigurationSubClass.STR_TABLE)));
+                        objProperty.get(ConfigurationClass.STR_TABLE)));
             });
             return strQueryRaw;
         }
@@ -209,7 +210,7 @@ public final class SpecificSqLiteClass {
          * @return List<Properties>
          */
         private static List<Properties> getTablesAndTheirSequence() {
-            final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
+            final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(ConfigurationClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
             final String strFeedback = String.format("Table list and their sequence query is: %s", queryTables);
             LogExposureClass.LOGGER.debug(strFeedback);
             return getSqLiteResultSetValues("Table list and their sequence", queryTables);
@@ -221,10 +222,10 @@ public final class SpecificSqLiteClass {
          */
         public static List<SequencedMap<Object, Object>> getTableStatisticsIntoListForHtmlTable() {
             final StringBuilder queryRecordCount = buildTableRecordCounting();
-            final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.ConfigurationSubClass.STR_SQLITE, "StatisticsTables");
+            final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(ConfigurationClass.STR_SQLITE, "StatisticsTables");
             final String strFinalQuery =  String.format(queryTableStats, queryRecordCount);
             final List<Properties> resultTableStats = getSqLiteResultSetValues("Table Statistics", strFinalQuery);
-            final List<String> desiredOrder = List.of("#", BasicStructuresClass.ConfigurationSubClass.STR_TABLE, "Records", "Sequence", "Gap");
+            final List<String> desiredOrder = List.of("#", ConfigurationClass.STR_TABLE, "Records", "Sequence", "Gap");
             return resultTableStats.stream()
                     .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                     .toList();

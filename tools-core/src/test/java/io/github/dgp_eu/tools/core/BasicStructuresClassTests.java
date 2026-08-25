@@ -45,7 +45,7 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Simple test to verify that 51.123 is not the same as 51.123 divided by 1000")
     void testComputePercentageSafelyNotEnoughPrecision() {
-        final BigDecimal expected = new BigDecimal(51.123);
+        final BigDecimal expected = new BigDecimal("51.123");
         final BigDecimal handled = BasicStructuresClass.computePercentageSafely(51_123L, 100_000L);
         assertNotEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
@@ -140,13 +140,6 @@ class BasicStructuresClassTests {
             assertNotEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
-        /**
-         * Constructor
-         */
-        TestStringCleaningSubClass() {
-            // intentionally blank
-        }
-
     }
 
     /**
@@ -163,13 +156,6 @@ class BasicStructuresClassTests {
             listStrings.add("Second");
             final boolean handled = BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring(STR_FIRST, listStrings);
             assertTrue(handled, String.format("\"%s\" is not true as expected", handled));
-        }
-
-        /**
-         * Constructor
-         */
-        TestStringEvaluationSubClass() {
-            // intentionally blank
         }
 
     }
@@ -195,13 +181,6 @@ class BasicStructuresClassTests {
             final String strExpected = "SELECT ?";
             final String handled = BasicStructuresClass.StringConversionSubClass.convertPromptParametersIntoParameters(strOriginal);
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
-        }
-
-        /**
-         * Constructor
-         */
-        TestStringConversionSubClass() {
-            // intentionally blank
         }
 
     }
@@ -315,13 +294,6 @@ class BasicStructuresClassTests {
             );
         }
 
-        /**
-         * Constructor
-         */
-        TestListAndMapSubClass() {
-            // intentionally blank
-        }
-
     }
 
     /**
@@ -412,20 +384,6 @@ class BasicStructuresClassTests {
             assertEquals(expectedProps, handled, String.format(ORIG_NQ_EXPCT, handled, expectedProps));
         }
 
-        /**
-         * Constructor
-         */
-        TestStringTransformationClass() {
-            // intentionally blank
-        }
-
-    }
-
-    /**
-     * Constructor
-     */
-    BasicStructuresClassTests() {
-        // intentionally blank
     }
 
 }

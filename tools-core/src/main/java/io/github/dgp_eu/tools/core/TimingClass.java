@@ -70,11 +70,11 @@ public final class TimingClass {
         // Initialize the concurrent map
         final Map<String, String> tempMap = new ConcurrentHashMap<>();
         tempMap.put("DotAndNineDigitNumber", ".%09d");
-        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_DOT_THREE, ".%03d");
-        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP, " %d %s");
-        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO, ":%02d");
-        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TWO, "%02d");
-        tempMap.put(BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, "%02d");
+        tempMap.put(ConfigurationClass.STR_DOT_THREE, ".%03d");
+        tempMap.put(ConfigurationClass.STR_TM_FRM_SP, " %d %s");
+        tempMap.put(ConfigurationClass.STR_SLMN_TWO, ":%02d");
+        tempMap.put(ConfigurationClass.STR_TWO, "%02d");
+        tempMap.put(ConfigurationClass.STR_TWO_NON_ZERO, "%02d");
         // Make the map unmodifiable
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
     }
@@ -259,7 +259,7 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN_MS)
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, ConfigurationClass.STR_TM_HUMAN_MS)
             , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
@@ -282,24 +282,24 @@ public final class TimingClass {
             String strFinalOne   = null;
             String strEmptyValue = "?";
             switch (strRule) {
-                case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN:
-                    final String strFinalRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
+                case ConfigurationClass.STR_TM_HUMAN:
+                    final String strFinalRule = ConfigurationClass.STR_TM_FRM_SP;
                     arrayStrings  = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                     strFinalOne   = "Nanosecond";
                     strEmptyValue = "INSTANT (less than a nanosecond)";
                     break;
-                case BasicStructuresClass.ConfigurationSubClass.STR_TM_HUMAN_MS:
-                    final String strMilliRule = BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP;
+                case ConfigurationClass.STR_TM_HUMAN_MS:
+                    final String strMilliRule = ConfigurationClass.STR_TM_FRM_SP;
                     arrayStrings  = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
-                    strFinalOne   = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
+                    strFinalOne   = ConfigurationClass.STR_MILLISECOND;
                     strEmptyValue = "INSTANT (less than a millisecond)";
                     break;
                 case "TimeClockClassic":
-                    arrayStrings = new String[] {BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, BasicStructuresClass.ConfigurationSubClass.STR_TWO, BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO};
+                    arrayStrings = new String[] {ConfigurationClass.STR_TWO_NON_ZERO, ConfigurationClass.STR_TWO, ConfigurationClass.STR_SLMN_TWO};
                     break;
                 case "TimeClock":
-                    arrayStrings = new String[] {BasicStructuresClass.ConfigurationSubClass.STR_TWO_NON_ZERO, BasicStructuresClass.ConfigurationSubClass.STR_TWO, BasicStructuresClass.ConfigurationSubClass.STR_SLMN_TWO, BasicStructuresClass.ConfigurationSubClass.STR_DOT_THREE};
-                    strFinalOne  = BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND;
+                    arrayStrings = new String[] {ConfigurationClass.STR_TWO_NON_ZERO, ConfigurationClass.STR_TWO, ConfigurationClass.STR_SLMN_TWO, ConfigurationClass.STR_DOT_THREE};
+                    strFinalOne  = ConfigurationClass.STR_MILLISECOND;
                     break;
                 default:
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -312,7 +312,7 @@ public final class TimingClass {
             String strReturn = strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
                     .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
                     .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
-                    .append(getDurationWithCustomRules(duration, BasicStructuresClass.ConfigurationSubClass.STR_SECOND, arrayStrings[2]))
+                    .append(getDurationWithCustomRules(duration, ConfigurationClass.STR_SECOND, arrayStrings[2]))
                     .append(strFinalPart)
                     .toString()
                     .trim();
@@ -333,10 +333,10 @@ public final class TimingClass {
             return switch (strWhichPart) {
                 case "Day"                                                      -> duration.toDaysPart();
                 case "Hour"                                                     -> duration.toHoursPart();
-                case BasicStructuresClass.ConfigurationSubClass.STR_MILLISECOND -> duration.toMillisPart();
+                case ConfigurationClass.STR_MILLISECOND -> duration.toMillisPart();
                 case "Minute"                                                   -> duration.toMinutesPart();
                 case "Nanosecond"                                               -> duration.toNanosPart();
-                case BasicStructuresClass.ConfigurationSubClass.STR_SECOND      -> duration.toSecondsPart();
+                case ConfigurationClass.STR_SECOND      -> duration.toSecondsPart();
                 default -> {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     throw new UnsupportedOperationException(strFeedbackErr);
@@ -363,7 +363,7 @@ public final class TimingClass {
                     final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     throw new UnsupportedOperationException(strFeedbackErr);
                 }
-                if (BasicStructuresClass.ConfigurationSubClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
+                if (ConfigurationClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
                     final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
                     strReturn = String.format(strFormats, lngNumber, strPart);
                 } else {

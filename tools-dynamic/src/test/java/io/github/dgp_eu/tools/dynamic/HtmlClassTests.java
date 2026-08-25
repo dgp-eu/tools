@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.TimingClass;
 
@@ -103,9 +103,9 @@ class HtmlClassTests {
     void buildMenuString() {
         final SequencedMap<String, Map<String, String>> inMapMenu = Stream.of(
                 Map.entry("home", Map.of(
-                        BasicStructuresClass.ConfigurationSubClass.STR_ICON, "fa-solid fa-house-user",
-                        BasicStructuresClass.ConfigurationSubClass.STR_MENU, "HomePage",
-                        BasicStructuresClass.ConfigurationSubClass.STR_TITLE, "HomePage"))
+                        ConfigurationClass.STR_ICON, "fa-solid fa-house-user",
+                        ConfigurationClass.STR_MENU, "HomePage",
+                        ConfigurationClass.STR_TITLE, "HomePage"))
         ).collect(
                 Collectors.toMap(
                         Map.Entry::getKey,
@@ -156,7 +156,7 @@ class HtmlClassTests {
         rec2.put("Obs.", "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.");
         final List<SequencedMap<Object, Object>> records = List.of(rec1, rec2);
         final Properties features = new Properties();
-        features.put(BasicStructuresClass.ConfigurationSubClass.STR_NEW_TAB, "Category");
+        features.put(ConfigurationClass.STR_NEW_TAB, "Category");
         features.put("Counter", "1");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
         assertAll("HTML table with tabs and counter",
