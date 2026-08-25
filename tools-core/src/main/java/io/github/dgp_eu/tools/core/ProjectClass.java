@@ -356,13 +356,8 @@ public final class ProjectClass {
          * Load all components: Dependencies and Plug-ins
          */
         public static void loadComponents() {
-            if (prjModel.getProperties() != null) {
-                prjInterpolator = loadProjectModelInterpolator(prjModel);
-            }
-            if (prjParentModel != null
-                    && prjParentModel.getProperties() != null) {
-                prjParentInterpol = loadProjectModelInterpolator(prjParentModel);
-            }
+            prjInterpolator = loadProjectModelInterpolator(prjModel);
+            prjParentInterpol = loadProjectModelInterpolator(prjParentModel);
             if (prjModel.getDependencyManagement() != null) {
                 loadProjectModelCentralDependencies();
             }
@@ -403,8 +398,12 @@ public final class ProjectClass {
          */
         private static StringSearchInterpolator loadProjectModelInterpolator(final Model projectModel) {
             final StringSearchInterpolator interpolator = new StringSearchInterpolator();
-            final Properties props = projectModel.getProperties();
-            interpolator.addValueSource(new MapBasedValueSource(props));
+            if (projectModel != null) {
+                final Properties props = projectModel.getProperties();
+                if (props != null) {
+                    interpolator.addValueSource(new MapBasedValueSource(props));
+                }
+            }
             return interpolator;
         }
 
