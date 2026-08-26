@@ -262,13 +262,12 @@ public final class RegularExpressionsClass {
                         }
                     }
                     case STR_AGING_TS_MS, STR_AGING_TS, STR_AGING_TIME, STR_AGING_DATE -> {
-                        final boolean isNegative = text.startsWith("-");
                         final TimingClass.AgingInfoRecord ageComponents = ConversionSubClass.convertAgingTimestampStringIntoAgingComponents(text);
                         String strZeroValue = "INSTANT (less than 1 millisecond)";
                         if (STR_AGING_DATE.equalsIgnoreCase(matchedGroup)) {
                             strZeroValue = "TODAY";
                         }
-                        return TimingClass.composeAgingInWordsFromListOfIntegerComponents(ageComponents, isNegative, strZeroValue);
+                        return TimingClass.AgingSubClass.composeAgingInWordsFromListOfIntegerComponents(ageComponents, strZeroValue);
                     }
                     default -> {
                         final String inPattern = MAP_PATTERNS.get(matchedGroup).input;
@@ -331,7 +330,7 @@ public final class RegularExpressionsClass {
                         // intentionally blank
                         break;
                 }
-                return new TimingClass.AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, milli);
+                return new TimingClass.AgingInfoRecord(false, years, months, days, intHours, intMinutes, intSeconds, milli);
             } else {
                 final String strFeedbackErr = String.format("Given input String %s does not seem to be an Aging Timestamp String... %s",
                         inString,

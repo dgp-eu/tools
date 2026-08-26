@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -26,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class TimingClassTests {
     /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
+    /** String format for assertion when actual/original is not equal to expected for Aging */
+    private static final String AGING_ERR = "calculated \"%s\" is not equal to expected \"%s\" considering %s as start and %s as finish having a Period of %s and Duration of %s";
     /** fixed Clock for predictable results */
     private static final ZoneId CLOCK_TZ = ZoneId.of("UTC");
     /** fixed Clock for predictable results */
@@ -35,10 +39,13 @@ class TimingClassTests {
     void testAgingNegative() {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
-        final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MILLIS), CLOCK_TZ);
-        final String handled = TimingClass.computeAging(finishDateTime, startDateTime, true);
-        final String expected = "-3 hours, 4 milliseconds";
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MINUTES).minus(5, ChronoUnit.SECONDS).minus(6, ChronoUnit.MILLIS), CLOCK_TZ);
+        final String handled = TimingClass.AgingSubClass.computeAgingIntoHumanReadableWords(startDateTime, finishDateTime);
+        final String expected = "-3 hours 4 minutes 5 seconds 6 milliseconds";
+        final Period period = Period.between(startDateTime.toLocalDate(), finishDateTime.toLocalDate());
+        final ZonedDateTime startAfterPeriod = startDateTime.plus(period);
+        final Duration duration = Duration.between(startAfterPeriod, finishDateTime);
+        assertEquals(expected, handled, String.format(AGING_ERR, handled, expected, startDateTime, finishDateTime, period, duration));
     }
 
     @Test
@@ -46,9 +53,12 @@ class TimingClassTests {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(62, ChronoUnit.DAYS).plus(4, ChronoUnit.HOURS), CLOCK_TZ);
-        final String handled = TimingClass.computeAging(finishDateTime, startDateTime, true);
-        final String expected = "-2 months, 20 hours";
-        assertEquals(expected, handled, String.format("calculated \"%s\" is not equal to expected \"%s\" considering %s as start and %s as finish", handled, expected, startDateTime, finishDateTime));
+        final String handled = TimingClass.AgingSubClass.computeAgingIntoHumanReadableWords(startDateTime, finishDateTime);
+        final String expected = "-2 months 20 hours";
+        final Period period = Period.between(startDateTime.toLocalDate(), finishDateTime.toLocalDate());
+        final ZonedDateTime startAfterPeriod = startDateTime.plus(period);
+        final Duration duration = Duration.between(startAfterPeriod, finishDateTime);
+        assertEquals(expected, handled, String.format(AGING_ERR, handled, expected, startDateTime, finishDateTime, period, duration));
     }
 
     @Test
@@ -56,9 +66,12 @@ class TimingClassTests {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.plus(3, ChronoUnit.DAYS), CLOCK_TZ);
-        final String handled = TimingClass.computeAging(startDateTime, finishDateTime, false);
+        final String handled = TimingClass.AgingSubClass.computeAgingIntoHumanReadableWords(startDateTime, finishDateTime);
         final String expected = "3 days";
-        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+        final Period period = Period.between(startDateTime.toLocalDate(), finishDateTime.toLocalDate());
+        final ZonedDateTime startAfterPeriod = startDateTime.plus(period);
+        final Duration duration = Duration.between(startAfterPeriod, finishDateTime);
+        assertEquals(expected, handled, String.format(AGING_ERR, handled, expected, startDateTime, finishDateTime, period, duration));
     }
 
     @Test
@@ -108,7 +121,7 @@ class TimingClassTests {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
-        final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT33S", "33 Seconds", "00:00:33.000");
+        final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT33S", "33 seconds", "00:00:33.000");
         final String handled = TimingClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
@@ -118,7 +131,7 @@ class TimingClassTests {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(60 * 60).minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
-        final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT1H33S", "1 Hour 33 Seconds", "01:00:33.000");
+        final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT1H33S", "1 hour 33 seconds", "01:00:33.000");
         final String handled = TimingClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }

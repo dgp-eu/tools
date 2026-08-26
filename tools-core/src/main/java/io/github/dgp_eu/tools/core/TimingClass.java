@@ -20,11 +20,8 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -54,10 +51,9 @@ public final class TimingClass {
     public static final String ISO_DATE_LONG = "EEEE, dd MMMM yyyy";
     /** String constant */
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-    /** Map w. predefined time format patterns used for duration/time-stamp formatting. */
-    private static final Map<String, String> TIME_FORMATS;
     /** Record for Aging Components */
     /* default */ public record AgingInfoRecord(
+        boolean isNegative,
         Integer intYears,
         Integer intMonths,
         Integer intDays,
@@ -65,80 +61,6 @@ public final class TimingClass {
         Integer intMinutes,
         Integer intSeconds,
         Integer intMilliseconds) {}
-
-    static {
-        // Initialize the concurrent map
-        final Map<String, String> tempMap = new ConcurrentHashMap<>();
-        tempMap.put("DotAndNineDigitNumber", ".%09d");
-        tempMap.put(ConfigurationClass.STR_DOT_THREE, ".%03d");
-        tempMap.put(ConfigurationClass.STR_TM_FRM_SP, " %d %s");
-        tempMap.put(ConfigurationClass.STR_SLMN_TWO, ":%02d");
-        tempMap.put(ConfigurationClass.STR_TWO, "%02d");
-        tempMap.put(ConfigurationClass.STR_TWO_NON_ZERO, "%02d");
-        // Make the map unmodifiable
-        TIME_FORMATS = Collections.unmodifiableMap(tempMap);
-    }
-
-    /**
-     * append if value is not 0
-     * @param parts input list to alter
-     * @param value input value to evaluate
-     * @param unit unit of the value
-     */
-    private static void appendIfNotZero(final List<String> parts, final long value, final String unit) {
-        if (value != 0) {
-            parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
-        }
-    }
-
-    /**
-     * composing Aging as words from Integer components
-     * @param inAgeComponents age components as List of Integer values
-     * @param negative true or false
-     * @param strZeroValue return value if all parts are empty
-     * @return String with words for aging
-     */
-    public static String composeAgingInWordsFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final boolean negative, final String strZeroValue) {
-        final List<String> parts = new ArrayList<>();
-        appendIfNotZero(parts, inAgeComponents.intYears, "year");
-        appendIfNotZero(parts, inAgeComponents.intMonths, "month");
-        appendIfNotZero(parts, inAgeComponents.intDays, "day");
-        appendIfNotZero(parts, inAgeComponents.intHours, "hour");
-        appendIfNotZero(parts, inAgeComponents.intMinutes, "minute");
-        appendIfNotZero(parts, inAgeComponents.intSeconds, "second");
-        appendIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
-        String strReturn = strZeroValue;
-        if (!parts.isEmpty()) {
-            strReturn = (negative ? "-" : "") + String.join(", ", parts);
-        }
-        return strReturn;
-    }
-
-    /**
-     * Aging logic 
-     * @param startTimestamp reference ZonedDatetime
-     * @param finishTimestamp ending ZonedDateTime
-     * @return Aging
-     */
-    public static String computeAging(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp, final boolean negative) {
-        final Period period = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
-        final ZonedDateTime startAfterPeriod = startTimestamp.plus(period);
-        final Duration duration = Duration.between(startAfterPeriod, finishTimestamp);
-        final int years  = period.getYears();
-        final int months = period.getMonths();
-        final int days   = period.getDays();
-        // duration components
-        final long hours   = Math.abs(duration.toHoursPart());
-        final long minutes = Math.abs(duration.toMinutesPart());
-        final long seconds = Math.abs(duration.toSecondsPart());
-        final int mili     = duration.toMillisPart();
-        // assemble for word composition
-        final int intHours   = (int) hours;
-        final int intMinutes = (int) minutes;
-        final int intSeconds = (int) seconds;
-        final AgingInfoRecord ageComponents = new AgingInfoRecord(years, months, days, intHours, intMinutes, intSeconds, mili);
-        return composeAgingInWordsFromListOfIntegerComponents(ageComponents, negative, "INSTANT (less than 1 millisecond)");
-    }
 
     /**
      * Current local DateTime w. TZ as String
@@ -251,125 +173,152 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, ConfigurationClass.STR_TM_HUMAN_MS)
-            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            , AgingSubClass.computeAgingIntoHumanReadableWords(zStartTimeStamp, zStopTimeStamp)
+            , AgingSubClass.computeAgingIntoTimeClock(zStartTimeStamp, zStopTimeStamp));
     }
 
     /**
-     * Converting Time
+     * Time Zones and associated coordinates handler
      */
-    public static final class ConversionSubClass {
-
-        /**
-         * Convert Nanoseconds to a more digestible string
-         * 
-         * @param duration actual duration in nanoseconds
-         * @param strRule rule to use for conversion
-         * @return String
-         */
-        @NonNull
-        public static String convertNanosecondsIntoSomething(@NonNull final Duration duration, @NonNull final String strRule) {
-            final StringBuilder strFinalString = new StringBuilder(100);
-            final String[] arrayStrings;
-            String strFinalOne   = null;
-            String strEmptyValue = "?";
-            switch (strRule) {
-                case ConfigurationClass.STR_TM_HUMAN:
-                    final String strFinalRule = ConfigurationClass.STR_TM_FRM_SP;
-                    arrayStrings  = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
-                    strFinalOne   = "Nanosecond";
-                    strEmptyValue = "INSTANT (less than a nanosecond)";
-                    break;
-                case ConfigurationClass.STR_TM_HUMAN_MS:
-                    final String strMilliRule = ConfigurationClass.STR_TM_FRM_SP;
-                    arrayStrings  = new String[] {strMilliRule, strMilliRule, strMilliRule, strMilliRule};
-                    strFinalOne   = ConfigurationClass.STR_MILLISECOND;
-                    strEmptyValue = "INSTANT (less than a millisecond)";
-                    break;
-                case "TimeClockClassic":
-                    arrayStrings = new String[] {ConfigurationClass.STR_TWO_NON_ZERO, ConfigurationClass.STR_TWO, ConfigurationClass.STR_SLMN_TWO};
-                    break;
-                case "TimeClock":
-                    arrayStrings = new String[] {ConfigurationClass.STR_TWO_NON_ZERO, ConfigurationClass.STR_TWO, ConfigurationClass.STR_SLMN_TWO, ConfigurationClass.STR_DOT_THREE};
-                    strFinalOne  = ConfigurationClass.STR_MILLISECOND;
-                    break;
-                default:
-                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                    throw new UnsupportedOperationException(strFeedbackErr);
-            }
-            String strFinalPart = "";
-            if (strFinalOne != null) {
-                strFinalPart = getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]);
-            }
-            String strReturn = strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
-                    .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
-                    .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
-                    .append(getDurationWithCustomRules(duration, ConfigurationClass.STR_SECOND, arrayStrings[2]))
-                    .append(strFinalPart)
-                    .toString()
-                    .trim();
-            if (strReturn.isBlank()) {
-                strReturn = strEmptyValue;
-            }
-            return strReturn;
-        }
-
-        /**
-         * get number for Duration
-         * 
-         * @param duration actual duration in nanoseconds
-         * @param strWhichPart which part of Date or Time to use for conversion
-         * @return final part of Date or Time
-         */
-        private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
-            return switch (strWhichPart) {
-                case "Day"                                                      -> duration.toDaysPart();
-                case "Hour"                                                     -> duration.toHoursPart();
-                case ConfigurationClass.STR_MILLISECOND -> duration.toMillisPart();
-                case "Minute"                                                   -> duration.toMinutesPart();
-                case "Nanosecond"                                               -> duration.toNanosPart();
-                case ConfigurationClass.STR_SECOND      -> duration.toSecondsPart();
-                default -> {
-                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                    throw new UnsupportedOperationException(strFeedbackErr);
-                }
-            };
-        }
-
-        /**
-         * outputs partial duration
-         * 
-         * @param duration actual duration in nanoseconds
-         * @param strWhichPart which time part to compute
-         * @param strHow controls output format
-         * @return String
-         */
-        @NonNull
-        private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhichPart, @NonNull final String strHow) {
-            final long lngNumber = getDurationPartNumber(duration, strWhichPart);
-            String strReturn = "";
-            if (lngNumber > 0
-                    || !strHow.endsWith("IfGreaterThanZero")) {
-                final String strFormats = TIME_FORMATS.get(strHow);
-                if ((strFormats == null) || strFormats.isEmpty()) {
-                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                    throw new UnsupportedOperationException(strFeedbackErr);
-                }
-                if (ConfigurationClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-                    final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
-                    strReturn = String.format(strFormats, lngNumber, strPart);
-                } else {
-                    strReturn = String.format(strFormats, lngNumber);
-                }
-            }
-            return strReturn;
-        }
+    public static final class AgingSubClass {
 
         /**
          * Constructor
          */
-        private ConversionSubClass() {
+        private AgingSubClass() {
             // intentionally blank
+        }
+
+        /**
+         * append w. prefix if value is not 0
+         * @param parts input list to alter
+         * @param value input value to evaluate
+         * @param strPrefix prefix of the value
+         */
+        private static void appendValueWithPrefixIfNotZero(final List<String> parts, final long value, final String strPrefix, final String strMeaning) {
+            String zeroString = "00";
+            String nonZeroFormat = "%02d";
+            if ("Milliseconds".equalsIgnoreCase(strMeaning)) {
+                zeroString = "000";
+                nonZeroFormat = "%03d";
+            }
+            if (value == 0) {
+                parts.add(strPrefix + zeroString);
+            } else {
+                parts.add(strPrefix + String.format(nonZeroFormat, value));
+            }
+        }
+
+        /**
+         * append w. units if value is not 0
+         * @param parts input list to alter
+         * @param value input value to evaluate
+         * @param unit unit of the value
+         */
+        private static void appendValueWithUnitsIfNotZero(final List<String> parts, final long value, final String unit) {
+            if (value != 0) {
+                parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
+            }
+        }
+
+        /**
+         * composing Aging as words from Integer components
+         * @param inAgeComponents age components as List of Integer values
+         * @param negative true or false
+         * @param strZeroValue return value if all parts are empty
+         * @return String with words for aging
+         */
+        public static String composeAgingClockFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final String strZeroValue) {
+            final List<String> parts = new ArrayList<>();
+            appendValueWithPrefixIfNotZero(parts, inAgeComponents.intHours, "", "Hours");
+            appendValueWithPrefixIfNotZero(parts, inAgeComponents.intMinutes, ":", "Minutes");
+            appendValueWithPrefixIfNotZero(parts, inAgeComponents.intSeconds, ":", "Seconds");
+            appendValueWithPrefixIfNotZero(parts, inAgeComponents.intMilliseconds, ".", "Milliseconds");
+            String strReturn = strZeroValue;
+            if (!parts.isEmpty()) {
+                strReturn = (inAgeComponents.isNegative ? "-" : "") + String.join("", parts);
+            }
+            return strReturn;
+        }
+
+        /**
+         * composing Aging as words from Integer components
+         * @param inAgeComponents age components as List of Integer values
+         * @param negative true or false
+         * @param strZeroValue return value if all parts are empty
+         * @return String with words for aging
+         */
+        public static String composeAgingInWordsFromListOfIntegerComponents(final AgingInfoRecord inAgeComponents, final String strZeroValue) {
+            final List<String> parts = new ArrayList<>();
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intYears, "year");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMonths, "month");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intDays, "day");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intHours, "hour");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMinutes, "minute");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intSeconds, "second");
+            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
+            String strReturn = strZeroValue;
+            if (!parts.isEmpty()) {
+                strReturn = (inAgeComponents.isNegative ? "-" : "") + String.join(" ", parts);
+            }
+            return strReturn;
+        }
+
+        /**
+         * Aging logic 
+         * @param startTimestamp reference ZonedDatetime
+         * @param finishTimestamp ending ZonedDateTime
+         * @return Aging
+         */
+        public static String computeAgingIntoHumanReadableWords(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
+            final AgingInfoRecord ageComponents = computeAgingInfoRecord(startTimestamp, finishTimestamp);
+            return composeAgingInWordsFromListOfIntegerComponents(ageComponents, "INSTANT (less than 1 millisecond)");
+        }
+
+        /**
+         * Aging logic 
+         * @param startTimestamp reference ZonedDatetime
+         * @param finishTimestamp ending ZonedDateTime
+         * @return Aging
+         */
+        public static String computeAgingIntoTimeClock(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
+            final AgingInfoRecord ageComponents = computeAgingInfoRecord(startTimestamp, finishTimestamp);
+            return composeAgingClockFromListOfIntegerComponents(ageComponents, "INSTANT (less than 1 millisecond)");
+        }
+
+        /**
+         * Aging Info Record logic 
+         * @param startTimestamp reference ZonedDatetime
+         * @param finishTimestamp ending ZonedDateTime
+         * @return Aging components
+         */
+        private static AgingInfoRecord computeAgingInfoRecord(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
+            final Period period                  = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
+            final ZonedDateTime startAfterPeriod = startTimestamp.plus(period);
+            final Duration duration              = Duration.between(startAfterPeriod.toInstant(), finishTimestamp.toInstant());
+            final int years  = Math.abs(period.getYears());
+            final int months = Math.abs(period.getMonths());
+            final int days   = Math.abs(period.getDays());
+            // duration components
+            final String strDuration       = duration.toString();
+            final List<String> strHours    = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}H");
+            final int intHours             = strHours.isEmpty() ? 0 : Math.abs(Integer.parseInt(strHours.getFirst().replace("H", "")));
+            final List<String> strMinutes  = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}M");
+            final int intMinutes           = strMinutes.isEmpty() ? 0 : Math.abs(Integer.parseInt(strMinutes.getFirst().replace("M", "")));
+            final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}[.,]?[0-9]{0,3})S");
+            int intSeconds = 0;
+            int intMilli   = 0;
+            if (!strSeconds.isEmpty()) {
+                final String firstSecond   = strSeconds.getFirst();
+                if (firstSecond.contains(".")) {
+                    final String[] firstSecondParts = strSeconds.getFirst().split("[.,]");
+                    intSeconds                      = Math.abs(Integer.parseInt(firstSecondParts[0]));
+                    intMilli                        = Integer.parseInt(firstSecondParts[1].replace("S", ""));
+                } else {
+                    intSeconds                      = Math.abs(Integer.parseInt(firstSecond.replace("S", "")));
+                }
+            }
+            return new AgingInfoRecord(duration.isNegative(), years, months, days, intHours, intMinutes, intSeconds, intMilli);
         }
 
     }
@@ -384,7 +333,7 @@ public final class TimingClass {
         private static String outputTimeZone;
 
         static {
-        	loadTimeZones();
+            loadTimeZones();
         }
 
         /**
@@ -430,12 +379,7 @@ public final class TimingClass {
                 final ZonedDateTime zStartTimeStamp = getFileLastModifiedZonedDateTime(file);
                 String strReturn = "";
                 if (zStartTimeStamp != null) {
-                    final boolean negative = refAgingTimeStamp.isBefore(zStartTimeStamp);
-                    if (negative) {
-                        strReturn = computeAging(refAgingTimeStamp, zStartTimeStamp, true);
-                    } else {
-                        strReturn = computeAging(zStartTimeStamp, refAgingTimeStamp, false);
-                    }
+                    strReturn = AgingSubClass.computeAgingIntoHumanReadableWords(refAgingTimeStamp, zStartTimeStamp);
                 }
                 return strReturn;
             }
