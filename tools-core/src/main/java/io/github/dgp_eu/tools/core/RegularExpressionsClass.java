@@ -56,7 +56,7 @@ public final class RegularExpressionsClass {
     /** Regular Expression for Long Time-stamp with Milliseconds  */
     public static final String REGEXP_LONG_TS_MS = "[A-Za-z]{3},\\s\\d{2}\\s[A-Za-z]{3}\\s[1-2]\\d{3}\\s([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
     /** Regular Expression for Number as Decimal */
-    private static final String REGEXP_MAVEN_PKG = "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+";
+    private static final String REGEXP_MAVEN_PKG = "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\._]+";
     /** Regular Expression for Number as Decimal */
     private static final String REGEXP_NO_DECIMAL = "-?\\d+\\.\\d+-?";
     /** Regular Expression for Number as Long */

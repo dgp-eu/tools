@@ -8,7 +8,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,6 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
+
+import io.github.dgp_eu.tools.core.TimingClass.AgingSubClass;
 
 /**
  * File Operations
@@ -1136,14 +1137,10 @@ public final class FileOperationsClass {
             fileProperties.put("Size [bytes]", fileSize);
             final String fileSizeDynamic = BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary");
             fileProperties.put("Size", fileSizeDynamic);
-            final String lastModifTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
-                    TimingClass.DATE_TIME_MS);
-            fileProperties.put("Last Modified Timestamp", lastModifTs);
-            fileProperties.put("Reference Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(inRefTimeStamp, TimingClass.DATE_TIME_MS_ABRV));
             final ZonedDateTime zFileTimeStamp = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedZonedDateTime(file);
-            final Duration objDuration = Duration.between(inRefTimeStamp, zFileTimeStamp);
-            fileProperties.put("Duration", objDuration.toString());
-            final String lastModifAging = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedAging(file);
+            fileProperties.put("Last Modified Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zFileTimeStamp,
+                    TimingClass.DATE_TIME_MS_ABRV));
+            final String lastModifAging = AgingSubClass.computeAgingIntoHumanReadableWords(inRefTimeStamp, zFileTimeStamp);
             fileProperties.put("Last Modified Aging", lastModifAging);
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
             return fileProperties;

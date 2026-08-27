@@ -392,6 +392,7 @@ public final class HtmlClass {
                 private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
                     String cellStyle = "";
                     String strValue = inValue.toString();
+                    final int strLength = strValue.length();
                     if (specialValues.containsKey(inValue)) {
                         cellStyle = specialValues.get(strValue).newStyle;
                         strValue = specialValues.get(strValue).newValue;
@@ -400,11 +401,9 @@ public final class HtmlClass {
                         if (tempValue != null) {
                             cellStyle = CSS_TEXT_RIGHT_NW;
                             strValue = tempValue;
-                        } else if (strValue.length() >= LARGE_STRING) {
+                        } else if (strLength >= LARGE_STRING) {
                             strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
-                            if (strValue != inValue.toString()) {
-                                cellStyle = CSS_TEXT_RIGHT_NW;
-                            }
+                            cellStyle = strValue.equals(inValue.toString()) ? cellStyle : CSS_TEXT_RIGHT_NW;
                         }
                     }
                     return Map.of(

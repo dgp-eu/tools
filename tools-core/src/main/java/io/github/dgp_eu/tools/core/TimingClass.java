@@ -2,6 +2,7 @@
 package io.github.dgp_eu.tools.core;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -198,7 +199,7 @@ public final class TimingClass {
         private static void appendValueWithPrefixIfNotZero(final List<String> parts, final long value, final String strPrefix, final String strMeaning) {
             String zeroString = "00";
             String nonZeroFormat = "%02d";
-            if ("Milliseconds".equalsIgnoreCase(strMeaning)) {
+            if (ConfigurationClass.STR_MILLISECONDS.equalsIgnoreCase(strMeaning)) {
                 zeroString = "000";
                 nonZeroFormat = "%03d";
             }
@@ -291,6 +292,7 @@ public final class TimingClass {
          * @return Aging components
          */
         private static AgingInfoRecord computeAgingInfoRecord(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
+            final boolean isNegative = startTimestamp.isAfter(finishTimestamp);
             final Period period                  = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
             final ZonedDateTime startAfterPeriod = startTimestamp.plus(period);
             final Duration duration              = Duration.between(startAfterPeriod.toInstant(), finishTimestamp.toInstant());
@@ -298,29 +300,27 @@ public final class TimingClass {
             final int months = Math.abs(period.getMonths());
             final int days   = Math.abs(period.getDays());
             // duration components
-            final String strDuration       = duration.toString();
-            final List<String> strHours    = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}H");
-            final int intHours             = strHours.isEmpty() ? 0 : Math.abs(Integer.parseInt(strHours.getFirst().replace("H", "")));
+            final String strDuration       = duration.toString().replace("PT", "");
+            final List<String> strHours    = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,9}H");
+            final int intHours             = strHours.isEmpty() ? 0 : Math.abs(Integer.parseInt(strHours.getFirst().replace("H", "")) % 24);
             final List<String> strMinutes  = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}M");
             final int intMinutes           = strMinutes.isEmpty() ? 0 : Math.abs(Integer.parseInt(strMinutes.getFirst().replace("M", "")));
-            final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}(|[.,][0-9]{0,3}))S");
+            final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}(|[.,][0-9]{0,9}))S");
             int intSeconds = 0;
             int intMilli   = 0;
             if (!strSeconds.isEmpty()) {
                 final String firstSecond   = strSeconds.getFirst();
                 if (firstSecond.contains(".")) {
-                    final String[] firstSecondParts = strSeconds.getFirst().split("[.,]");
+                    final String[] firstSecondParts = firstSecond.split("[.,]");
                     intSeconds                      = Math.abs(Integer.parseInt(firstSecondParts[0]));
                     final String strMilliseconds    = firstSecondParts[1].replace("S", "");
-                    intMilli                        = Integer.parseInt(strMilliseconds);
-                    if (strMilliseconds.length() > 3) {
-                        intMilli = Math.round(intMilli);
-                    }
+                    final int roundingFactor        = strMilliseconds.length() - 3;
+                    intMilli                        = new BigDecimal(strMilliseconds).scaleByPowerOfTen(-roundingFactor).intValue();
                 } else {
                     intSeconds                      = Math.abs(Integer.parseInt(firstSecond.replace("S", "")));
                 }
             }
-            return new AgingInfoRecord(duration.isNegative(), years, months, days, intHours, intMinutes, intSeconds, intMilli);
+            return new AgingInfoRecord(isNegative, years, months, days, intHours, intMinutes, intSeconds, intMilli);
         }
 
     }
