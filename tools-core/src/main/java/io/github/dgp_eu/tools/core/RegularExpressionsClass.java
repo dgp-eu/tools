@@ -33,12 +33,12 @@ public final class RegularExpressionsClass {
     /** Regular Expression for short form Age as Time-stamp with Milliseconds fixed */
     private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
     /** Regular Expression for full words Aging */
-    private static final String REGEXP_AGING_FULL = "^(|\\d{1,6}\\syear(s|)(|,\\s))"
-            + "(|(1[0-1]|[1-9])\\smonth(s|)(|,\\s))"
-            + "(|(1\\d|2\\d|30|\\d)\\sday(s|)(|,\\s))"
-            + "(|(1\\d|2[0-3]|\\d)\\s(hour(s|))(|,\\s))"
-            + "(|([1-5]\\d|\\d)\\s(minute(s|))(|,\\s))"
-            + "(|([1-5]\\d|\\d)\\s(second(s|))(|,\\s))"
+    private static final String REGEXP_AGING_FULL = "^[\\-]?(|\\d{1,6}\\syear(s|)(|\\s))"
+            + "(|(1[0-1]|[1-9])\\smonth(s|)(|\\s))"
+            + "(|(1\\d|2\\d|30|\\d)\\sday(s|)(|\\s))"
+            + "(|(1\\d|2[0-3]|\\d)\\s(hour(s|))(|\\s))"
+            + "(|([1-5]\\d|\\d)\\s(minute(s|))(|\\s))"
+            + "(|([1-5]\\d|\\d)\\s(second(s|))(|\\s))"
             + "(|\\d{1,3}\\s(millisecond(s|)))$";
     /** Regular Expression for byte size value and unit of measure */
     private static final String REGEXP_BYTE_SIZE = "\\d*\\.?\\d*\\s(byte|bytes|KB|KiB|MB|MiB|GB|GiB|TB|TiB|PB|PiB|EB|EiB)";

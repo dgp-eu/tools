@@ -402,6 +402,9 @@ public final class HtmlClass {
                             strValue = tempValue;
                         } else if (strValue.length() >= LARGE_STRING) {
                             strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
+                            if (strValue != inValue.toString()) {
+                                cellStyle = CSS_TEXT_RIGHT_NW;
+                            }
                         }
                     }
                     return Map.of(
