@@ -8,6 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -1028,14 +1029,14 @@ public final class FileOperationsClass {
          * performs statistics for all files within a given folder
          * @param strFolderName input folder name
          */
-        private static void gatherFileStatisticsFromFolder(final String strFolderName) {
+        private static void gatherFileStatisticsFromFolder(final String strFolderName, final ZonedDateTime inRefTimeStamp) {
             final Path folder = Paths.get(strFolderName);
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
                 for (final Path file : stream) {
                     if (Files.isDirectory(file)) {
-                        gatherFileStatisticsFromFolder(file.toString());
+                        gatherFileStatisticsFromFolder(file.toString(), inRefTimeStamp);
                     } else if (Files.isRegularFile(file)) {
-                        FILE_STATISTICS.add(getSingleFileStatistic(file));
+                        FILE_STATISTICS.add(getSingleFileStatistic(file, inRefTimeStamp));
                     }
                 }
             } catch (IOException ei) {
@@ -1077,7 +1078,7 @@ public final class FileOperationsClass {
                 FILE_STATISTICS.clear();
             }
             TimingClass.LocalizationSubClass.FileSubSubClass.setReferenceTimeStampValueForAgingCalculation(inRefTimeStamp);
-            gatherFileStatisticsFromFolder(strFolderName);
+            gatherFileStatisticsFromFolder(strFolderName, inRefTimeStamp);
             return FILE_STATISTICS;
         }
 
@@ -1125,7 +1126,7 @@ public final class FileOperationsClass {
          * @param file in scope
          * @return Properties with relevant statistics
          */
-        private static Properties getSingleFileStatistic(final Path file) {
+        private static Properties getSingleFileStatistic(final Path file, final ZonedDateTime inRefTimeStamp) {
             final String strFeedback = String.format("Will process file %s for multiple statistics", file);
             LogExposureClass.LOGGER.debug(strFeedback);
             final Properties fileProperties = new Properties();
@@ -1138,6 +1139,10 @@ public final class FileOperationsClass {
             final String lastModifTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(file,
                     TimingClass.DATE_TIME_MS);
             fileProperties.put("Last Modified Timestamp", lastModifTs);
+            fileProperties.put("Reference Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(inRefTimeStamp, TimingClass.DATE_TIME_MS_ABRV));
+            final ZonedDateTime zFileTimeStamp = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedZonedDateTime(file);
+            final Duration objDuration = Duration.between(inRefTimeStamp, zFileTimeStamp);
+            fileProperties.put("Duration", objDuration.toString());
             final String lastModifAging = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedAging(file);
             fileProperties.put("Last Modified Aging", lastModifAging);
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));

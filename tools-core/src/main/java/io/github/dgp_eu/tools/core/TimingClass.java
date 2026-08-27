@@ -224,7 +224,6 @@ public final class TimingClass {
         /**
          * composing Aging as words from Integer components
          * @param inAgeComponents age components as List of Integer values
-         * @param negative true or false
          * @param strZeroValue return value if all parts are empty
          * @return String with words for aging
          */
@@ -244,7 +243,6 @@ public final class TimingClass {
         /**
          * composing Aging as words from Integer components
          * @param inAgeComponents age components as List of Integer values
-         * @param negative true or false
          * @param strZeroValue return value if all parts are empty
          * @return String with words for aging
          */
@@ -305,7 +303,7 @@ public final class TimingClass {
             final int intHours             = strHours.isEmpty() ? 0 : Math.abs(Integer.parseInt(strHours.getFirst().replace("H", "")));
             final List<String> strMinutes  = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}M");
             final int intMinutes           = strMinutes.isEmpty() ? 0 : Math.abs(Integer.parseInt(strMinutes.getFirst().replace("M", "")));
-            final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}[.,]?[0-9]{0,3})S");
+            final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}(|[.,][0-9]{0,3}))S");
             int intSeconds = 0;
             int intMilli   = 0;
             if (!strSeconds.isEmpty()) {
@@ -313,7 +311,11 @@ public final class TimingClass {
                 if (firstSecond.contains(".")) {
                     final String[] firstSecondParts = strSeconds.getFirst().split("[.,]");
                     intSeconds                      = Math.abs(Integer.parseInt(firstSecondParts[0]));
-                    intMilli                        = Integer.parseInt(firstSecondParts[1].replace("S", ""));
+                    final String strMilliseconds    = firstSecondParts[1].replace("S", "");
+                    intMilli                        = Integer.parseInt(strMilliseconds);
+                    if (strMilliseconds.length() > 3) {
+                        intMilli = Math.round(intMilli);
+                    }
                 } else {
                     intSeconds                      = Math.abs(Integer.parseInt(firstSecond.replace("S", "")));
                 }
@@ -322,6 +324,8 @@ public final class TimingClass {
         }
 
     }
+
+    
 
     /**
      * Time Zones and associated coordinates handler
