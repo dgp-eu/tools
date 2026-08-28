@@ -108,6 +108,8 @@ public final class ConfigurationClass {
     public static final String STR_SQLITE = "SQLite";
     /** internal rule constant for timing computation */
     public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+    /** Status constant */
+    public static final String STR_STATUS = "Status";
     /** System constant */
     public static final String STR_SYSTEM = "System";
     /** Style constant */
