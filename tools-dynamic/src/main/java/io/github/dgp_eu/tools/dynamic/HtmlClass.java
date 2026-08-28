@@ -191,16 +191,14 @@ public final class HtmlClass {
                 outHtml.add(buildLabelTag(objFeatures));
             }
             manageAdditionalAttributesAndDefaults(objFeatures);
+            final String strName = objFeatures.get("Name")
+                    + (objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "[]");
             outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>",
-                    objFeatures.get("Name"),
+                    strName,
                     objFeatures.get("Id"),
                     additionalAttrib));
             mapValues.forEach((strValue, strText) -> {
-                String strSelected = "";
-                if (!defaults.isEmpty()
-                        && defaults.contains(strValue)) {
-                    strSelected = " selected";
-                }
+                final String strSelected = !defaults.isEmpty() && defaults.contains(strValue) ? " selected" : "";
                 outHtml.add(String.format("<option value=\"%s\"%s>%s</option>",
                         strValue,
                         strSelected,
