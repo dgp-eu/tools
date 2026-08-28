@@ -1140,7 +1140,7 @@ public final class FileOperationsClass {
             final ZonedDateTime zFileTimeStamp = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedZonedDateTime(file);
             fileProperties.put("Last Modified Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zFileTimeStamp,
                     TimingClass.DATE_TIME_MS_ABRV));
-            final String lastModifAging = AgingSubClass.computeAgingIntoHumanReadableWords(inRefTimeStamp, zFileTimeStamp);
+            final String lastModifAging = AgingSubClass.computeAgingIntoHumanReadableWords(zFileTimeStamp, inRefTimeStamp);
             fileProperties.put("Last Modified Aging", lastModifAging);
             fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
             return fileProperties;
