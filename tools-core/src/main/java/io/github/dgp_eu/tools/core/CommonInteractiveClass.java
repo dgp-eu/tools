@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
 import java.time.LocalDateTime;
@@ -16,6 +14,12 @@ import picocli.CommandLine.Option;
  * Common class for Interactive service
  */
 public final class CommonInteractiveClass {
+    /** Constant for non or single/one */
+    /* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
+    /** arity one or more */
+    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
+    /** One as string */
+    /* default */ public static final String ARITY_ONLY_ONE = "1";
     /** Exit Code variable */
     private static int exitCode;
     /** Start Date Time variable */
@@ -130,7 +134,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldDst", "--folderDestination"},
                 description = "Destination Folder where archives will be created (required, only one)",
-                arity = ConfigurationClass.ARITY_ONLY_ONE,
+                arity = ARITY_ONLY_ONE,
                 required = true)
         private String strDestFolder;
 
@@ -160,7 +164,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldNm", "--folderName"},
                 description = "Folder Name in scope (required, one or more)",
-                arity = ConfigurationClass.ARITY_ONE_OR_MORE,
+                arity = ARITY_ONE_OR_MORE,
                 required = true)
         private String[] strFolderNames;
 
@@ -190,7 +194,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-if", "--inFileName"},
                 description = "Input file(s) to consider",
-                arity = ConfigurationClass.ARITY_ONE_OR_MORE,
+                arity = ARITY_ONE_OR_MORE,
                 required = true)
         private String[] strInFileNames;
 
@@ -220,7 +224,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-ldb", "--localDatabaseFile"},
                 description = "Local Database File",
-                arity = ConfigurationClass.ARITY_ONLY_ONE,
+                arity = ARITY_ONLY_ONE,
                 required = true)
         private String strLocalDbFile;
 
@@ -250,7 +254,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-of", "--outFileName"},
                 description = "Destination file to write information into",
-                arity = ConfigurationClass.ARITY_ONLY_ONE,
+                arity = ARITY_ONLY_ONE,
                 required = true)
         private String strOutFileName;
 
@@ -280,7 +284,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-p", "--port"},
                 description = "Port Number for web user interface",
-                arity = ConfigurationClass.ARITY_ONLY_ONE,
+                arity = ARITY_ONLY_ONE,
                 required = true)
         private long portNumber;
 

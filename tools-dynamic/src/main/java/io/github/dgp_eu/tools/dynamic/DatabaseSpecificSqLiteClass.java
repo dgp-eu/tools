@@ -29,7 +29,7 @@ import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubCl
 /**
  * SQLite methods
  */
-public final class SpecificSqLiteClass {
+public final class DatabaseSpecificSqLiteClass {
     /**
      * Internal database variable
      */
@@ -176,7 +176,7 @@ public final class SpecificSqLiteClass {
     /**
      * constructor
      */
-    private SpecificSqLiteClass() {
+    private DatabaseSpecificSqLiteClass() {
         // empty constructor
     }
 

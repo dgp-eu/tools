@@ -81,9 +81,9 @@ public final class HtmlClass {
     public static String buildTimeZoneSelect(final String inTimeZone) {
         final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
         final Properties selectProps = new Properties();
-        selectProps.put("Name", "TZ");
+        selectProps.put(ConfigurationClass.STR_NAME, "TZ");
         selectProps.put("Id", "TZ");
-        selectProps.put("Default", inTimeZone);
+        selectProps.put(ConfigurationClass.STR_DEFAULT, inTimeZone);
         selectProps.put("Size", 1);
         selectProps.put("AutoSubmit", 1);
         return SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps);
@@ -191,7 +191,7 @@ public final class HtmlClass {
                 outHtml.add(buildLabelTag(objFeatures));
             }
             manageAdditionalAttributesAndDefaults(objFeatures);
-            final String strName = objFeatures.get("Name")
+            final String strName = objFeatures.get(ConfigurationClass.STR_NAME)
                     + (objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "[]");
             outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>",
                     strName,
@@ -209,7 +209,7 @@ public final class HtmlClass {
         }
 
         private static void manageAdditionalAttributesAndDefaults(final Properties objFeatures) {
-            final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
+            final String defaultValue = objFeatures.getOrDefault(ConfigurationClass.STR_DEFAULT, "").toString();
             String[] defaultVals = {defaultValue};
             if (!objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty()) {
                 if (!defaultValue.isEmpty()) {
@@ -333,7 +333,7 @@ public final class HtmlClass {
              */
             private static final class RowSubSubSubClass {
                 /** Variable for specialValues */
-                private static SequencedMap<String, SpValuesRecord> specialValues = new LinkedHashMap<>();
+                private static final SequencedMap<String, SpValuesRecord> MAP_SPEC_VALS = new LinkedHashMap<>();
                 /** Record for ZoneInfo */
                 /* default */ public record SpValuesRecord(
                     String newValue,
@@ -378,8 +378,8 @@ public final class HtmlClass {
                  * loading special Values and CSS style
                  */
                 private static void loadPredefinedValuesAndTheirStyles() {
-                    specialValues.put(ConfigurationClass.STR_NULL, new SpValuesRecord("&lt;NULL&gt;", "color:LightGrey;font-style:italic;"));
-                    specialValues.put("", new SpValuesRecord("&lt;blank&gt;", "color:Grey;font-style:italic;"));
+                    MAP_SPEC_VALS.put(ConfigurationClass.STR_NULL, new SpValuesRecord("&lt;NULL&gt;", "color:LightGrey;font-style:italic;"));
+                    MAP_SPEC_VALS.put("", new SpValuesRecord("&lt;blank&gt;", "color:Grey;font-style:italic;"));
                 }
 
                 /**
@@ -391,9 +391,9 @@ public final class HtmlClass {
                     String cellStyle = "";
                     String strValue = inValue.toString();
                     final int strLength = strValue.length();
-                    if (specialValues.containsKey(inValue)) {
-                        cellStyle = specialValues.get(strValue).newStyle;
-                        strValue = specialValues.get(strValue).newValue;
+                    if (MAP_SPEC_VALS.containsKey(strValue)) {
+                        cellStyle = MAP_SPEC_VALS.get(strValue).newStyle;
+                        strValue = MAP_SPEC_VALS.get(strValue).newValue;
                     } else {
                         final String tempValue = transformValueByPatternMatch(strValue);
                         if (tempValue != null) {
@@ -433,7 +433,6 @@ public final class HtmlClass {
                 /**
                  * Transform 1 value by Given Pattern
                  * @param inputString input value
-                 * @param crtPattern matching pattern
                  * @return String
                  */
                 private static String transformValueByPatternMatch(final String inputString) {

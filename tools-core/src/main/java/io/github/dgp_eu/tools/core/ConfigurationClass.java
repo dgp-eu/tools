@@ -1,3 +1,4 @@
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
 import java.io.File;
@@ -8,12 +9,6 @@ import java.util.Arrays;
  * Configuration strings management
  */
 public final class ConfigurationClass {
-    /** Constant for non or single/one */
-    /* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
-    /** arity one or more */
-    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
-    /** One as string */
-    /* default */ public static final String ARITY_ONLY_ONE = "1";
     /** frequently expression used to catch conversion error  */
     public static final String CONVERT_INT_NA = "Could not convert value %s into Integer... %s";
     /** default Locale */
@@ -22,10 +17,16 @@ public final class ConfigurationClass {
     public static final String STR_ACTV_PXLS = "Active Pixels";
     /** binary constant */
     public static final String STR_BINARY = "binary";
+    /** Category constant */
+    public static final String STR_CATEGORY = "Category";
+    /** Constant for Comment */
+    public static final String STR_COMMENT = "Comment";
     /** Content constant */
     public static final String STR_CONTENT = "Content";
     /** decimal constant */
     public static final String STR_DECIMAL = "decimal";
+    /** Default constant */
+    public static final String STR_DEFAULT = "Default";
     /** Dependencies constant */
     public static final String STR_DEPENDENCIES = "Dependencies";
     /** String for internal ETL */
@@ -92,6 +93,8 @@ public final class ConfigurationClass {
     public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
     /** "Range Limits" constant */
     public static final String STR_RANGE_LMTS = "Range Limits";
+    /** standard String */
+    public static final String STR_ROLES = "Roles";
     /** "RowStyle" constant */
     public static final String STR_ROW_STYLE = "RowStyle";
     /** String for Second */
@@ -143,7 +146,6 @@ public final class ConfigurationClass {
 
     /**
      * Getting current project folder
-     * @return application folder
      */
     private static void loadCurrentFolder() {
         String strAppFolder = "";

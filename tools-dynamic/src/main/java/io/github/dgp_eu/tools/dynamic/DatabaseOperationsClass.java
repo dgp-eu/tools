@@ -648,7 +648,7 @@ public final class DatabaseOperationsClass {
             private static Properties captureMetadataIntoProperties(final ResultSetMetaData metaData, final int columnNumber) throws SQLException {
                 final Properties colProperties = new Properties();
                 colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
-                colProperties.put("Name", metaData.getColumnName(columnNumber));
+                colProperties.put(ConfigurationClass.STR_NAME, metaData.getColumnName(columnNumber));
                 colProperties.put("Precision", metaData.getPrecision(columnNumber));
                 colProperties.put("Scale", metaData.getScale(columnNumber));
                 colProperties.put("Type", metaData.getColumnTypeName(columnNumber));

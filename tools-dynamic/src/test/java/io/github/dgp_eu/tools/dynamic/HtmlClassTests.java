@@ -68,9 +68,9 @@ class HtmlClassTests {
         mapValues.put("tz2", "Timezone Two");
         final Properties props = new Properties();
         props.put("Label", "Time Zones");
-        props.put("Name", "TZ");
+        props.put(ConfigurationClass.STR_NAME, "TZ");
         props.put("Id", "TZ");
-        props.put("Default", "tz1");
+        props.put(ConfigurationClass.STR_DEFAULT, "tz1");
         props.put("Size", "1");
         final String html = HtmlClass.SelectInputSubClass.buildSelectInput(mapValues, props);
         assertAll("Select HTML correctness",
@@ -135,28 +135,28 @@ class HtmlClassTests {
     void testGetListOfSequencedMapIntoHtmlTableProducesTableAndTabs() {
         final SequencedMap<Object, Object> rec1 = new LinkedHashMap<>();
         TimingClass.LocalizationSubClass.setOutputTimeZone(ZoneId.systemDefault().toString());
-        rec1.put("Category", "A");
-        rec1.put("Name", "Item1");
+        rec1.put(ConfigurationClass.STR_CATEGORY, "A");
+        rec1.put(ConfigurationClass.STR_NAME, "Item1");
         rec1.put("Quantity", "10");
         rec1.put("Price", "1.99");
         rec1.put("Overall", "22147483649");
         rec1.put("When", "2026-01-01");
         rec1.put("Due", "2026-01-29 23:12:05");
-        rec1.put("Comments", "");
+        rec1.put(ConfigurationClass.STR_COMMENT, "");
         rec1.put("Obs.", "-");
         final SequencedMap<Object, Object> rec2 = new LinkedHashMap<>();
-        rec2.put("Category", "B");
-        rec2.put("Name", "Item2");
+        rec2.put(ConfigurationClass.STR_CATEGORY, "B");
+        rec2.put(ConfigurationClass.STR_NAME, "Item2");
         rec2.put("Quantity", "15");
         rec2.put("Price", "0.9");
         rec2.put("Overall", "");
         rec2.put("When", "2026-06-01");
         rec2.put("Due", "NULL");
-        rec2.put("Comments", "2026-06-26 23:59:59.555");
+        rec2.put(ConfigurationClass.STR_COMMENT, "2026-06-26 23:59:59.555");
         rec2.put("Obs.", "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.");
         final List<SequencedMap<Object, Object>> records = List.of(rec1, rec2);
         final Properties features = new Properties();
-        features.put(ConfigurationClass.STR_NEW_TAB, "Category");
+        features.put(ConfigurationClass.STR_NEW_TAB, ConfigurationClass.STR_CATEGORY);
         features.put("Counter", "1");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
         assertAll("HTML table with tabs and counter",

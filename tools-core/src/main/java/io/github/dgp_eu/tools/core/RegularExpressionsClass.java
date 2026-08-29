@@ -220,7 +220,7 @@ public final class RegularExpressionsClass {
 
     /**
      * Getter for MAP_PATTERNS
-     * @return
+     * @return Map for Time/Date patterns formats & regex
      */
     public static Map<String, DateTimeInfoRec> getMapPatterns() {
         return MAP_PATTERNS;
@@ -290,8 +290,8 @@ public final class RegularExpressionsClass {
 
         /**
          * convert Aging String into Aging Components
-         * @param inString
-         * @return
+         * @param inString input String to convert
+         * @return AgingInfoRecord with components
          */
         public static TimingClass.AgingInfoRecord convertAgingTimestampStringIntoAgingComponents(final String inString) {
             final int strLength         = inString.length();
@@ -341,9 +341,9 @@ public final class RegularExpressionsClass {
 
         /**
          * Establish RegExp for Aging conversion
-         * @param inString
-         * @param inputLength
-         * @return
+         * @param inString input String to convert
+         * @param inputLength length of input String
+         * @return  String with relevant RegExp
          */
         private static String establishRelevantRegularExpression(final String inString, final int inputLength) {
             return switch (inputLength) {

@@ -1,6 +1,4 @@
-/**
- * Copyright 2026 Daniel-Gheorghe Popiniuc
- */
+/** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
 import java.io.IOException;
@@ -174,7 +172,7 @@ public final class BasicStructuresClass {
             final List<Properties> resultReleases = new ArrayList<>();
             inMap.forEach((strKey, strValue) -> {
                 final Properties mProperties = new Properties();
-                mProperties.put("Category", strCategory);
+                mProperties.put(ConfigurationClass.STR_CATEGORY, strCategory);
                 mProperties.put("Element", strKey);
                 mProperties.put("Value", strValue);
                 resultReleases.add(mProperties);
@@ -386,7 +384,8 @@ public final class BasicStructuresClass {
         /**
          * Format bytes into a rounded string representation using IEC standard, part 2
          * @param inBytes input Bytes value
-         * @param strStyle conversion style
+         * @param arrayNumbers array with Decimal values
+         * @param arraySymbols array with Decimal units
          * @return String
          */
         private static String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final String... arraySymbols) {
@@ -487,7 +486,7 @@ public final class BasicStructuresClass {
          * @return String cleaned
          */
         public static String cleanStringAsDatabaseObject(final String strObject) {
-            return strObject.replaceAll("[^A-Za-z0-9_\\/.|()]", "");
+            return strObject.replaceAll("[^A-Za-z0-9_/.|()]", "");
         }
 
         /**
@@ -496,7 +495,7 @@ public final class BasicStructuresClass {
          * @return String cleaned
          */
         public static String cleanStringFromUnwantedCharacters(final String strObject) {
-            return strObject.replaceAll("[^A-Za-z0-9 _\\-–\\/.():'`]", "");
+            return strObject.replaceAll("[^A-Za-z0-9 _\\-–/.():'`]", "");
         }
 
         /**
@@ -504,7 +503,7 @@ public final class BasicStructuresClass {
          * @param inString input String
          * @return String with proper escaped characters
          */
-        public static String ensureEscapingForValidJson(final String inString) {
+        public static String ensureEscapingOnEndOfLineAndTabs(final String inString) {
             return inString.replace("\n", "\\n").replace("\r", "\\r").replace("\t", " ");
         }
 
@@ -726,12 +725,8 @@ public final class BasicStructuresClass {
          * @return true/false
          */
         public static boolean isStringOneVariable(final String inString) {
-            boolean bolReturn = false;
-            if (inString.startsWith("${")
-                    && inString.endsWith("}")) {
-                bolReturn = true;
-            }
-            return bolReturn;
+            return inString.startsWith("${")
+                    && inString.endsWith("}");
         }
 
         // Private constructor to prevent instantiation
@@ -801,7 +796,7 @@ public final class BasicStructuresClass {
         }
 
         /**
-         * Format Decimal String with Thousand separator
+         * Format Decimal String with a Thousand separator
          * @param strOriginal Original string
          * @return String
          */

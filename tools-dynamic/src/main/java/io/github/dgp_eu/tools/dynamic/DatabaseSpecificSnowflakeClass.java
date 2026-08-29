@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.ShellingClass;
@@ -20,11 +21,7 @@ import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubCl
 /**
  * Snowflake methods
  */
-public final class SpecificSnowflakeClass {
-    /** String for Snowflake */
-    public static final String STR_SNOWFLAKE = "Snowflake";
-    /** standard String */
-    public static final String STR_ROLES = "Roles";
+public final class DatabaseSpecificSnowflakeClass {
     /** connection string Variable */
     private static String strConnection;
     /** username variable */
@@ -76,7 +73,7 @@ public final class SpecificSnowflakeClass {
         Connection connection = null;
         try {
             final String strFeedback = String.format("Will attempt to create a %s connection named %s to database %s using %s as connection string and %s properties",
-                    STR_SNOWFLAKE,
+                    ConfigurationClass.STR_SNOWFLAKE,
                     idConnection,
                     strDatabase,
                     strConnection,
@@ -84,13 +81,13 @@ public final class SpecificSnowflakeClass {
             LogExposureClass.LOGGER.debug(strFeedback);
             connection = DriverManager.getConnection(strConnection, propConnection);
             final String strFeedbackOk = String.format("%s connection named %s to database %s was successfully established!",
-                    STR_SNOWFLAKE,
+                    ConfigurationClass.STR_SNOWFLAKE,
                     idConnection,
                     strDatabase);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (SQLException e) {
             final String strFeedbackErr = String.format("%s connection named %s has failed %s",
-                    STR_SNOWFLAKE,
+                    ConfigurationClass.STR_SNOWFLAKE,
                     idConnection,
                     e.getLocalizedMessage());
             LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -133,10 +130,10 @@ public final class SpecificSnowflakeClass {
      */
     public static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strAction, final String strFetchType) {
         final Properties queryProperties = new Properties();
-        if (STR_ROLES.equalsIgnoreCase(strAction)) {
+        if (ConfigurationClass.STR_SNOWFLAKE.equalsIgnoreCase(strAction)) {
             queryProperties.put("expectedExactNumberOfColumns", "1");
         }
-        final String strQueryToUse = DatabaseOperationsClass.getPreDefinedQuery(STR_SNOWFLAKE, strAction);
+        final String strQueryToUse = DatabaseOperationsClass.getPreDefinedQuery(ConfigurationClass.STR_SNOWFLAKE, strAction);
         final Properties rsProperties = DatabaseOperationsClass.packageResultSetProperties("purpose: " + strAction, strQueryToUse, strFetchType);
         return ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
     }
@@ -191,14 +188,21 @@ public final class SpecificSnowflakeClass {
     private static void loadSnowflakeDriver() {
         final String jdbcVersion = getSnowflakeJdbcDriverVersion();
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-        final String strFeedback = String.format("Will attempt to load %s driver %s", STR_SNOWFLAKE, strDriverName);
+        final String strFeedback = String.format("Will attempt to load %s driver %s",
+                ConfigurationClass.STR_SNOWFLAKE,
+                strDriverName);
         LogExposureClass.LOGGER.debug(strFeedback);
         try {
             Class.forName(strDriverName);
-            final String strFeedbackOk = String.format("%s driver %s has been successfully loaded", STR_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
+            final String strFeedbackOk = String.format("%s driver %s has been successfully loaded",
+                    ConfigurationClass.STR_SNOWFLAKE,
+                    strDriverName + " v. " + jdbcVersion);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (ClassNotFoundException ex) {
-            final String strFeedbackErr = String.format("%s driver %s not found... %s", STR_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
+            final String strFeedbackErr = String.format("%s driver %s not found... %s",
+                    ConfigurationClass.STR_SNOWFLAKE,
+                    strDriverName,
+                    Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
     }
@@ -210,8 +214,10 @@ public final class SpecificSnowflakeClass {
      */
     public static void performSnowflakePreDefinedAction(final String strAction, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-                Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
-            final String predefinedInfo = getSnowflakePreDefinedInformation(objStatement, strAction, DatabaseOperationsClass.STR_VALUES).toString();
+                Statement objStatement = ConnectivitySubClass.createSqlStatement(ConfigurationClass.STR_SNOWFLAKE, objConnection)) {
+            final String predefinedInfo = getSnowflakePreDefinedInformation(objStatement,
+                    strAction,
+                    DatabaseOperationsClass.STR_VALUES).toString();
             LogExposureClass.LOGGER.info(predefinedInfo);
         } catch (SQLException e) {
             final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
@@ -238,7 +244,7 @@ public final class SpecificSnowflakeClass {
     /**
      * Constructor
      */
-    private SpecificSnowflakeClass() {
+    private DatabaseSpecificSnowflakeClass() {
         // intentionally blank
     }
 }

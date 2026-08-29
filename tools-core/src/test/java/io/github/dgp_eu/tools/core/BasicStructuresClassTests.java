@@ -237,7 +237,7 @@ class BasicStructuresClassTests {
             final List<Properties> result = BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("TestCategory", inMap);
             assertAll("Convert map of strings into list of properties creates correct structure",
                     () -> assertEquals(2, result.size(), "Result should have 2 property objects"),
-                    () -> assertEquals("TestCategory", result.get(0).getProperty("Category"), "Category should be set")
+                    () -> assertEquals("TestCategory", result.get(0).getProperty(ConfigurationClass.STR_CATEGORY), "Category should be set")
             );
         }
 

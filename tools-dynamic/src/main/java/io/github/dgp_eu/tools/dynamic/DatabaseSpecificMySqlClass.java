@@ -18,7 +18,7 @@ import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubCl
 /**
  * MySQL methods
  */
-public final class SpecificMySqlClass {
+public final class DatabaseSpecificMySqlClass {
     /**
      * Database MySQL
      */
@@ -115,7 +115,7 @@ public final class SpecificMySqlClass {
     /**
      * constructor
      */
-    private SpecificMySqlClass() {
+    private DatabaseSpecificMySqlClass() {
         // intentionally blank
     }
 }
