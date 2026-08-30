@@ -67,11 +67,11 @@ class HtmlClassTests {
         mapValues.put("tz1", "Timezone One");
         mapValues.put("tz2", "Timezone Two");
         final Properties props = new Properties();
-        props.put("Label", "Time Zones");
+        props.put(ConfigurationClass.STR_LABEL, "Time Zones");
         props.put(ConfigurationClass.STR_NAME, "TZ");
         props.put("Id", "TZ");
         props.put(ConfigurationClass.STR_DEFAULT, "tz1");
-        props.put("Size", "1");
+        props.put(ConfigurationClass.STR_SIZE, "1");
         final String html = HtmlClass.SelectInputSubClass.buildSelectInput(mapValues, props);
         assertAll("Select HTML correctness",
                 () -> assertTrue(html.contains("<label for=\"TZ"), "Label should exist point to actual select id"),
@@ -157,7 +157,7 @@ class HtmlClassTests {
         final List<SequencedMap<Object, Object>> records = List.of(rec1, rec2);
         final Properties features = new Properties();
         features.put(ConfigurationClass.STR_NEW_TAB, ConfigurationClass.STR_CATEGORY);
-        features.put("Counter", "1");
+        features.put(ConfigurationClass.STR_COUNTER, "1");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
         assertAll("HTML table with tabs and counter",
                 () -> assertTrue(html.contains("<table"), "Output should contain table markup"),

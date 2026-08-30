@@ -23,12 +23,16 @@ public final class ConfigurationClass {
     public static final String STR_COMMENT = "Comment";
     /** Content constant */
     public static final String STR_CONTENT = "Content";
+    /** Counter constant */
+    public static final String STR_COUNTER = "Counter";
     /** decimal constant */
     public static final String STR_DECIMAL = "decimal";
     /** Default constant */
     public static final String STR_DEFAULT = "Default";
     /** Dependencies constant */
     public static final String STR_DEPENDENCIES = "Dependencies";
+    /** Description constant */
+    public static final String STR_DESCRIPTION = "Description";
     /** String for internal ETL */
     public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
     /** String for internal Environment */
@@ -55,6 +59,8 @@ public final class ConfigurationClass {
     public static final String STR_INPUT = "Input";
     /** Just Date string */
     public static final String STR_JUST_DATE = "justDate";
+    /** Label constant */
+    public static final String STR_LABEL = "Label";
     /** Locale constant */
     public static final String STR_LOCALE = "Locale";
     /** Localization constant */
@@ -107,6 +113,8 @@ public final class ConfigurationClass {
     public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
     /** "Serial Number" constant */
     public static final String STR_SRL_NUM = "Serial Number";
+    /** Size constant */
+    public static final String STR_SIZE = "Size";
     /** Database SQLite */
     public static final String STR_SQLITE = "SQLite";
     /** internal rule constant for timing computation */

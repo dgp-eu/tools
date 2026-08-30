@@ -417,7 +417,7 @@ public final class FileOperationsClass {
             public static Map<String, Long> getCleanedFolderStatistics() {
                 final Map<String, Long> statsClndFldr = new ConcurrentHashMap<>();
                 statsClndFldr.put("Files", lngFilesClnd);
-                statsClndFldr.put("Size", lngByteSizeClnd);
+                statsClndFldr.put(ConfigurationClass.STR_SIZE, lngByteSizeClnd);
                 return statsClndFldr;
             }
 
@@ -1059,7 +1059,7 @@ public final class FileOperationsClass {
                 try {
                     writer.write(fileProperties.get("Folder").toString()
                             + ';' + fileProperties.get("File").toString()
-                            + ';' + fileProperties.get("Size").toString()
+                            + ';' + fileProperties.get(ConfigurationClass.STR_SIZE).toString()
                             + ';' + fileProperties.get("Last Modified Time").toString());
                     for (final String algo : listAlgorithms) {
                         writer.write(';' + fileProperties.get(algo).toString());
@@ -1138,7 +1138,7 @@ public final class FileOperationsClass {
             final long fileSize = file.toFile().length();
             fileProperties.put("Size [bytes]", fileSize);
             final String fileSizeDynamic = BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary");
-            fileProperties.put("Size", fileSizeDynamic);
+            fileProperties.put(ConfigurationClass.STR_SIZE, fileSizeDynamic);
             final ZonedDateTime zFileTimeStamp = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedZonedDateTime(file);
             fileProperties.put("Last Modified Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zFileTimeStamp,
                     TimingClass.DATE_TIME_MS_ABRV));

@@ -84,7 +84,7 @@ public final class HtmlClass {
         selectProps.put(ConfigurationClass.STR_NAME, "TZ");
         selectProps.put("Id", "TZ");
         selectProps.put(ConfigurationClass.STR_DEFAULT, inTimeZone);
-        selectProps.put("Size", 1);
+        selectProps.put(ConfigurationClass.STR_SIZE, 1);
         selectProps.put("AutoSubmit", 1);
         return SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps);
     }
@@ -172,7 +172,7 @@ public final class HtmlClass {
          * @return String
          */
         private static String buildLabelTag(final Properties objFeatures) {
-            final String strLabel = objFeatures.getOrDefault("Label", "").toString()
+            final String strLabel = objFeatures.getOrDefault(ConfigurationClass.STR_LABEL, "").toString()
                     + (objFeatures.getOrDefault(ConfigurationClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
             final String tagLabelRaw = "<label for=\"%s\"%s>%s:</label>";
             final String strLabelStyle = objFeatures.getOrDefault("Label Style", "").toString().isEmpty() ? "" : " style=\"" + objFeatures.get("Label Style").toString() + "\"";
@@ -187,7 +187,7 @@ public final class HtmlClass {
          */
         public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
             final List<String> outHtml = new ArrayList<>();
-            if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
+            if (!objFeatures.getOrDefault(ConfigurationClass.STR_LABEL, "").toString().isEmpty()) {
                 outHtml.add(buildLabelTag(objFeatures));
             }
             manageAdditionalAttributesAndDefaults(objFeatures);
@@ -217,8 +217,8 @@ public final class HtmlClass {
                 }
                 additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(ConfigurationClass.STR_MULTIPLE));
             }
-            if (!objFeatures.getOrDefault("Size", "").toString().isEmpty()) {
-                additionalAttrib = String.format(" size=\"%s\"", objFeatures.get("Size"));
+            if (!objFeatures.getOrDefault(ConfigurationClass.STR_SIZE, "").toString().isEmpty()) {
+                additionalAttrib = String.format(" size=\"%s\"", objFeatures.get(ConfigurationClass.STR_SIZE));
             }
             final String autoSubmit = objFeatures.getOrDefault("AutoSubmit", "").toString();
             if (!autoSubmit.isEmpty()) {
@@ -470,7 +470,7 @@ public final class HtmlClass {
             }
             ctx.strTableHeader = "";
             ctx.rememberKey = getRememberKey(objFeatures);
-            ctx.useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
+            ctx.useCounter = !objFeatures.getOrDefault(ConfigurationClass.STR_COUNTER, "").toString().isEmpty();
             for (final SequencedMap<Object, Object> recordMap : inList) {
                 TableBuildContextSubClass.processRecord(recordMap, ctx);
             }
