@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.5</revision>
+        <revision>1.2.6-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -418,7 +418,7 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>26.0.2</version>
+                                        <version>[26.0.2,)</version>
                                     </requireJavaVersion>
                                 </rules>    
                             </configuration>
