@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+import io.github.dgp_eu.tools.core.time.TimingClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
-import io.github.dgp_eu.tools.core.TimingClass;
 
 /**
  * Database methods

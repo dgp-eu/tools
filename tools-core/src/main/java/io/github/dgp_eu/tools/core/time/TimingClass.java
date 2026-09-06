@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.core.time;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,6 +27,11 @@ import java.util.Locale;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp_eu.tools.core.ConfigurationClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.RegularExpressionsClass;
+
 
 /**
  * Time methods
@@ -50,6 +55,10 @@ public final class TimingClass {
     public static final String ISO_DATE_ABRV = "EEE, dd MMM yyyy";
     /** constant for long date */
     public static final String ISO_DATE_LONG = "EEEE, dd MMMM yyyy";
+    /** constant for time SQL-style with milliseconds */
+    public static final String TIME_MS = "HH:mm:ss.SSS";
+    /** constant for time number style with milliseconds */
+    public static final String TIME_NO = "HHmmss.SSS";
     /** String constant */
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
     /** Record for Aging Components */
@@ -67,6 +76,15 @@ public final class TimingClass {
      * Current local DateTime w. TZ as String
      * @return String
      */
+    public static String getCurrentDateTimeLocal() {
+        return DateTimeFormatter.ofPattern(DATE_TIME_MS_ABRV, Locale.US)
+                .format(ZonedDateTime.now(ZoneId.systemDefault()));
+    }
+
+    /**
+     * Current local DateTime w. TZ as String
+     * @return String
+     */
     public static String getCurrentDateTimeLocal(final String inTimeZone) {
         return DateTimeFormatter.ofPattern(DATE_TIME_MS_ABRV, Locale.US)
                 .format(ZonedDateTime.now(ZoneId.of(inTimeZone)));
@@ -79,6 +97,14 @@ public final class TimingClass {
     public static String getCurrentDateTimeUniveralTimeCoordination() {
         return DateTimeFormatter.ofPattern(DATE_TIME_MS, Locale.US)
                 .format(ZonedDateTime.now(Clock.systemUTC()));
+    }
+
+    /**
+     * Current local DateTime w. TZ as String
+     * @return String
+     */
+    public static ZonedDateTime getCurrentZonedDateTime() {
+        return ZonedDateTime.now(ZoneId.systemDefault());
     }
 
     /**
@@ -170,12 +196,25 @@ public final class TimingClass {
     public static String logDuration(@NonNull final LocalDateTime startTimeStamp, @NonNull final LocalDateTime finishTimeStamp, @NonNull final String strPartial) {
         final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(startTimeStamp, ZoneId.systemDefault());
         final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
-        final Duration objDuration = Duration.between(zStartTimeStamp, zStopTimeStamp);
+        return logDuration(zStartTimeStamp, zStopTimeStamp, strPartial);
+    }
+
+    /**
+     * log a duration
+     * 
+     * @param startTimeStamp times-tamp value seen at start
+     * @param finishTimeStamp times-tamp value seen at stop
+     * @param strPartial prefix for feedback
+     * @return String
+     */
+    @NonNull
+    public static String logDuration(@NonNull final ZonedDateTime startTimeStamp, @NonNull final ZonedDateTime finishTimeStamp, @NonNull final String strPartial) {
+        final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , AgingSubClass.computeAgingIntoHumanReadableWords(zStartTimeStamp, zStopTimeStamp)
-            , AgingSubClass.computeAgingIntoTimeClock(zStartTimeStamp, zStopTimeStamp));
+            , AgingSubClass.computeAgingIntoHumanReadableWords(startTimeStamp, finishTimeStamp)
+            , AgingSubClass.computeAgingIntoTimeClock(startTimeStamp, finishTimeStamp));
     }
 
     /**
@@ -271,6 +310,8 @@ public final class TimingClass {
          */
         public static String computeAgingIntoHumanReadableWords(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
             final AgingInfoRecord ageComponents = computeAgingInfoRecord(startTimestamp, finishTimestamp);
+            final String strFeedback = String.format("Age components are %s", ageComponents);
+            LogExposureClass.LOGGER.debug(strFeedback);
             return composeAgingInWordsFromListOfIntegerComponents(ageComponents, "INSTANT (less than 1 millisecond)");
         }
 
@@ -292,19 +333,27 @@ public final class TimingClass {
          * @return Aging components
          */
         private static AgingInfoRecord computeAgingInfoRecord(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
-            final boolean isNegative = startTimestamp.isAfter(finishTimestamp);
+            final boolean isNegative             = startTimestamp.isAfter(finishTimestamp);
             final Period period                  = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
-            final ZonedDateTime startAfterPeriod = startTimestamp.plus(period);
-            final Duration duration              = Duration.between(startAfterPeriod.toInstant(), finishTimestamp.toInstant());
+            final Duration duration              = Duration.between(startTimestamp.toInstant(), finishTimestamp.toInstant());
+            final String strFeedback = String.format("Period is %s and Duration is %s", period, duration);
+            LogExposureClass.LOGGER.debug(strFeedback);
             final int years  = Math.abs(period.getYears());
             final int months = Math.abs(period.getMonths());
-            final int days   = Math.abs(period.getDays());
+            int days   = Math.abs(period.getDays());
+            final DateTimeFormatter formatterNo = DateTimeFormatter.ofPattern(TIME_NO, Locale.US);
+            final BigDecimal startTimeNumber = new BigDecimal(startTimestamp.format(formatterNo));
+            final BigDecimal finishTimeNumber = new BigDecimal(finishTimestamp.format(formatterNo));
+            if ("P1D".equalsIgnoreCase(period.toString())
+                    && startTimeNumber.compareTo(finishTimeNumber) > 0) {
+                final String strFeedback3 = String.format("Start Time as Number is %s and Finish Time as Number is %s within consecutive days, hence a correction of 1 day will take place", startTimeNumber, finishTimeNumber);
+                LogExposureClass.LOGGER.debug(strFeedback3);
+                days = days - 1;
+            }
             // duration components
+            final int intHours             = Math.abs(duration.toHoursPart());
+            final int intMinutes           = Math.abs(duration.toMinutesPart());
             final String strDuration       = duration.toString().replace("PT", "");
-            final List<String> strHours    = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,9}H");
-            final int intHours             = strHours.isEmpty() ? 0 : Math.abs(Integer.parseInt(strHours.getFirst().replace("H", "")) % 24);
-            final List<String> strMinutes  = RegularExpressionsClass.extractMatches(strDuration, "[-+]?[0-9]{1,2}M");
-            final int intMinutes           = strMinutes.isEmpty() ? 0 : Math.abs(Integer.parseInt(strMinutes.getFirst().replace("M", "")));
             final List<String> strSeconds  = RegularExpressionsClass.extractMatches(strDuration, "([-+]?[0-9]{1,2}(|[.,][0-9]{0,9}))S");
             int intSeconds = 0;
             int intMilli   = 0;

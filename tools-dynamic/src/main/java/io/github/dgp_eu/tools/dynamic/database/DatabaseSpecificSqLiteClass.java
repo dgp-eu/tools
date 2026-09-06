@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.database;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +23,8 @@ import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ConnectivitySubClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ConnectivitySubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ResultSettingSubClass;
 
 /**
  * SQLite methods

@@ -6,6 +6,7 @@ import java.time.ZoneId;
 
 import org.apache.maven.model.Model;
 
+import io.github.dgp_eu.tools.core.time.TimingClass;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

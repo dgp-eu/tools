@@ -23,7 +23,8 @@ import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
 
-import io.github.dgp_eu.tools.core.TimingClass.AgingSubClass;
+import io.github.dgp_eu.tools.core.time.TimingClass;
+import io.github.dgp_eu.tools.core.time.TimingClass.AgingSubClass;
 
 /**
  * File Operations

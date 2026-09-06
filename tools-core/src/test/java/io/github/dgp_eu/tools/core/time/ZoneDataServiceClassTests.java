@@ -1,4 +1,4 @@
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.core.time;
 
 import static org.junit.jupiter.api.Assertions.*;
 

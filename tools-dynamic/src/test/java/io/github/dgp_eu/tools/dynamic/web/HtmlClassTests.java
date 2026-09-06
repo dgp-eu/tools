@@ -1,4 +1,4 @@
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.web;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,9 +17,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import io.github.dgp_eu.tools.core.time.TimingClass;
 import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
-import io.github.dgp_eu.tools.core.TimingClass;
 
 /**
  * HtmlClass tests

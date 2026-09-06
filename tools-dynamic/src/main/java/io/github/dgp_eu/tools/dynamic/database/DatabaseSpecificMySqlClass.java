@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,8 +11,8 @@ import java.util.Properties;
 
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ConnectivitySubClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ConnectivitySubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ResultSettingSubClass;
 
 
 /**

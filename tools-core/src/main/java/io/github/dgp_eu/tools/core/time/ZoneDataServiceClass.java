@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.core;
+package io.github.dgp_eu.tools.core.time;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +19,10 @@ import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+import io.github.dgp_eu.tools.core.FileOperationsClass;
+import io.github.dgp_eu.tools.core.LogExposureClass;
+import io.github.dgp_eu.tools.core.RegularExpressionsClass;
 
 /**
  * Time Zones and associated coordinates handler

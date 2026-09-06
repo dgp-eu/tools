@@ -10,6 +10,8 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.dgp_eu.tools.core.time.TimingClass;
+
 /**
  * Regular Expressions things
  */

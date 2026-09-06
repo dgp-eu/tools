@@ -1,14 +1,14 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.web;
 
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import gg.jte.resolve.ResourceCodeResolver;
+import io.github.dgp_eu.tools.core.time.TimingClass;
+import io.github.dgp_eu.tools.core.time.ZoneDataServiceClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
-import io.github.dgp_eu.tools.core.TimingClass;
-import io.github.dgp_eu.tools.core.ZoneDataServiceClass;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.io.Sender;

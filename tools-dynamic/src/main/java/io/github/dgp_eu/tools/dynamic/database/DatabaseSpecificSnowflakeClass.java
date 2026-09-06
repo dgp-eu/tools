@@ -1,5 +1,5 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
-package io.github.dgp_eu.tools.dynamic;
+package io.github.dgp_eu.tools.dynamic.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,8 +15,8 @@ import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.ShellingClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ConnectivitySubClass;
-import io.github.dgp_eu.tools.dynamic.DatabaseOperationsClass.ResultSettingSubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ConnectivitySubClass;
+import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ResultSettingSubClass;
 
 /**
  * Snowflake methods
