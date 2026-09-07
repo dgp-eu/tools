@@ -87,10 +87,9 @@ class HtmlClassTests {
     void buildFileInfoBox() throws IOException {
         final Path tempFile = Files.createTempFile("fileops-test-file-", ".txt");
         try {
-            final String myInfoBox = HtmlClass.FileInfoSubClass.buildFileInfoBox(tempFile);
+            final String myInfoBox = HtmlClass.FileInfoSubClass.gatherFileStatistics(tempFile);
             assertAll("Select HTML correctness",
-                    () -> assertTrue(myInfoBox.contains("<div class="), "HTML should contain div tag with class"),
-                    () -> assertTrue(myInfoBox.contains("infoBox"), "HTML should contain infoBox class"),
+                    () -> assertTrue(myInfoBox.startsWith("File is"), "HTML should start with"),
                     () -> assertTrue(myInfoBox.contains(", last modified time-stamp on"), "HTML contains specific sequence text pieces")
             );
         } finally {

@@ -222,7 +222,7 @@ public final class RegularExpressionsClass {
 
     /**
      * Getter for MAP_PATTERNS
-     * @return Map for Time/Date patterns formats & regex
+     * @return Map for Time/Date patterns formats and regular expressions
      */
     public static Map<String, DateTimeInfoRec> getMapPatterns() {
         return MAP_PATTERNS;

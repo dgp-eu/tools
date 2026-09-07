@@ -109,16 +109,6 @@ public final class HtmlClass {
          * Build Information Box
          * @return String
          */
-        public static String buildFileInfoBox(final Path fileName) {
-            final String rawHtml = "<div class=\"infoBox blueShaddowBorderLeft\">%s</div>";
-            final String fileStatsHtml = gatherFileStatistics(fileName);
-            return String.format(rawHtml, fileStatsHtml);
-        }
-
-        /**
-         * Build Information Box
-         * @return String
-         */
         public static String gatherFileStatistics(final Path fileName) {
             if (Files.exists(fileName)) {
                 fileSizeBytes = fileName.toFile().length();

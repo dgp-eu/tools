@@ -288,18 +288,14 @@ public final class UndertowClass {
      * Template management
      */
     public static final class TemplateRenderingSubClass {
-        /**
-         * server exchange
-         */
+        /** Content Type value variable */
+        /* default */ private static String contentTypeValue = "text/html";
+        /** server exchange variable */
         private static HttpServerExchange exchange;
-        /**
-         * page parameters
-         */
-        private static final Map<String, Object> TEMPLATE_PARAMS = new ConcurrentHashMap<>();
-        /**
-         * output handler
-         */
+        /** output handler variable */
         private static Utf8ByteOutput output;
+        /** page parameters variable */
+        private static final Map<String, Object> TEMPLATE_PARAMS = new ConcurrentHashMap<>();
 
         /**
          * Getter for parameterPage
@@ -315,7 +311,7 @@ public final class UndertowClass {
          */
         private static void handleResponseHeader(final HeaderMap header) {
             final long contentLength = output.getContentLength();
-            header.put(Headers.CONTENT_TYPE, "text/html");
+            header.put(Headers.CONTENT_TYPE, contentTypeValue);
             header.put(Headers.CONTENT_LENGTH, String.valueOf(contentLength));
         }
 
@@ -367,12 +363,21 @@ public final class UndertowClass {
         }
 
         /**
+         * Setter for contentTypeValue
+         * @param inContentTypeVal input Content Type
+         */
+        public static void setContentTypeValue(final String inContentTypeVal) {
+           contentTypeValue = inContentTypeVal;
+        }
+
+        /**
          * Setter for Server Exchange
          * @param inExchange input Exchange
          */
         public static void setServerExchange(final HttpServerExchange inExchange) {
            exchange = inExchange;
         }
+
         /**
          * Setter for output
          * @param inOutput Output

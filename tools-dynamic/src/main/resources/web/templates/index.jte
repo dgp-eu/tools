@@ -19,9 +19,6 @@
     <meta name="Author" content="Daniel Popiniuc">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/web/static/styles.css">
-    <!-- Bootstrap components -->
-    <link rel="stylesheet" href="/web/static/BootStrap/5.3.8/bootstrap.min.css">
-    <script src="/web/static/BootStrap/5.3.8/bootstrap.bundle.min.js" defer></script>
     <!-- Fontawesome components -->
     <link rel="stylesheet" href="/web/static/FontAwesome/7.3.1/fontawesome.min.css">
     <script src="/web/static/FontAwesome/7.3.1/brands.min.js" defer></script>
