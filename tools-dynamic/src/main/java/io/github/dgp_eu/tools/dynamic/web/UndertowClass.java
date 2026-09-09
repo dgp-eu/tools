@@ -288,6 +288,8 @@ public final class UndertowClass {
      * Template management
      */
     public static final class TemplateRenderingSubClass {
+        /** Content Disposition value variable */
+        /* default */ private static String contentDispositn = "inline";
         /** Content Type value variable */
         /* default */ private static String contentTypeValue = "text/html";
         /** server exchange variable */
@@ -309,10 +311,11 @@ public final class UndertowClass {
          * handle Response Header
          * @param header map
          */
-        private static void handleResponseHeader(final HeaderMap header) {
+        public static void handleResponseHeader(final HeaderMap header) {
             final long contentLength = output.getContentLength();
             header.put(Headers.CONTENT_TYPE, contentTypeValue);
             header.put(Headers.CONTENT_LENGTH, String.valueOf(contentLength));
+            header.put(Headers.CONTENT_DISPOSITION, contentDispositn);
         }
 
         /**
@@ -360,6 +363,14 @@ public final class UndertowClass {
             handleResponseHeader(header);
             final Sender response = exchange.getResponseSender();
             handleResponseSender(response);
+        }
+
+        /**
+         * Setter for contentDispositn
+         * @param inContentDisp input Content Disposition
+         */
+        public static void setContentDisposition(final String inContentDisp) {
+           contentDispositn = inContentDisp;
         }
 
         /**
