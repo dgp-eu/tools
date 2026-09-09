@@ -76,8 +76,6 @@ public final class ShellingClass {
         } catch(InterruptedException ei) {
             final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
-            /* Clean up whatever needs to be handled before interrupting  */
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -128,8 +126,6 @@ public final class ShellingClass {
             try {
                 strProcOut = stdoutFuture.get();
             } catch (InterruptedException ei) {
-                /* Clean up whatever needs to be handled before interrupting  */
-                Thread.currentThread().interrupt();
                 final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
             } catch (ExecutionException ee) {

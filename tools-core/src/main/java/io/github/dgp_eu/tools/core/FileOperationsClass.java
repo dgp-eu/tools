@@ -15,9 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -150,7 +147,7 @@ public final class FileOperationsClass {
                 final String strFileName,
                 final Integer intColToEval,
                 final Integer intColToGrpBy) {
-            Map<String, List<String>> grouped = null;
+            Map<String, List<String>> grouped = new ConcurrentHashMap<>();
             try (Stream<String> lines = Files.lines(Path.of(strFileName))) {
                 // Group values by category
                 grouped = lines
@@ -1012,19 +1009,8 @@ public final class FileOperationsClass {
          */
         private static Properties computeFileMultipleChecksumsIntoProperties(final Path file) {
             final Properties fileProperties = new Properties();
-            try(ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
-                executor.submit(() -> {
-                    for (final String algo : listAlgorithms) {
-                        fileProperties.put(algo, computeSingleChecksum(file, algo));
-                    }
-                });
-                executor.shutdown();
-                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException ei) {
-                final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
-                LogExposureClass.LOGGER.warn(strFeedback);
-                /* Clean up whatever needs to be handled before interrupting  */
-                Thread.currentThread().interrupt();
+            for (final String algo : listAlgorithms) {
+                fileProperties.put(algo, computeSingleChecksum(file, algo));
             }
             return fileProperties;
         }
