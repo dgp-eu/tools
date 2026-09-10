@@ -69,14 +69,21 @@ public final class UndertowClass {
      * @param inExchange input Exchange
      */
     public static void handleCommonThings(final HttpServerExchange inExchange) {
-        ParametersSubClass.setQueryParameters(inExchange);
-        ParametersSubClass.setPageParameter();
         SessionSubClass.initializeSession(inExchange);
         SessionSubClass.handleTimeZoneSession();
         ParametersSubClass.redirectPageIfNeeded(inExchange);
         final Object tzAttribute = UndertowClass.SessionSubClass.getSession().getAttribute("TZ");
         final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
         HtmlClass.TableSubClass.setOutTimeZone(timeZone);
+    }
+
+    /**
+     * Query Parameters and Page logic
+     * @param inExchange input Exchange
+     */
+    public static void handleQueryParametersAndPage(final HttpServerExchange inExchange) {
+        ParametersSubClass.setQueryParameters(inExchange);
+        ParametersSubClass.setPageParameter();
     }
 
     /**
@@ -143,13 +150,9 @@ public final class UndertowClass {
      * Template management
      */
     public static final class ParametersSubClass {
-        /**
-         * Page variable
-         */
+        /** Page variable */
         private static String parameterPage;
-        /**
-         * page parameter variables
-         */
+        /** page parameter variables */
         private static Map<String, Deque<String>> queryParams;
 
         /**
@@ -219,17 +222,11 @@ public final class UndertowClass {
      * Template management
      */
     public static final class SessionSubClass {
-        /**
-         * Session Manager handle
-         */
+        /** Session Manager handle */
         private static final InMemorySessionManager SESSION_MANAGER = new InMemorySessionManager("SESSION_MANAGER");
-        /**
-         * Session Config handle
-         */
+        /** Session Config handle */
         private static final SessionCookieConfig SESSION_CONFIG = new SessionCookieConfig();
-        /**
-         * Session variable
-         */
+        /** Session variable */
         private static Session session;
 
         /**
@@ -288,10 +285,14 @@ public final class UndertowClass {
      * Template management
      */
     public static final class TemplateRenderingSubClass {
+        /** Content Disposition for HTML content */
+        private static String DFLT_CTNT_DISP = "inline";
+        /** Content Type for HTML content */
+        private static String DFLT_CTNT_TYP = "text/html";
         /** Content Disposition value variable */
-        /* default */ private static String contentDispositn = "inline";
+        /* default */ private static String contentDispositn = DFLT_CTNT_DISP;
         /** Content Type value variable */
-        /* default */ private static String contentTypeValue = "text/html";
+        /* default */ private static String contentTypeValue = DFLT_CTNT_TYP;
         /** server exchange variable */
         private static HttpServerExchange exchange;
         /** output handler variable */
@@ -371,6 +372,14 @@ public final class UndertowClass {
          */
         public static void setContentDisposition(final String inContentDisp) {
            contentDispositn = inContentDisp;
+        }
+
+        /**
+         * Setter for contentDispositn and contentTypeValue
+         */
+        public static void setContentDispositionAndTypeValuesForHtmlContent() {
+           contentDispositn = DFLT_CTNT_DISP;
+           contentTypeValue = DFLT_CTNT_TYP;
         }
 
         /**
