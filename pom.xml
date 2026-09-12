@@ -83,7 +83,7 @@
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <pmd.version>7.27.0</pmd.version>
         <takari-lifecycle-plugin.version>2.3.4</takari-lifecycle-plugin.version>
-        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.22.0</versions-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
