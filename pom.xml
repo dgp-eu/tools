@@ -53,7 +53,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Build properties -->
-        <java.version>26</java.version>
+        <java.version>27</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
@@ -426,7 +426,7 @@
                             <configuration>
                                 <rules>
                                     <requireJavaVersion>
-                                        <version>[26.0.2,)</version>
+                                        <version>[27,)</version>
                                     </requireJavaVersion>
                                 </rules>    
                             </configuration>
