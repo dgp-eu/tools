@@ -219,7 +219,7 @@ public final class JsonOperationsClass {
             // Validate
             final OutputUnit outputUnit = schema.validate(inJsonNode, OutputFormat.HIERARCHICAL, executionContext -> executionContext.executionConfig(executionConfig -> executionConfig
                     .annotationCollectionEnabled(true)
-                    .annotationCollectionFilter(keyword -> true)
+                    .annotationCollectionFilter(_ -> true)
                     .formatAssertionsEnabled(true)));
             if (!outputUnit.isValid()) {
                 final String strFeedback = String.format("Errors on data validation on the file %s using %s schema were encountered... %s",
