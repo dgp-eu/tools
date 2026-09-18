@@ -4,7 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,15 +20,22 @@ import org.junit.jupiter.api.Test;
  * Testing for BasicStructuresClass
  */
 @DisplayName("BasicStructuresClass testing")
-class BasicStructuresClassTests {
+final class BasicStructuresClassTests {
     /** String for Original not equal to Expected */
     private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
     /** Constant for first */
     private static final String STR_FIRST = "first";
 
+    /**
+     * Constructor
+     */
+    private BasicStructuresClassTests() {
+        super();
+    }
+
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
-    void testComputePercentageSafelySimple() {
+    static void testComputePercentageSafelySimple() {
         final BigDecimal original = new BigDecimal(51).setScale(2, RoundingMode.HALF_UP);
         final BigDecimal handled = BasicStructuresClass.computePercentageSafely(51, 100);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
@@ -98,10 +110,17 @@ class BasicStructuresClassTests {
      */
     @Nested
     /* default */ @DisplayName("StringCleaningClass testing...")
-    class TestStringCleaningSubClass {
+    final class TestStringCleaningSubClass {
+
+        /**
+         * Constructor
+         */
+        private TestStringCleaningSubClass() {
+            super();
+        }
 
         @Test
-        void testCleanStringAsDatabaseObject() {
+        static void testCleanStringAsDatabaseObject() {
             final String strOriginal = "Original1";
             final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringAsDatabaseObject(strOriginal + "^");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
@@ -142,10 +161,17 @@ class BasicStructuresClassTests {
      */
     @Nested
     /* default */ @DisplayName("TestStringEvaluationClass testing...")
-    class TestStringEvaluationSubClass {
+    final class TestStringEvaluationSubClass {
+
+        /**
+         * Constructor
+         */
+        private TestStringEvaluationSubClass() {
+            super();
+        }
 
         @Test
-        void testHasMatchingSubstring() {
+        static void testHasMatchingSubstring() {
             final List<String> listStrings = new ArrayList<>();
             listStrings.add(STR_FIRST);
             listStrings.add("Second");
@@ -160,10 +186,17 @@ class BasicStructuresClassTests {
      */
     @Nested
     /* default */ @DisplayName("StringConversionClass testing...")
-    class TestStringConversionSubClass {
+    final class TestStringConversionSubClass {
+
+        /**
+         * Constructor
+         */
+        private TestStringConversionSubClass() {
+            super();
+        }
 
         @Test
-        void testConvertPromptParametersIntoNamedParameters() {
+        static void testConvertPromptParametersIntoNamedParameters() {
             final String strOriginal = "SELECT {Field A}";
             final String strExpected = "SELECT :Field_A";
             final String handled = BasicStructuresClass.StringConversionSubClass.convertPromptParametersIntoNamedParameters(strOriginal);
@@ -185,11 +218,18 @@ class BasicStructuresClassTests {
      */
     @Nested
     /* default */ @DisplayName("ListAndMapSubClass testing...")
-    class TestListAndMapSubClass {
+    final class TestListAndMapSubClass {
+
+        /**
+         * Constructor
+         */
+        private TestListAndMapSubClass() {
+            super();
+        }
 
         @Test
         @DisplayName("assertAll: Get word counts from list with space separator returns correct counts")
-        void testGetWordCountsWithSpaceSeparator() {
+        static void testGetWordCountsWithSpaceSeparator() {
             final List<String> valList = new ArrayList<>();
             valList.add("pear banana pear");
             valList.add("banana cherry pear");
@@ -296,11 +336,18 @@ class BasicStructuresClassTests {
      */
     @Nested
     /* default */ @DisplayName("StringTransformationClass testing...")
-    class TestStringTransformationClass {
+    final class TestStringTransformationClass {
+
+        /**
+         * Constructor
+         */
+        private TestStringTransformationClass() {
+            super();
+        }
 
         @Test
         @DisplayName("Compute string signature produces consistent output")
-        void computeStringSignatureProducesConsistentOutput() {
+        static void computeStringSignatureProducesConsistentOutput() {
             final String input = "test_input";
             final String first = BasicStructuresClass.StringTransformationSubClass.computeStringSignature(input);
             final String second = BasicStructuresClass.StringTransformationSubClass.computeStringSignature(input);

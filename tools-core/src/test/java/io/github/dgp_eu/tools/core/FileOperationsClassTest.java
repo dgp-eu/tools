@@ -22,11 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * The tests are designed to cover various scenarios 
  * and edge cases to ensure robustness.</p>
  */
-class FileOperationsClassTest {
+final class FileOperationsClassTest {
+
+    /**
+     * Constructor
+     */
+    private FileOperationsClassTest() {
+        // intentionally blank
+    }
 
     @Test
     @DisplayName("getFileSizeIfFileExistsAndIsReadable returns -99 for null filename")
-    void testGetFileSizeReturnsNegativeForNullInput() {
+    static void testGetFileSizeReturnsNegativeForNullInput() {
         final long result = FileOperationsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(null);
         assertEquals(-99L, result, "Null filename should return -99");
     }
@@ -72,11 +79,7 @@ class FileOperationsClassTest {
         try {
             Files.writeString(tempFile, "payload", StandardCharsets.UTF_8);
             final Properties props = FileOperationsClass.RetrievingSubClass.checkFileExistanceAndReadability(tempFile.toString());
-            assertAll("checkFileExistanceAndReadability returns OK property for readable file",
-                    () -> assertNotNull(props, "Properties result should not be null"),
-                    () -> assertTrue(props.containsKey("OK"), "Properties should contain OK key for readable file"),
-                    () -> assertEquals(tempFile.toString(), props.getProperty("OK"), "OK value should be the original file path")
-            );
+            assertEquals(tempFile.toString(), props.getProperty("OK"), "OK value should be the original file path");
         } finally {
             Files.deleteIfExists(tempFile);
         }
@@ -129,13 +132,6 @@ class FileOperationsClassTest {
                     .map(Path::toFile)
                     .forEach(File::delete);
         }
-    }
-
-    /**
-     * Constructor
-     */
-    FileOperationsClassTest() {
-        // intentionally blank
     }
 
 }

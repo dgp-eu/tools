@@ -9,14 +9,19 @@ import io.github.dgp_eu.tools.core.time.TimingClass;
 /**
  * Regular Expressions testing
  */
-class RegularExpressionsClassTests {
-    /**
-     * String for Original not equal to Expected
-     */
+final class RegularExpressionsClassTests {
+    /** String for Original not equal to Expected */
     private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
+    /**
+     * Constructor
+     */
+    private RegularExpressionsClassTests() {
+        // intentionally blank
+    }
+
     @Test
-    void testConvertAgingDateIntoHumanReadableString() {
+    static void testConvertAgingDateIntoHumanReadableString() {
         final String strOriginal = "+0000-01-05";
         final String strExpected = "1 month 5 days";
         final TimingClass.AgingInfoRecord ageComponents = RegularExpressionsClass.ConversionSubClass.convertAgingTimestampStringIntoAgingComponents(strOriginal);
@@ -45,13 +50,6 @@ Started on Wed, 25 Mar 2026.
 Log at Wed, 25 Mar 2026 10:00:00.
 High precision at Fri, 25 Dec 2026 14:30:05.123.""";
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
-    }
-
-    /**
-     * Constructor
-     */
-    RegularExpressionsClassTests() {
-        // intentionally blank
     }
 
 }

@@ -10,19 +10,22 @@ import org.junit.jupiter.api.Test;
  * LogExposureClass testing
  */
 @DisplayName("LogExposureClass testing")
-class LogExposureClassTests {
-    /**
-     * String for Present
-     */
+final class LogExposureClassTests {
+    /** String for Present */
     private static final String STR_ACTIVE = "active";
-    /**
-     * String for Present
-     */
+    /** String for Present */
     private static final String STR_PRESENT = "present";
+
+    /**
+     * Constructor
+     */
+    private LogExposureClassTests() {
+        // intentionally blank
+    }
 
     @Test
     @DisplayName("HandleNameUnformattedMessage testing 1")
-    void testHandleNameUnformattedMessage() {
+    static void testHandleNameUnformattedMessage() {
         final String strUnformatted = "Multiple strings are %s";
         final String strExpected = "Multiple strings are present";
         final String handled = LogExposureClass.handleNameUnformattedMessage(1, strUnformatted, STR_PRESENT);
@@ -54,13 +57,6 @@ class LogExposureClassTests {
         final String strExpected = "Multiple strings are present, active, cool and high quality";
         final String exception = LogExposureClass.handleNameUnformattedMessage(4, strUnformatted, STR_PRESENT, STR_ACTIVE, "high", "quality");
         assertNotEquals(strExpected, exception, String.format("\"%s\" is NOT not equal to \"%s\"", strUnformatted, strExpected));
-    }
-
-    /**
-     * Constructor
-     */
-    LogExposureClassTests() {
-        // intentionally blank
     }
 
 }

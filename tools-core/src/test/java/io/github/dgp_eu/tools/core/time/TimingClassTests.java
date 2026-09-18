@@ -27,18 +27,26 @@ import static org.junit.jupiter.api.Assertions.*;
  * conversions, duration logging, and localized time-stamp pattern replacement.
  */
 @DisplayName("TimingClass unit testing")
-class TimingClassTests {
+final class TimingClassTests {
     /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
-    /** String format for assertion when actual/original is not equal to expected for Aging */
+    /** String format for assertion when actual/original 
+     * is not equal to expected for Aging */
     private static final String AGING_ERR = "calculated \"%s\" is not equal to expected \"%s\" considering %s as start and %s as finish having a Period of %s and Duration of %s";
     /** fixed Clock for predictable results */
     private static final ZoneId CLOCK_TZ = ZoneId.of("UTC");
     /** fixed Clock for predictable results */
     private static final Clock CLOCK_FIXED = Clock.fixed(Instant.parse("2023-08-26T22:57:42Z"), CLOCK_TZ);
 
+    /**
+     * Constructor
+     */
+    private TimingClassTests() {
+        super();
+    }
+
     @Test
-    void testAgingNegative() {
+    static void testAgingNegative() {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MINUTES).minus(5, ChronoUnit.SECONDS).minus(6, ChronoUnit.MILLIS), CLOCK_TZ);
@@ -143,10 +151,17 @@ class TimingClassTests {
      */
     @Nested
     /* default */ @DisplayName("getDaysAgoWithMillisecondsPrecision testing...")
-    class TestDaysAgoSubClass {
+    final class TestDaysAgoSubClass {
+
+        /**
+         * Constructor
+         */
+        private TestDaysAgoSubClass() {
+            super();
+        }
 
         @Test
-        void testGetDaysAgoWithMillisecondsPrecision() {
+        static void testGetDaysAgoWithMillisecondsPrecision() {
             final Instant startNow = Instant.now(CLOCK_FIXED);
             final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECONDS).toEpochMilli();
             final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);

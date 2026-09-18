@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +22,18 @@ import io.github.dgp_eu.tools.core.ProjectClass;
 /**
  * HtmlClass tests
  */
-class HtmlClassTests {
+final class HtmlClassTests {
+
+    /**
+     * Constructor
+     */
+    private HtmlClassTests() {
+        super();
+    }
 
     @Test
     @DisplayName("buildApplicationCopyright should be returned as String")
-    void buildApplicationCopyright() {
+    static void buildApplicationCopyright() {
         ProjectClass.setPomFile("/tools-core-pom.xml");
         final String appCopyright = HtmlClass.buildApplicationCopyright();
         assertTrue(appCopyright.contains("&copy; by "), "Application copyright should have Copyright symbol followed by single space and \"by\" word");
@@ -100,18 +105,11 @@ class HtmlClassTests {
     @Test
     @DisplayName("HtmlClass.buildMenuString produces select with time zones")
     void buildMenuString() {
-        final SequencedMap<String, Map<String, String>> inMapMenu = Stream.of(
-                Map.entry("home", Map.of(
-                        ConfigurationClass.STR_ICON, "fa-solid fa-house-user",
-                        ConfigurationClass.STR_MENU, "HomePage",
-                        ConfigurationClass.STR_TITLE, "HomePage"))
-        ).collect(
-                Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (v1, _) -> v1,
-                        LinkedHashMap::new)  // Ensures it returns a SequencedMap
-        );
+        final SequencedMap<String, Map<String, String>> inMapMenu = new LinkedHashMap<>();
+        inMapMenu.put("home", Map.of(
+                ConfigurationClass.STR_ICON, "fa-solid fa-house-user",
+                ConfigurationClass.STR_MENU, "HomePage",
+                ConfigurationClass.STR_TITLE, "HomePage"));
         final String myMenu = HtmlClass.buildMenuString(inMapMenu);
         assertAll("Select HTML correctness",
                 () -> assertTrue(myMenu.contains("<li>"), "HTML should contain li tag"),

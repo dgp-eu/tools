@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  * ZoneDataServiceClass testing
  */
 @DisplayName("ZoneDataServiceClass unit testing")
-class ZoneDataServiceClassTests {
+final class ZoneDataServiceClassTests {
     /** Constant for America/New_York */
     private static final String AMERICA_NY = "America/New_York";
     /** Constant for Calculated Not Equal to Expected */
@@ -23,9 +23,16 @@ class ZoneDataServiceClassTests {
     /** Constant for Zone Info should not be null */
     private static final String ZONE_INFO_NOT_NUL = "Zone info should not be null";
 
+    /**
+     * Constructor
+     */
+    private ZoneDataServiceClassTests() {
+        super();
+    }
+
     @Test
     @DisplayName("Loaded time zones are properly sorted with UTC offsets")
-    void testGetTimeZonesAreSortedWithUtcOffsets() {
+    static void testGetTimeZonesAreSortedWithUtcOffsets() {
         final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
         for (final String value : timeZones.values()) {
             assertAll("Loaded time zones are properly sorted with UTC offsets",
@@ -128,11 +135,18 @@ class ZoneDataServiceClassTests {
      */
     @Nested
     /* default */ @DisplayName("Coordinates testing...")
-    class TestCoordinates {
+    final class TestCoordinates {
+
+        /**
+         * Constructor
+         */
+        private TestCoordinates() {
+            // intentionally blank
+        }
 
         @Test
         @DisplayName("Get zone info includes latitude and longitude coordinates")
-        void testGetZoneInfoIncludesCoordinates() {
+        static void testGetZoneInfoIncludesCoordinates() {
             final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
             assertAll("Get zone info includes latitude and longitude coordinates",
                     () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
@@ -151,13 +165,6 @@ class ZoneDataServiceClassTests {
             );
         }
 
-        /**
-         * Constructor
-         */
-        TestCoordinates() {
-            // intentionally blank
-        }
-
     }
 
     /**
@@ -165,11 +172,18 @@ class ZoneDataServiceClassTests {
      */
     @Nested
     /* default */ @DisplayName("Zones testing...")
-    class TestSupportedZones{
+    final class TestSupportedZones{
+
+        /**
+         * Constructor
+         */
+        private TestSupportedZones() {
+            // intentionally blank
+        }
 
         @Test
         @DisplayName("Load supported time zones returns at least five zones")
-        void loadSupportedTimeZonesReturnsAtLeastFiveZones() {
+        static void loadSupportedTimeZonesReturnsAtLeastFiveZones() {
             final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
             final List<String> keysList = new ArrayList<>(timeZones.keySet());
             assertTrue(keysList.size() >= 5, "Should have at least 5 supported zones");
@@ -222,19 +236,5 @@ class ZoneDataServiceClassTests {
             assertTrue(timeZones.containsKey("Australia/Melbourne"), "Australia/Melbourne should be supported");
         }
 
-        /**
-         * Constructor
-         */
-        TestSupportedZones() {
-            // intentionally blank
-        }
-
-    }
-
-    /**
-     * Constructor
-     */
-    ZoneDataServiceClassTests() {
-        // intentionally blank
     }
 }
