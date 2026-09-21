@@ -56,10 +56,10 @@ public final class UndertowClass {
      * @param inExchange input Exchange
      */
     public static void handleCommonThings(final HttpServerExchange inExchange) {
-        SessionClass.initializeSession(inExchange);
-        SessionClass.handleTimeZoneSession();
-        ParametersClass.redirectPageIfNeeded(inExchange);
-        final Object tzAttribute = SessionClass.getSession().getAttribute("TZ");
+        UndertowSessionClass.initializeSession(inExchange);
+        UndertowSessionClass.handleTimeZoneSession();
+        UndertowParametersClass.redirectPageIfNeeded(inExchange);
+        final Object tzAttribute = UndertowSessionClass.getSession().getAttribute("TZ");
         final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
         HtmlClass.TableSubClass.setOutTimeZone(timeZone);
     }
@@ -69,8 +69,8 @@ public final class UndertowClass {
      * @param inExchange input Exchange
      */
     public static void handleQueryParametersAndPage(final HttpServerExchange inExchange) {
-        ParametersClass.setQueryParameters(inExchange);
-        ParametersClass.setPageParameter();
+        UndertowParametersClass.setQueryParameters(inExchange);
+        UndertowParametersClass.setPageParameter();
     }
 
     /**
@@ -100,7 +100,7 @@ public final class UndertowClass {
                     .addPrefixPath("/" + pathStatic, staticHandler)
                     .addPrefixPath("/", rootHandler);
             // finally package everything to consider Session handler
-            final HttpHandler sessionHandler = SessionClass.getSessionHandler(routesHandler);
+            final HttpHandler sessionHandler = UndertowSessionClass.getSessionHandler(routesHandler);
             // determine the relevant port
             final int relevantWebPort = BasicStructuresClass.convertStringIntoInteger(webPort);
             // start Web Server

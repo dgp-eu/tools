@@ -11,7 +11,7 @@ import io.undertow.util.StatusCodes;
 /**
  * Template management
  */
-public final class ParametersClass {
+public final class UndertowParametersClass {
     /** Page variable */
     private static String parameterPage;
     /** page parameter variables */
@@ -74,7 +74,7 @@ public final class ParametersClass {
     }
 
     // Private constructor to prevent instantiation
-    private ParametersClass() {
+    private UndertowParametersClass() {
         // intentionally blank
     }
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,10 +25,8 @@ class BasicStructuresClassTests {
     /** Constant for first */
     private static final String STR_FIRST = "first";
 
-    /**
-     * Constructor
-     */
-    private BasicStructuresClassTests() {
+    /** Constructor */
+    BasicStructuresClassTests() {
         super();
     }
 
@@ -266,9 +263,9 @@ class BasicStructuresClassTests {
         @Test
         @DisplayName("Convert map of strings into list of properties creates correct structure")
         void convertMapOfStringsIntoListOfPropertiesCreatesCorrectStructure() {
-            final Map<String, Object> inMap = new ConcurrentHashMap<>();
-            inMap.put("key11", "value11");
-            inMap.put("key2", "value2");
+            final Map<String, Object> inMap = Map.of(
+                    "key11", "value11",
+                    "key2", "value2");
             final List<Properties> result = BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("TestCategory", inMap);
             assertAll("Convert map of strings into list of properties creates correct structure",
                     () -> assertEquals(2, result.size(), "Result should have 2 property objects"),
@@ -279,9 +276,9 @@ class BasicStructuresClassTests {
         @Test
         @DisplayName("Convert map of strings into list of properties sorts by element name")
         void convertMapOfStringsIntoListOfPropertiesSortsByElementName() {
-            final Map<String, Object> inMap = new ConcurrentHashMap<>();
-            inMap.put("zebra", "value1");
-            inMap.put("apple", "value2");
+            final Map<String, Object> inMap = Map.of(
+                    "zebra", "value1",
+                    "apple", "value2");
             final List<Properties> result = BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Cat", inMap);
             assertEquals("apple", result.getFirst().getProperty("Element"), "Should be sorted alphabetically");
         }
@@ -289,11 +286,11 @@ class BasicStructuresClassTests {
         @Test
         @DisplayName("Merge keys preserves non-merged keys")
         void mergeKeysPreservesNonMergedKeys() {
-            final Map<String, List<String>> inputMap = new ConcurrentHashMap<>();
-            inputMap.put("a", new ArrayList<>(List.of("v1")));
-            inputMap.put("b", new ArrayList<>(List.of("v2")));
-            final Map<List<String>, String> mergeRules = new ConcurrentHashMap<>();
-            mergeRules.put(List.of("a"), "merged");
+            final Map<String, List<String>> inputMap = Map.of(
+                    "a", new ArrayList<>(List.of("v1")),
+                    "b", new ArrayList<>(List.of("v2")));
+            final Map<List<String>, String> mergeRules = Map.of(
+                    List.of("a"), "merged");
             final Map<String, List<String>> result = BasicStructuresClass.ListAndMapSubClass.mergeKeys(inputMap, mergeRules);
             assertTrue(result.containsKey("b"), "Non-merged key should be preserved");
         }

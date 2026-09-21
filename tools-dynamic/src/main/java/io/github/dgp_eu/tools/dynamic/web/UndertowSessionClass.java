@@ -17,7 +17,7 @@ import io.undertow.util.Sessions;
 /**
  * Template management
  */
-public final class SessionClass {
+public final class UndertowSessionClass {
     /** Session Manager handle */
     private static final InMemorySessionManager SESSION_MANAGER = new InMemorySessionManager("SESSION_MANAGER");
     /** Session Config handle */
@@ -46,7 +46,7 @@ public final class SessionClass {
      * Time Zone set logic
      */
     public static void handleTimeZoneSession() {
-        final Map<String, Deque<String>> queryParams = ParametersClass.getQueryParameters();
+        final Map<String, Deque<String>> queryParams = UndertowParametersClass.getQueryParameters();
         if (queryParams.get("TZ") != null) {
             session.setAttribute("TZ", queryParams.get("TZ").getFirst());
         }
@@ -71,7 +71,7 @@ public final class SessionClass {
     }
 
     // Private constructor to prevent instantiation
-    private SessionClass() {
+    private UndertowSessionClass() {
         // intentionally blank
     }
 

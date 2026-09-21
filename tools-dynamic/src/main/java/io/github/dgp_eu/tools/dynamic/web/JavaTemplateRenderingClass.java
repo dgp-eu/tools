@@ -15,7 +15,7 @@ import io.undertow.util.Headers;
 /**
  * Template management
  */
-public final class TemplateRenderingClass {
+public final class JavaTemplateRenderingClass {
     /** Content Disposition for HTML content */
     private static final String DFLT_CTNT_DISP = "inline";
     /** Content Type for HTML content */
@@ -62,7 +62,7 @@ public final class TemplateRenderingClass {
      * Common parameters packing
      */
     public static void packCommonParameters() {
-        final String sessionTimeZone = SessionClass.getSession().getAttribute("TZ").toString();
+        final String sessionTimeZone = UndertowSessionClass.getSession().getAttribute("TZ").toString();
         final gg.jte.Content selectTimeZones = output -> output.writeContent(HtmlClass.buildTimeZoneSelect(sessionTimeZone));
         packParameter("timeZoneSelect", selectTimeZones);
         packParameter("currentPageQuery", getCurrentPageQuery());
@@ -138,7 +138,7 @@ public final class TemplateRenderingClass {
     }
 
     // Private constructor to prevent instantiation
-    private TemplateRenderingClass() {
+    private JavaTemplateRenderingClass() {
         // intentional empty
     }
 
