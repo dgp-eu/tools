@@ -21,7 +21,7 @@ final class RegularExpressionsClassTests {
     }
 
     @Test
-    static void testConvertAgingDateIntoHumanReadableString() {
+    void testConvertAgingDateIntoHumanReadableString() {
         final String strOriginal = "+0000-01-05";
         final String strExpected = "1 month 5 days";
         final TimingClass.AgingInfoRecord ageComponents = RegularExpressionsClass.ConversionSubClass.convertAgingTimestampStringIntoAgingComponents(strOriginal);

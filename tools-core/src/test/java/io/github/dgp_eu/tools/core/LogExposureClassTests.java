@@ -25,7 +25,7 @@ final class LogExposureClassTests {
 
     @Test
     @DisplayName("HandleNameUnformattedMessage testing 1")
-    static void testHandleNameUnformattedMessage() {
+    void testHandleNameUnformattedMessage() {
         final String strUnformatted = "Multiple strings are %s";
         final String strExpected = "Multiple strings are present";
         final String handled = LogExposureClass.handleNameUnformattedMessage(1, strUnformatted, STR_PRESENT);

@@ -22,7 +22,7 @@ import io.github.dgp_eu.tools.core.ProjectClass;
 /**
  * HtmlClass tests
  */
-final class HtmlClassTests {
+class HtmlClassTests {
 
     /**
      * Constructor
@@ -33,7 +33,7 @@ final class HtmlClassTests {
 
     @Test
     @DisplayName("buildApplicationCopyright should be returned as String")
-    static void buildApplicationCopyright() {
+    void buildApplicationCopyright() {
         ProjectClass.setPomFile("/tools-core-pom.xml");
         final String appCopyright = HtmlClass.buildApplicationCopyright();
         assertTrue(appCopyright.contains("&copy; by "), "Application copyright should have Copyright symbol followed by single space and \"by\" word");

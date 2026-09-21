@@ -46,7 +46,7 @@ final class TimingClassTests {
     }
 
     @Test
-    static void testAgingNegative() {
+    void testAgingNegative() {
         final Instant startNow = Instant.now(CLOCK_FIXED);
         final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
         final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.minus(3, ChronoUnit.HOURS).minus(4, ChronoUnit.MINUTES).minus(5, ChronoUnit.SECONDS).minus(6, ChronoUnit.MILLIS), CLOCK_TZ);
@@ -161,7 +161,7 @@ final class TimingClassTests {
         }
 
         @Test
-        static void testGetDaysAgoWithMillisecondsPrecision() {
+        void testGetDaysAgoWithMillisecondsPrecision() {
             final Instant startNow = Instant.now(CLOCK_FIXED);
             final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECONDS).toEpochMilli();
             final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
  * Testing for BasicStructuresClass
  */
 @DisplayName("BasicStructuresClass testing")
-final class BasicStructuresClassTests {
+class BasicStructuresClassTests {
     /** String for Original not equal to Expected */
     private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
     /** Constant for first */
@@ -35,7 +35,7 @@ final class BasicStructuresClassTests {
 
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
-    static void testComputePercentageSafelySimple() {
+    void testComputePercentageSafelySimple() {
         final BigDecimal original = new BigDecimal(51).setScale(2, RoundingMode.HALF_UP);
         final BigDecimal handled = BasicStructuresClass.computePercentageSafely(51, 100);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
@@ -120,7 +120,7 @@ final class BasicStructuresClassTests {
         }
 
         @Test
-        static void testCleanStringAsDatabaseObject() {
+        void testCleanStringAsDatabaseObject() {
             final String strOriginal = "Original1";
             final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringAsDatabaseObject(strOriginal + "^");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
@@ -171,7 +171,7 @@ final class BasicStructuresClassTests {
         }
 
         @Test
-        static void testHasMatchingSubstring() {
+        void testHasMatchingSubstring() {
             final List<String> listStrings = new ArrayList<>();
             listStrings.add(STR_FIRST);
             listStrings.add("Second");
@@ -196,7 +196,7 @@ final class BasicStructuresClassTests {
         }
 
         @Test
-        static void testConvertPromptParametersIntoNamedParameters() {
+        void testConvertPromptParametersIntoNamedParameters() {
             final String strOriginal = "SELECT {Field A}";
             final String strExpected = "SELECT :Field_A";
             final String handled = BasicStructuresClass.StringConversionSubClass.convertPromptParametersIntoNamedParameters(strOriginal);
@@ -229,7 +229,7 @@ final class BasicStructuresClassTests {
 
         @Test
         @DisplayName("assertAll: Get word counts from list with space separator returns correct counts")
-        static void testGetWordCountsWithSpaceSeparator() {
+        void testGetWordCountsWithSpaceSeparator() {
             final List<String> valList = new ArrayList<>();
             valList.add("pear banana pear");
             valList.add("banana cherry pear");
@@ -257,7 +257,7 @@ final class BasicStructuresClassTests {
             final SequencedMap<String, Long> wordCounts = BasicStructuresClass.ListAndMapSubClass.getWordCounts(valList, " ");
             final List<String> keys = new ArrayList<>(wordCounts.keySet());
             assertAll("Get word counts orders words by frequency descending",
-                    () -> assertEquals("a", keys.get(0), "Most frequent word should be first"),
+                    () -> assertEquals("a", keys.getFirst(), "Most frequent word should be first"),
                     () -> assertEquals("b", keys.get(1), "Second frequent word should be second"),
                     () -> assertEquals("c", keys.get(2), "Least frequent word should be last")
             );
@@ -272,7 +272,7 @@ final class BasicStructuresClassTests {
             final List<Properties> result = BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("TestCategory", inMap);
             assertAll("Convert map of strings into list of properties creates correct structure",
                     () -> assertEquals(2, result.size(), "Result should have 2 property objects"),
-                    () -> assertEquals("TestCategory", result.get(0).getProperty(ConfigurationClass.STR_CATEGORY), "Category should be set")
+                    () -> assertEquals("TestCategory", result.getFirst().getProperty(ConfigurationClass.STR_CATEGORY), "Category should be set")
             );
         }
 
@@ -283,17 +283,17 @@ final class BasicStructuresClassTests {
             inMap.put("zebra", "value1");
             inMap.put("apple", "value2");
             final List<Properties> result = BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Cat", inMap);
-            assertEquals("apple", result.get(0).getProperty("Element"), "Should be sorted alphabetically");
+            assertEquals("apple", result.getFirst().getProperty("Element"), "Should be sorted alphabetically");
         }
 
         @Test
         @DisplayName("Merge keys preserves non-merged keys")
         void mergeKeysPreservesNonMergedKeys() {
             final Map<String, List<String>> inputMap = new ConcurrentHashMap<>();
-            inputMap.put("a", new ArrayList<>(Arrays.asList("v1")));
-            inputMap.put("b", new ArrayList<>(Arrays.asList("v2")));
+            inputMap.put("a", new ArrayList<>(List.of("v1")));
+            inputMap.put("b", new ArrayList<>(List.of("v2")));
             final Map<List<String>, String> mergeRules = new ConcurrentHashMap<>();
-            mergeRules.put(Arrays.asList("a"), "merged");
+            mergeRules.put(List.of("a"), "merged");
             final Map<String, List<String>> result = BasicStructuresClass.ListAndMapSubClass.mergeKeys(inputMap, mergeRules);
             assertTrue(result.containsKey("b"), "Non-merged key should be preserved");
         }
@@ -309,7 +309,7 @@ final class BasicStructuresClassTests {
             final SequencedMap<Object, Object> result = BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, order);
             final List<Object> keys = new ArrayList<>(result.keySet());
             assertAll("Sort properties maintains order specified in list",
-                    () -> assertEquals(STR_FIRST, keys.get(0), "First key should be ordered first"),
+                    () -> assertEquals(STR_FIRST, keys.getFirst(), "First key should be ordered first"),
                     () -> assertEquals("second", keys.get(1), "Second key should be ordered second")
             );
         }
@@ -320,11 +320,11 @@ final class BasicStructuresClassTests {
             final Properties prop = new Properties();
             prop.put("unspecified", "value");
             prop.put(STR_FIRST, "value1");
-            final List<String> order = Arrays.asList(STR_FIRST);
+            final List<String> order = List.of(STR_FIRST);
             final SequencedMap<Object, Object> result = BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, order);
             final List<Object> keys = new ArrayList<>(result.keySet());
             assertAll("Sort properties puts unspecified keys at end",
-                    () -> assertEquals(STR_FIRST, keys.get(0), "Specified key should come first"),
+                    () -> assertEquals(STR_FIRST, keys.getFirst(), "Specified key should come first"),
                     () -> assertEquals("unspecified", keys.get(1), "Unspecified key should come last")
             );
         }
@@ -347,7 +347,7 @@ final class BasicStructuresClassTests {
 
         @Test
         @DisplayName("Compute string signature produces consistent output")
-        static void computeStringSignatureProducesConsistentOutput() {
+        void computeStringSignatureProducesConsistentOutput() {
             final String input = "test_input";
             final String first = BasicStructuresClass.StringTransformationSubClass.computeStringSignature(input);
             final String second = BasicStructuresClass.StringTransformationSubClass.computeStringSignature(input);

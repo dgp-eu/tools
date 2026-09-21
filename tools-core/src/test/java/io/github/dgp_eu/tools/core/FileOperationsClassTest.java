@@ -33,7 +33,7 @@ final class FileOperationsClassTest {
 
     @Test
     @DisplayName("getFileSizeIfFileExistsAndIsReadable returns -99 for null filename")
-    static void testGetFileSizeReturnsNegativeForNullInput() {
+    void testGetFileSizeReturnsNegativeForNullInput() {
         final long result = FileOperationsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(null);
         assertEquals(-99L, result, "Null filename should return -99");
     }
