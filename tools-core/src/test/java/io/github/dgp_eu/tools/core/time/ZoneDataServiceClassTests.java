@@ -32,7 +32,7 @@ final class ZoneDataServiceClassTests {
 
     @Test
     @DisplayName("Loaded time zones are properly sorted with UTC offsets")
-    static void testGetTimeZonesAreSortedWithUtcOffsets() {
+    void testGetTimeZonesAreSortedWithUtcOffsets() {
         final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
         for (final String value : timeZones.values()) {
             assertAll("Loaded time zones are properly sorted with UTC offsets",
@@ -146,7 +146,7 @@ final class ZoneDataServiceClassTests {
 
         @Test
         @DisplayName("Get zone info includes latitude and longitude coordinates")
-        static void testGetZoneInfoIncludesCoordinates() {
+        void testGetZoneInfoIncludesCoordinates() {
             final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
             assertAll("Get zone info includes latitude and longitude coordinates",
                     () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
@@ -183,7 +183,7 @@ final class ZoneDataServiceClassTests {
 
         @Test
         @DisplayName("Load supported time zones returns at least five zones")
-        static void loadSupportedTimeZonesReturnsAtLeastFiveZones() {
+        void loadSupportedTimeZonesReturnsAtLeastFiveZones() {
             final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
             final List<String> keysList = new ArrayList<>(timeZones.keySet());
             assertTrue(keysList.size() >= 5, "Should have at least 5 supported zones");
