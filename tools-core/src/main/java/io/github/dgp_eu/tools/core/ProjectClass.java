@@ -42,7 +42,7 @@ public final class ProjectClass {
     private static String pomParentFile;
     /** current Project Model Interpolator */
     private static StringSearchInterpolator prjInterpolator;
-    /** current Project Model Interpolator */
+    /** current Parent Project Model Interpolator */
     private static StringSearchInterpolator prjParentInterpol;
     /** current Project Model */
     private static Model prjModel;

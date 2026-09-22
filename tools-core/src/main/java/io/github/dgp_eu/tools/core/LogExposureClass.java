@@ -103,55 +103,6 @@ public final class LogExposureClass {
     }
 
     /**
-     * handle NameUnformatted
-     * @param intRsParams number for parameters
-     * @param strUnformatted original string
-     * @param strReplacement replacements (1 to multiple)
-     * @return String
-     */
-    public static String handleNameUnformattedMessage(
-        final int intRsParams,
-        final String strUnformatted,
-        final Object... strReplacement
-    ) {
-        return switch (intRsParams) {
-            case 1 -> String.format(strUnformatted, strReplacement[0]);
-            case 2 -> String.format(
-                strUnformatted,
-                strReplacement[0],
-                strReplacement[1]
-            );
-            case 3 -> String.format(
-                strUnformatted,
-                strReplacement[0],
-                strReplacement[1],
-                strReplacement[2]
-            );
-            case 4 -> String.format(
-                    strUnformatted,
-                    strReplacement[0],
-                    strReplacement[1],
-                    strReplacement[2],
-                    strReplacement[3]
-                );
-            default -> getUnsupportedFeatures(
-                String.valueOf(intRsParams),
-                StackWalker.getInstance().walk(frames ->
-                    frames
-                        .findFirst()
-                        .map(
-                            frame ->
-                                frame.getClassName() +
-                                "." +
-                                frame.getMethodName()
-                        )
-                        .orElse(STR_I18N_UNKN)
-                )
-            );
-        };
-    }
-
-    /**
      * get Unsupported Feature
      * @param strDecision decision evaluated
      * @param strWhere which function this is called from
@@ -225,8 +176,8 @@ public final class LogExposureClass {
             final ComponentBuilder<?> policy = buildPolicies();
             final String rollingName = switch (strType) {
                 case ConfigurationClass.STR_ERROR -> "rollingError";
-                case "rest"                         -> "rollingRest";
-                default                             -> "rollingAll";
+                case "rest"                       -> "rollingRest";
+                default                           -> "rollingAll";
             };
             final FilterComponentBuilder levelRangeFilter = switch (strType) {
                 case ConfigurationClass.STR_ERROR -> buildLevelRangeFilter(
