@@ -469,6 +469,28 @@ public final class HtmlClass {
         }
 
         /**
+         * Map into HTML simple Table
+         * @param inMap input Map
+         * @return String as HTML table
+         */
+        public static String getMapIntoHtmlTable(final Map<String, Object> inMap) {
+            StringBuilder sbReturn = new StringBuilder(100);
+            sbReturn.append("<table>");
+            inMap.forEach((crtKey, crtValue) -> {
+                sbReturn.append("<tr>")
+                       .append("<th style=\"text-align:left;\">")
+                       .append(crtKey)
+                       .append("</th>")
+                       .append("<td>")
+                       .append(crtValue)
+                       .append("</td>")
+                       .append("</tr>");
+            });
+            sbReturn.append("</table>");
+            return sbReturn.toString();
+        }
+
+        /**
          * establishing the Key to Remember if relevant
          * @param objFeatures optional HTML Table features
          * @return String
