@@ -132,7 +132,7 @@ public final class HtmlClass {
                     LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
                 }
             }
-            final String rawHtml = "File is <span class=\"importantText\">%s</span>, having as size of <span class=\"importantText\">%s bytes (%s)</span>, last modified time-stamp on <span class=\"importantText\">%s</span>";
+            final String rawHtml = "File is <span class=\"importantText\">%s</span>, has a size of <span class=\"importantText\">%s bytes (%s)</span>, last modified time-stamp on <span class=\"importantText\">%s</span>";
             final String strThousandSep = "%,d";
             return String.format(rawHtml,
                     fileName.getFileName().toString(),
