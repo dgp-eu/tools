@@ -13,8 +13,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import io.github.dgp_eu.tools.core.time.TimingClass;
-
 /**
  * Shell execution methods
  */
@@ -76,7 +74,6 @@ public final class ShellingClass {
         } catch(InterruptedException ei) {
             final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -129,7 +126,6 @@ public final class ShellingClass {
             } catch (InterruptedException ei) {
                 final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
-                Thread.currentThread().interrupt();
             } catch (ExecutionException ee) {
                 final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(ee.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
