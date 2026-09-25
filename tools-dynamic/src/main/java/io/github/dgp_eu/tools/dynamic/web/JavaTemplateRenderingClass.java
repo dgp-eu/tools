@@ -54,6 +54,14 @@ public final class JavaTemplateRenderingClass {
      * handle Response Sender
      * @param response received response 
      */
+    public static void handleRawResponseSender(final Sender response, final String strRaw) {
+        response.send(strRaw);
+    }
+
+    /**
+     * handle Response Sender
+     * @param response received response 
+     */
     private static void handleResponseSender(final Sender response) {
         response.send(ByteBuffer.wrap(output.toByteArray()));
     }

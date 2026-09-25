@@ -310,6 +310,22 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * produce a Sequenced Map from simple Map
+         * @param inMap input Map
+         * @return SequencedMap with sorted values
+         */
+        public static SequencedMap<String, Object> sortMapByKey(final Map<String, Object> inMap) {
+            return inMap.entrySet().stream()
+                    .sorted(Comparator.comparing(Map.Entry::getKey))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, _) -> e1, // merge function (not used here)
+                            LinkedHashMap::new // preserve sorted order
+                    ));
+        }
+
+        /**
          * produce a Sequenced Map from Properties
          * @param prop Properties
          * @param order order as List of String

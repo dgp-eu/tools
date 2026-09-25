@@ -76,6 +76,7 @@ public final class ShellingClass {
         } catch(InterruptedException ei) {
             final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
+            Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 26.09.2026, 00:47
         }
     }
 
@@ -128,6 +129,7 @@ public final class ShellingClass {
             } catch (InterruptedException ei) {
                 final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
+                Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 26.09.2026, 00:48
             } catch (ExecutionException ee) {
                 final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(ee.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
