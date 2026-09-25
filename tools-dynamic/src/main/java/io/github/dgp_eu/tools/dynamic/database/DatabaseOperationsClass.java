@@ -10,11 +10,15 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 import io.github.dgp_eu.tools.core.time.TimingClass;
 import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.ConfigurationClass;
+import io.github.dgp_eu.tools.core.FileContentClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
@@ -177,10 +181,7 @@ public final class DatabaseOperationsClass {
         if (!strRelativeFile.toString().endsWith(".sql")) {
             strRelativeFile.append(".sql");
         }
-        boolean isJarExecution = false;
-        if (BasicStructuresClass.isRunningFromJar()) {
-            isJarExecution = true;
-        }
+        final boolean isJarExecution = BasicStructuresClass.isRunningFromJar();
         final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strRelativeFile.toString(), isJarExecution);
         final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strRelativeFile, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
@@ -195,7 +196,7 @@ public final class DatabaseOperationsClass {
             final String crtFolder = ConfigurationClass.getCurrentFolder();
             strRelativeFile.append(crtFolder).append("/src/main/resources").append(oldRelativeFile);
         }
-        return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile.toString());
+        return FileContentClass.ContentReadingSubClass.getFileContentIntoString(strRelativeFile.toString());
     }
 
     /**

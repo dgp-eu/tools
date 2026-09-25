@@ -474,17 +474,14 @@ public final class HtmlClass {
          * @return String as HTML table
          */
         public static String getMapIntoHtmlTable(final Map<String, Object> inMap) {
-            StringBuilder sbReturn = new StringBuilder(100);
+            final StringBuilder sbReturn = new StringBuilder(100);
             sbReturn.append("<table>");
             inMap.forEach((crtKey, crtValue) -> {
-                sbReturn.append("<tr>")
-                       .append("<th style=\"text-align:left;\">")
+                sbReturn.append("<tr><th style=\"text-align:left;\">")
                        .append(crtKey)
-                       .append("</th>")
-                       .append("<td>")
+                       .append("</th><td>")
                        .append(crtValue)
-                       .append("</td>")
-                       .append("</tr>");
+                       .append("</td></tr>");
             });
             sbReturn.append("</table>");
             return sbReturn.toString();

@@ -1,347 +1,41 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.core;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
 
 import io.github.dgp_eu.tools.core.time.TimingClass;
-import io.github.dgp_eu.tools.core.time.TimingClass.AgingSubClass;
 
 /**
  * File Operations
  */
 public final class FileOperationsClass {
-    /**
-     * Localized String for File Finding error 
-     */
+    /** Localized String for File Finding error */
     public static final String FILE_FIND_ERR = "Error encountered when attempting to get %s file(s) from %s folder";
-
-    /**
-     * File Content Reading
-     */
-    public static final class ContentReadingSubClass {
-
-        /**
-         * Capture Import Statements from Java source files into CSV
-         * @param inJavaSources folder with Java source files
-         * @param outCsvFile CSV file to write results into
-         */
-        public static void extractImportStatementsFromJavaSourceFilesIntoCsvFile(final Path inJavaSources, final Path outCsvFile) {
-            final String strImport = "import ";
-            final String dtNow = DateTimeFormatter.ofPattern(TimingClass.DATE_TIME_MS, Locale.US)
-                    .format(ZonedDateTime.now(ZoneId.systemDefault()));
-            try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
-                writer.write("Path;File;Imported;Timestamp");
-                writer.newLine();
-                final List<Path> arrayFiles = RetrievingSubClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
-                arrayFiles.forEach(crtFileName -> {
-                    try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
-                        String line = reader.readLine();  // Initialize the variable outside the loop
-                        long lineCounter = 0;
-                        while (Objects.nonNull(line)
-                                && (lineCounter < 100)) {
-                            if (line.startsWith(strImport)) {
-                                writer.write(crtFileName.getParent().toString()
-                                        + ';' + crtFileName.getFileName().toString()
-                                        + ';' + line.replace(strImport, "").replace(";", "")
-                                        + ';' + dtNow);
-                                writer.newLine();
-                            }
-                            line = reader.readLine();  // Update the variable within the loop, not in the condition
-                            lineCounter++;
-                        }
-                        final String strFeedback = String.format("File %s has been digested...", crtFileName);
-                        LogExposureClass.LOGGER.debug(strFeedback);
-                    } catch (IOException ei) {
-                        LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
-                    }
-                });
-            } catch (IOException ei) {
-                LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
-            }
-        }
-
-        /**
-         * Get file content into String
-         * (either included in JAR or from Disk/Storage)
-         * @param strFileName file name in scope
-         * @return file content
-         */
-        public static String getFileContentIntoString(final String strFileName) {
-            final String strOutput;
-            if (BasicStructuresClass.isRunningFromJar()) {
-                strOutput = getJarIncludedFileContentIntoString(strFileName);
-            } else {
-                strOutput = getDiskFileContentIntoString(strFileName);
-            }
-            return strOutput;
-        }
-
-        /**
-         * Get file content into String
-         * (good for small files, bad for JAR included files)
-         * @param strFileName file name
-         * @return String
-         */
-        private static String getDiskFileContentIntoString(final String strFileName) {
-            final String strFeedback = String.format("Attempting to get content into a String from %s file...", strFileName);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            String strReturn = "";
-            try {
-                strReturn = Files.readString(Path.of(strFileName));
-            } catch (IOException e) {
-                final String strFeedbackErr = String.format("Error when attempting to get content of file \"%s\": %s", strFileName, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return strReturn;
-        }
-
-        /**
-         * Get file content into InputStream
-         * @param strFileName file name
-         * @return input stream
-         */
-        private static String getJarIncludedFileContentIntoString(final String strFileName) {
-            String strContent = null;
-            final String strFeedback = String.format("Attempting to get content into a String from %s file...", strFileName);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            try (InputStream iStream = ContentReadingSubClass.class.getResourceAsStream(strFileName)) {
-                assert iStream != null;
-                try (InputStreamReader inputStreamReader = new InputStreamReader(iStream, StandardCharsets.UTF_8);
-                     BufferedReader bReader = new BufferedReader(inputStreamReader)) {
-                    strContent = bReader.readAllAsString();
-                    final String strFeedbackOk = String.format("I have successfully loaded entire content from %s file into stream...", strFileName);
-                    LogExposureClass.LOGGER.debug(strFeedbackOk);
-                }
-            } catch (IOException ex) {
-                final String strFeedbackErr = String.format("Error \"%s\"", Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return strContent;
-        }
-
-        /**
-         * Getting list of values from a column grouped by another column
-         * @param strFileName target file name to be written to
-         * @param intColToEval number of column to evaluate (build values list from it)
-         * @param intColToGrpBy number of column to group list of values by
-         * @return Map with String and List or String
-         */
-        public static Map<String, List<String>> getListOfValuesFromColumnGroupedByAnotherColumnValuesFromCsvFile(
-                final String strFileName,
-                final Integer intColToEval,
-                final Integer intColToGrpBy) {
-            Map<String, List<String>> grouped = new ConcurrentHashMap<>();
-            try (Stream<String> lines = Files.lines(Path.of(strFileName))) {
-                // Group values by category
-                grouped = lines
-                        .skip(1)
-                        .map(line -> line.split("\",\"")) // split by comma
-                        .collect(Collectors.groupingBy(
-                                cols -> cols[intColToGrpBy], // key = Category
-                                Collectors.mapping(cols -> cols[intColToEval].replace("\"", ""), Collectors.toList()) // values
-                        ));
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-            return grouped;
-        }
-
-        /**
-         * Constructor
-         */
-        private ContentReadingSubClass() {
-            // intentionally blank
-        }
-
-    }
-
-    /**
-     * File Content Reading
-     */
-    public static final class ContentWritingSubClass {
-        /**
-         * Column Separator for CSV file writing methods
-         */
-        private static char chCsvColSeparator = ',';
-        /**
-         * Line Prefix for CSV content writing methods
-         */
-        private static String strCsvLinePrefix = "";
-
-        /**
-         * Setter for Column Separator for CSV file writing methods
-         * @param inCsvColSeparator char
-         */
-        public static void setCsvColumnSeparator(final char inCsvColSeparator) {
-            chCsvColSeparator = inCsvColSeparator;
-        }
-
-        /**
-         * Setter for Line prefix for CSV file writing methods
-         * @param inCsvLinePrefix String
-         */
-        public static void setCsvLinePrefix(final String inCsvLinePrefix) {
-            strCsvLinePrefix = inCsvLinePrefix + chCsvColSeparator;
-        }
-
-        /**
-         * storing into a CSV file a LinkedHashMap
-         * @param strFileName target file name to be written to
-         * @param strHeader header values
-         * @param listHsMp LinkedHashMap
-         */
-        public static void writeLinkedHashMapToCsvFile(final String strFileName, final String strHeader, final Map<String, Long> listHsMp) {
-            try {
-                final List<String> strLines;
-                final File strFile = new File(strFileName);
-                if (strFile.exists()) {
-                    strLines = listHsMp.entrySet().stream()
-                            .map(e -> strCsvLinePrefix + e.getKey() + chCsvColSeparator + e.getValue())
-                            .toList();
-                } else {
-                    strLines = Stream.concat(
-                            Stream.of(strHeader), // header
-                            listHsMp.entrySet().stream()
-                                    .map(e -> strCsvLinePrefix + e.getKey() + chCsvColSeparator + e.getValue())
-                    ).toList();
-                }
-                Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-        }
-
-        /**
-         * Write list of single values to File
-         * 
-         * @param listStrings List of Strings
-         * @param strFileName file name to write to
-         */
-        public static void writeListToTextFile(final String strFileName, final List<String> listStrings) {
-            DeletingSubClass.deleteFileIfExists(strFileName);
-            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
-                listStrings.forEach(strLine -> {
-                    try {
-                        bwr.write(strLine);
-                        bwr.newLine();
-                    } catch (IOException er) {
-                        final String strFeedback = String.format("Error encountered when attempting to write to %s file... %s", strFileName, Arrays.toString(er.getStackTrace()));
-                        LogExposureClass.LOGGER.error(strFeedback);
-                    }
-                });
-                final String strFeedback = String.format("Writing list to %s file completed successfully!", strFileName);
-                LogExposureClass.LOGGER.debug(strFeedback);
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-        }
-
-        /**
-         * Write list of Properties to CSV File
-         *
-         * @param strFileName target File
-         * @param propertiesList list of Properties
-         */
-        public static void writePropertiesListToCsvFile(final String strFileName, final List<Properties> propertiesList) {
-            // Collect all unique keys
-            final Set<String> allKeys = new LinkedHashSet<>();
-            for (final Properties properties : propertiesList) {
-                allKeys.addAll(properties.stringPropertyNames());
-            }
-            final String strClmnSeparator = String.valueOf(chCsvColSeparator);
-            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
-                // Write the header
-                bwr.write(String.join(strClmnSeparator, allKeys));
-                bwr.newLine();
-                final Set<String> row = new LinkedHashSet<>();
-                // Write each row
-                for (final Properties properties : propertiesList) {
-                    row.clear();
-                    for (final String key : allKeys) {
-                        row.add(properties.getProperty(key, "")); // Supply default value "" if key is absent
-                    }
-                    bwr.write(String.join(strClmnSeparator, row));
-                    bwr.newLine();
-                }
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-        }
-
-        /**
-         * Store small content into file
-         * @param strFileName destination file name
-         * @param strRawText content
-         */
-        public static void writeRawTextToFile(final String strFileName, final String strRawText) {
-            DeletingSubClass.deleteFileIfExists(strFileName);
-            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
-                bwr.write(strRawText);
-                final String strFeedback = String.format("Writing list to %s file completed successfully!", strFileName);
-                LogExposureClass.LOGGER.debug(strFeedback);
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-        }
-
-        /**
-         * storing into a CSV file a LinkedHashMap
-         * @param strFileName target file name to be written to
-         * @param strHeader header values
-         * @param listStrings List of String
-         */
-        public static void writeStringListToCsvFile(final String strFileName, final String strHeader, final List<String> listStrings) {
-            try {
-                final List<String> strLines;
-                final File strFile = new File(strFileName);
-                if (strFile.exists()) {
-                    strLines = listStrings.stream()
-                            .map(value -> strCsvLinePrefix + value)
-                            .toList();
-                } else {
-                    strLines = Stream.concat(
-                            Stream.of(strHeader), // header
-                            listStrings.stream()
-                                    .map(value -> strCsvLinePrefix + value)
-                    ).toList();
-                }
-                Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            } catch (IOException ex) {
-                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-        }
-
-        /**
-         * Constructor
-         */
-        private ContentWritingSubClass() {
-            // intentionally blank
-        }
-
-    }
 
     /**
      * File Deletion logic
@@ -394,7 +88,7 @@ public final class FileOperationsClass {
         /**
          * File deleting logic
          */
-        public static final class OlderClass {
+        public static final class OlderSubSubClass {
             /**
              * Cleaned Folder Statistics
              */
@@ -426,9 +120,9 @@ public final class FileOperationsClass {
              * @param intOlderLimit older days limit
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
-                final long cutoff = TimingClass.getDaysAgoWithMillisecondsPrecision(Instant.now(), intOlderLimit);
+                final long cutoff = TimingClass.getDaysAgoWithMillisecondsPrecision(intOlderLimit);
                 final String strFeedback = String.format("Will attempt to remove all files older than \"%s\" from within \"%s\" folder...",
-                        Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim(), strFolderName);
+                        TimingClass.getEpochMilliseconds(cutoff), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
@@ -485,7 +179,7 @@ public final class FileOperationsClass {
             /**
              * Constructor
              */
-            private OlderClass() {
+            private OlderSubSubClass() {
                 // intentionally blank
             }
 
@@ -503,22 +197,14 @@ public final class FileOperationsClass {
     /**
      * File Mass Change logic
      */
-    public static final class MassChangeSubClass {
-        /**
-         * holding characters being replaced
-         */
+    public static final class MassFileChangeSubClass {
+        /** holding characters being replaced */
         private static String existingContent;
-        /**
-         * holding characters to replace it with
-         */
+        /** holding characters to replace it with */
         private static String replacedContent;
-        /**
-         * variable for folder
-         */
+        /** variable for folder */
         private static String strFolder;
-        /**
-         * variable for pattern
-         */
+        /** variable for pattern */
         private static String strPattern;
 
         /**
@@ -563,7 +249,7 @@ public final class FileOperationsClass {
         private static void secureModify(final Path file) {
             final Path newFile = getNewFile(file);
             try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-                BufferedWriter writer = Files.newBufferedWriter(newFile, StandardCharsets.UTF_8)) {
+                 BufferedWriter writer = Files.newBufferedWriter(newFile, StandardCharsets.UTF_8)) {
                 String line = reader.readLine();  // Initialize the variable outside the loop
                 while (Objects.nonNull(line)) {
                     writer.write(line.replace(existingContent, replacedContent));
@@ -614,7 +300,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private MassChangeSubClass() {
+        private MassFileChangeSubClass() {
             // intentionally blank
         }
     }
@@ -897,258 +583,6 @@ public final class FileOperationsClass {
             // intentionally blank
         }
 
-    }
-
-    /**
-     * Statistics
-     */
-    public static final class StatisticsSubClass {
-        /**
-         * Checksum algorithms
-         */
-        private static String[] listAlgorithms = {"SHA-256", "SHA-512", "SHA3-256", "SHA3-512"};
-        /**
-         * file statistics
-         */
-        private static final List<Properties> FILE_STATISTICS = new ArrayList<>();
-
-        /**
-         * A simple record to hold our results
-         */
-        /* default */ record FolderStatsRecord(long fileCount, long folderCount, long totalSize) {
-            /* default */ static FolderStatsRecord empty() { return new FolderStatsRecord(0, 0, 0); }
-            /* default */ FolderStatsRecord add(final FolderStatsRecord other) {
-                return new FolderStatsRecord(
-                    this.fileCount + other.fileCount,
-                    this.folderCount + other.folderCount,
-                    this.totalSize + other.totalSize
-                );
-            }
-        }
-
-        /**
-         * Get statistics for all files within a given folder
-         * @param strFolderName input folder name
-         */
-        public static void captureFileStatisticsFromFolder(final String strFolderName, final String outCsvFile) {
-            try (BufferedWriter writer = Files.newBufferedWriter(Path.of(outCsvFile), StandardCharsets.UTF_8)) {
-                writer.write("Folder;File;Size;Last Modified Time");
-                for(final String crtAlgo: listAlgorithms) {
-                    writer.write(';' + crtAlgo);
-                }
-                writer.newLine();
-                gatherFileStatisticsFromFolderIntoFile(strFolderName, writer);
-            } catch (IOException ei) {
-                LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
-            }
-        }
-
-        /**
-         * Compute Digest for checksum Algorithm
-         * @param algorithm input value
-         * @return Digest
-         */
-        private static MessageDigest computeDigestForAlgorithm(final String algorithm) {
-            MessageDigest digest = null;
-            try {
-                digest = MessageDigest.getInstance(algorithm);
-            } catch (NoSuchAlgorithmException e) {
-                final String strFeedbackErr = String.format("Checksum algorithm %s is not available.... %s", algorithm, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return digest;
-        }
-
-        /**
-         * Compute checksum for a given file
-         * @param file input file
-         * @param algorithm checksum algorithm name
-         * @return String
-         */
-        public static String computeSingleChecksum(final Path file, final String algorithm) {
-            String sbChecksumValue = "checksum not computed";
-            try (InputStream istrmFile = Files.newInputStream(file)) {
-                sbChecksumValue = computeSingleChecksumFromInputStream(istrmFile, algorithm);
-            } catch (IOException e) {
-                final String strFeedbackErr = String.format("Error when attempting to get content from file \"%s\": " +
-                                "%s", file, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return sbChecksumValue;
-        }
-
-        /**
-         * Compute Checksum from Input Stream
-         * @param inStream input stream
-         * @param algorithm algorithm to use for checksum calculation
-         * @return Checksum value
-         */
-        public static String computeSingleChecksumFromInputStream(final InputStream inStream, final String algorithm) {
-            final MessageDigest digest = computeDigestForAlgorithm(algorithm);
-            final StringBuilder sbChecksumValue = new StringBuilder();
-            try (DigestInputStream dis = new DigestInputStream(inStream, digest)) {
-                // Read and discard all data while updating the digest
-                dis.transferTo(OutputStream.nullOutputStream());
-                assert digest != null;
-                final byte[] hashBytes = digest.digest();
-                for (final byte byteVar : hashBytes) {
-                    sbChecksumValue.append(String.format("%02x", byteVar));
-                }
-            } catch (IOException e) {
-                final String strFeedbackErr = String.format("Error when attempting to get content from input stream " +
-                        "\"%s\": %s", "*", Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return sbChecksumValue.toString();
-        }
-
-        /**
-         * Compute all known checksums for a given file
-         * @param file input file
-         * @return Properties checksum values
-         */
-        private static Properties computeFileMultipleChecksumsIntoProperties(final Path file) {
-            final Properties fileProperties = new Properties();
-            for (final String algo : listAlgorithms) {
-                fileProperties.put(algo, computeSingleChecksum(file, algo));
-            }
-            return fileProperties;
-        }
-
-        /**
-         * performs statistics for all files within a given folder
-         * @param strFolderName input folder name
-         */
-        private static void gatherFileStatisticsFromFolder(final String strFolderName, final ZonedDateTime inRefTimeStamp) {
-            final Path folder = Paths.get(strFolderName);
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
-                for (final Path file : stream) {
-                    if (Files.isDirectory(file)) {
-                        gatherFileStatisticsFromFolder(file.toString(), inRefTimeStamp);
-                    } else if (Files.isRegularFile(file)) {
-                        FILE_STATISTICS.add(getSingleFileStatistic(file, inRefTimeStamp));
-                    }
-                }
-            } catch (IOException ei) {
-                final String strFeedback = String.format("I/O exception on processing %s folder...", strFolderName);
-                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-            }
-        }
-
-        /**
-         * performs statistics for all files within a given folder
-         * @param strFolderName input folder name
-         */
-        private static void gatherFileStatisticsFromFolderIntoFile(final String strFolderName, final BufferedWriter writer) {
-            final ZonedDateTime refTimeStamp = ZonedDateTime.now(ZoneId.systemDefault());
-            final List<Properties> crtFileStatistics = getFileStatisticsIntoListOfProperties(strFolderName, refTimeStamp);
-            crtFileStatistics.forEach(fileProperties -> {
-                try {
-                    writer.write(fileProperties.get("Folder").toString()
-                            + ';' + fileProperties.get("File").toString()
-                            + ';' + fileProperties.get(ConfigurationClass.STR_SIZE).toString()
-                            + ';' + fileProperties.get("Last Modified Time").toString());
-                    for (final String algo : listAlgorithms) {
-                        writer.write(';' + fileProperties.get(algo).toString());
-                    }
-                    writer.newLine();
-                } catch (IOException ei) {
-                    final String strFeedback = "Error writing files statistics";
-                    LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-                }
-            });
-        }
-
-        /**
-         * performs statistics for all files within a given folder
-         * @param strFolderName input folder name
-         */
-        public static List<Properties> getFileStatisticsIntoListOfProperties(final String strFolderName, final ZonedDateTime inRefTimeStamp) {
-            if (!FILE_STATISTICS.isEmpty()) {
-                FILE_STATISTICS.clear();
-            }
-            TimingClass.LocalizationSubClass.FileSubSubClass.setReferenceTimeStampValueForAgingCalculation(inRefTimeStamp);
-            gatherFileStatisticsFromFolder(strFolderName, inRefTimeStamp);
-            return FILE_STATISTICS;
-        }
-
-        /**
-         * get Folder statistics recursively
-         * @param strFolderName folder name
-         * @param pathProps path properties
-         * @return Properties
-         */
-        public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
-            final Path directory = Paths.get(strFolderName.replace("\"", ""));
-            // use DirectoryStream to list files which are present in specific
-            try (Stream<Path> stream = Files.walk(directory)) {
-                final FolderStatsRecord stats = stream
-                    .map(path -> {
-                        if (Files.isDirectory(path)) {
-                            // Don't count the root directory itself as a sub-folder
-                            return path.equals(directory) ? FolderStatsRecord.empty() : new FolderStatsRecord(0, 1, 0);
-                        } else {
-                            try {
-                                return new FolderStatsRecord(1, 0, Files.size(path));
-                            } catch (IOException e) {
-                                final String strFeedback = String.format("Input/Output exception on %s folder encountered on %s", strFolderName, Arrays.toString(e.getStackTrace()));
-                                LogExposureClass.LOGGER.debug(strFeedback);
-                                return FolderStatsRecord.empty();
-                            }
-                        }
-                    })
-                    .reduce(FolderStatsRecord.empty(), FolderStatsRecord::add);
-                pathProps.put("TOTAL_OBJECTS", stats.folderCount() + stats.fileCount());
-                pathProps.put("DIRECTORIES", stats.folderCount());
-                pathProps.put("FILES", stats.fileCount());
-                pathProps.put("SIZE_BYTES", stats.totalSize());
-            } catch (IOException ei) {
-                final Path foderName = Path.of(strFolderName);
-                final String strFeedback = String.format(FILE_FIND_ERR, foderName.getParent(), foderName.getFileName());
-                LogExposureClass.exposeInputOutputException(strFeedback,
-                        Arrays.toString(ei.getStackTrace()));
-            }
-            return pathProps;
-        }
-
-        /**
-         * Determining single file statistics
-         * @param file in scope
-         * @return Properties with relevant statistics
-         */
-        private static Properties getSingleFileStatistic(final Path file, final ZonedDateTime inRefTimeStamp) {
-            final String strFeedback = String.format("Will process file %s for multiple statistics", file);
-            LogExposureClass.LOGGER.debug(strFeedback);
-            final Properties fileProperties = new Properties();
-            fileProperties.put("Folder", file.getParent().toString());
-            fileProperties.put("File", file.getFileName().toString());
-            final long fileSize = file.toFile().length();
-            fileProperties.put("Size [bytes]", fileSize);
-            final String fileSizeDynamic = BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSize, "binary");
-            fileProperties.put(ConfigurationClass.STR_SIZE, fileSizeDynamic);
-            final ZonedDateTime zFileTimeStamp = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedZonedDateTime(file);
-            fileProperties.put("Last Modified Timestamp", TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zFileTimeStamp,
-                    TimingClass.DATE_TIME_MS_ABRV));
-            final String lastModifAging = AgingSubClass.computeAgingIntoHumanReadableWords(zFileTimeStamp, inRefTimeStamp);
-            fileProperties.put("Last Modified Aging", lastModifAging);
-            fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
-            return fileProperties;
-        }
-
-        /**
-         * Setter for checksum algorithms
-         * @param inAlgorithms char
-         */
-        public static void setChecksumAlgorithms(@NonNull final String... inAlgorithms) {
-            listAlgorithms = inAlgorithms;
-        }
-
-        /**
-         * Constructor
-         */
-        private StatisticsSubClass() {
-            // intentionally blank
-        }
     }
 
     /**

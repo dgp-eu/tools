@@ -94,7 +94,7 @@ final class FileOperationsClassTest {
             Files.createFile(nested.resolve("A.java"));
             Files.createFile(nested.resolve("B.java"));
             Files.createFile(nested.resolve("C.txt"));
-            final Properties folderProps = FileOperationsClass.StatisticsSubClass .getFolderStatisticsRecursive(nested.toString(), new Properties());
+            final Properties folderProps = FileStatisticsClass .getFolderStatisticsRecursive(nested.toString(), new Properties());
             assertAll("getSpecificFilesFromFolderRecursive finds files with given extension recursively",
                     () -> assertEquals(3L, folderProps.get("TOTAL_OBJECTS"), "Should find exactly 3 objects"),
                     () -> assertEquals(0L, folderProps.get("DIRECTORIES"), "Should find 0 sub-folders"),

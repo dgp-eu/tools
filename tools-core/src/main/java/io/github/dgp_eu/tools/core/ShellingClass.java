@@ -13,6 +13,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import io.github.dgp_eu.tools.core.time.TimingClass;
+
 /**
  * Shell execution methods
  */

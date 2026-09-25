@@ -91,6 +91,15 @@ public final class TimingClass {
     }
 
     /**
+     * Current DateTime
+     * @return String
+     */
+    public static String getCurrentDateTimeLocalRaw() {
+        return DateTimeFormatter.ofPattern(DATE_TIME_MS, Locale.US)
+                .format(ZonedDateTime.now(ZoneId.systemDefault()));
+    }
+
+    /**
      * Current DateTime UTC
      * @return String
      */
@@ -105,6 +114,15 @@ public final class TimingClass {
      */
     public static ZonedDateTime getCurrentZonedDateTime() {
         return ZonedDateTime.now(ZoneId.systemDefault());
+    }
+
+    /**
+     * Epoch Milliseconds as String
+     * @param cutoff input reference TS as Long value
+     * @return String
+     */
+    public static String getEpochMilliseconds(final long cutoff) {
+        return Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim();
     }
 
     /**
@@ -159,6 +177,15 @@ public final class TimingClass {
                 BasicStructuresClass.convertStringIntoInteger(timeContinuous.substring(0, 2)),
                 BasicStructuresClass.convertStringIntoInteger(timeContinuous.substring(2, 4)),
                 BasicStructuresClass.convertStringIntoInteger(timeContinuous.substring(4, 6)));
+    }
+
+    /**
+     * Returns X days ago with milliseconds ago limit
+     * @param intDaysLimit number of days in the past
+     * @return milliseconds in the past
+     */
+    public static long getDaysAgoWithMillisecondsPrecision(final long intDaysLimit) {
+        return Instant.now().minusMillis(intDaysLimit * DAY_MILLISECONDS).toEpochMilli();
     }
 
     /**
@@ -384,6 +411,8 @@ public final class TimingClass {
         private static String inputTimeZone;
         /** Output time zone variable */
         private static String outputTimeZone;
+        /** Variable used as reference ZoneDateTime for Aging calculation */
+        private static ZonedDateTime refAgingTimeStamp;
 
         static {
             loadTimeZones();
@@ -393,34 +422,12 @@ public final class TimingClass {
          * File time related logic
          */
         public static final class FileSubSubClass {
-            /** Variable used as reference ZoneDateTime for Aging calculation */
-            private static ZonedDateTime refAgingTimeStamp;
 
             /**
              * Constructor
              */
             private FileSubSubClass() {
-                // intentionally blank
-            }
-
-            /**
-             * get Last Modified date time
-             * @param file given file
-             * @return ZonedDateTime
-             */
-            @Nullable
-            public static ZonedDateTime getFileLastModifiedZonedDateTime(@NonNull final Path file) {
-                ZonedDateTime zDateTime = null;
-                try {
-                    final Instant modifTime = Files.getLastModifiedTime(file).toInstant();
-                    zDateTime = ZonedDateTime.ofInstant(modifTime, ZoneId.of(outputTimeZone));
-                } catch (IOException ei) {
-                    final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder",
-                            file.getParent(),
-                            file.getFileName());
-                    LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-                }
-                return zDateTime;
+                super();
             }
 
             /**
@@ -462,14 +469,6 @@ public final class TimingClass {
                     returnString = dateTime.format(fixedFormatter);
                 }
                 return returnString;
-            }
-
-            /**
-             * Setter for zAgingRefTimeStamp
-             * @param inRefTimeStamp input Reference Time-stamp
-             */
-            public static void setReferenceTimeStampValueForAgingCalculation(final ZonedDateTime inRefTimeStamp) {
-                refAgingTimeStamp = inRefTimeStamp;
             }
 
         }
@@ -572,6 +571,26 @@ public final class TimingClass {
         }
 
         /**
+         * get Last Modified date time
+         * @param file given file
+         * @return ZonedDateTime
+         */
+        @Nullable
+        public static ZonedDateTime getFileLastModifiedZonedDateTime(@NonNull final Path file) {
+            ZonedDateTime zDateTime = null;
+            try {
+                final Instant modifTime = Files.getLastModifiedTime(file).toInstant();
+                zDateTime = ZonedDateTime.ofInstant(modifTime, ZoneId.of(outputTimeZone));
+            } catch (IOException ei) {
+                final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder",
+                        file.getParent(),
+                        file.getFileName());
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+            return zDateTime;
+        }
+
+        /**
          * loading Input/Output time zones
          */
         private static void loadTimeZones() {
@@ -596,10 +615,18 @@ public final class TimingClass {
         }
 
         /**
+         * Setter for zAgingRefTimeStamp
+         * @param inRefTimeStamp input Reference Time-stamp
+         */
+        public static void setReferenceTimeStampValueForAgingCalculation(final ZonedDateTime inRefTimeStamp) {
+            refAgingTimeStamp = inRefTimeStamp;
+        }
+
+        /**
          * Constructor
          */
         private LocalizationSubClass() {
-            // intentionally blank
+            super();
         }
 
     }
@@ -608,6 +635,6 @@ public final class TimingClass {
      * Constructor
      */
     private TimingClass() {
-        // intentionally blank
+        super();
     }
 }

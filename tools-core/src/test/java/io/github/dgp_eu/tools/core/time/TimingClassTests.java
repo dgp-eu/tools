@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * conversions, duration logging, and localized time-stamp pattern replacement.
  */
 @DisplayName("TimingClass unit testing")
-final class TimingClassTests {
+class TimingClassTests {
     /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
     /** String format for assertion when actual/original 

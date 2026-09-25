@@ -1,7 +1,8 @@
 /** Copyright 2026 Daniel-Gheorghe Popiniuc */
 package io.github.dgp_eu.tools.dynamic;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,8 +78,7 @@ public final class JsonOperationsClass {
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final Path jsonFile) {
-        final boolean validFile =
-                RegularExpressionsClass.ValidationSubClass.isFileNameValid(jsonFile.getFileName().toString());
+        final boolean validFile = RegularExpressionsClass.ValidationSubClass.isFileNameValid(jsonFile.getFileName().toString());
         if (!validFile) {
             final String strFeedback = String.format("Invalid file name: %s", jsonFile.getFileName().toString());
             LogExposureClass.LOGGER.error(strFeedback);
