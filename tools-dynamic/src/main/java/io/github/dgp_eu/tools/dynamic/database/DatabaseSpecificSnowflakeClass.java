@@ -220,7 +220,7 @@ public final class DatabaseSpecificSnowflakeClass {
                     DatabaseOperationsClass.STR_VALUES).toString();
             LogExposureClass.LOGGER.info(predefinedInfo);
         } catch (SQLException e) {
-            final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedback = "Error " + Arrays.toString(e.getStackTrace());
             LogExposureClass.LOGGER.error(strFeedback);
         }
     }

@@ -56,8 +56,7 @@ public final class LogExposureClass {
         final String customMsg,
         final String inStackTrace
     ) {
-        final String strFeedbackErr =
-            customMsg + String.format("... %s", inStackTrace);
+        final String strFeedbackErr = customMsg + "... " + inStackTrace;
         LOGGER.error(strFeedbackErr);
     }
 

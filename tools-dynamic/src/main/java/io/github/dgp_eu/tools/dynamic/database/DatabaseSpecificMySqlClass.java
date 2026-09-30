@@ -107,7 +107,7 @@ public final class DatabaseSpecificMySqlClass {
                 }
             }
         } catch(SQLException e) {
-            final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedbackErr = "Error " + Arrays.toString(e.getStackTrace());
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
     }
