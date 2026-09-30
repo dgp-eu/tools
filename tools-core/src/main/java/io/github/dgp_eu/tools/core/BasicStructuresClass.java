@@ -316,7 +316,7 @@ public final class BasicStructuresClass {
          */
         public static SequencedMap<String, Object> sortMapByKey(final Map<String, Object> inMap) {
             return inMap.entrySet().stream()
-                    .sorted(Comparator.comparing(Map.Entry::getKey))
+                    .sorted(Map.Entry.comparingByKey())
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,
@@ -786,11 +786,14 @@ public final class BasicStructuresClass {
          */
         private static String encloseStringWithCharacter(final String inString, final char inChar) {
             final StringBuilder strBuilder = new StringBuilder();
-            if (inString.matches(String.format("^%s.*%s$", inChar, inChar))) { // is already enclosed
+            final String strEnclosedAlready =  "^" + inChar + ".*" + inChar + "$";
+            final String strStartEnclosed =  "^" + inChar + ".*[^" + inChar + "]$";
+            final String strEndEnclosed =  "^[^" + inChar + "].*" + inChar + "$";
+            if (inString.matches(strEnclosedAlready)) { // is already enclosed
                 strBuilder.append(inString);
-            } else if (inString.matches(String.format("^%s.*[^%s]$", inChar, inChar))) { // has only start enclosed
+            } else if (inString.matches(strStartEnclosed)) { // has only start enclosed
                 strBuilder.append(inString).append('\"');
-            } else if (inString.matches(String.format("^[^%s].*%s$", inChar, inChar))) { // has only end enclosed
+            } else if (inString.matches(strEndEnclosed)) { // has only end enclosed
                 strBuilder.append('\"').append(inString);
             } else { // does not have neither start nor end enclosed
                 strBuilder.append('\"').append(inString).append('\"');
