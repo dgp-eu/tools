@@ -27,7 +27,6 @@ import io.github.dgp_eu.tools.core.ConfigurationClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.ProjectClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
-import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -383,7 +382,7 @@ public final class HtmlClass {
                  * @param inValue input value
                  * @return Map
                  */
-                private static @NonNull @Unmodifiable Map<String, String> manageCellStyleAndValue(final @NonNull Object inValue) {
+                private static @NonNull Map<String, String> manageCellStyleAndValue(final @NonNull Object inValue) {
                     String cellStyle = "";
                     String strValue = inValue.toString();
                     final int strLength = strValue.length();
@@ -482,13 +481,13 @@ public final class HtmlClass {
         public static @NonNull String getMapIntoHtmlTable(final @NonNull Map<String, Object> inMap) {
             final StringBuilder sbReturn = new StringBuilder(100);
             sbReturn.append("<table>");
-            inMap.forEach((crtKey, crtValue) -> {
+            inMap.forEach((crtKey, crtValue) ->
                 sbReturn.append("<tr><th style=\"text-align:left;\">")
                        .append(crtKey)
                        .append("</th><td>")
                        .append(crtValue)
-                       .append("</td></tr>");
-            });
+                       .append("</td></tr>")
+            );
             sbReturn.append("</table>");
             return sbReturn.toString();
         }
