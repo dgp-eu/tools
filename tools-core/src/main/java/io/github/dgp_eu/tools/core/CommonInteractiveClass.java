@@ -287,7 +287,7 @@ public final class CommonInteractiveClass {
                 description = "Port Number for web user interface",
                 arity = ARITY_ONLY_ONE,
                 required = true)
-        private long portNumber;
+        /* default */ private long portNumber = 8080;
 
         /**
          * Getter for portNumber

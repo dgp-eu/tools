@@ -170,13 +170,10 @@ public final class DatabaseSpecificSnowflakeClass {
     private static void loadUsernameForConnection() {
         String currentUser = strUserName;
         if (currentUser == null) {
-            final String resolvedUser = ShellingClass.getCurrentUserAccount();
-            if (resolvedUser != null) {
-                currentUser = resolvedUser.toUpperCase(Locale.getDefault());
-            }
+            final String resolvedUser = ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault());
+            currentUser = resolvedUser.toUpperCase(Locale.getDefault());
         }
-        if (currentUser == null
-                || currentUser.isEmpty()) {
+        if (currentUser.isEmpty()) {
             currentUser = "UNKNOWN_USER";
         }
         connectionUser = currentUser;

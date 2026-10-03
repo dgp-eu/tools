@@ -203,6 +203,7 @@ public final class FileStatisticsClass {
         final Path directory = Paths.get(strFolderName.replace("\"", ""));
         // use DirectoryStream to list files which are present in specific
         try (Stream<Path> stream = Files.walk(directory)) {
+            @SuppressWarnings("null")
             final FolderStatsRecord stats = stream
                 .map(path -> {
                     if (Files.isDirectory(path)) {

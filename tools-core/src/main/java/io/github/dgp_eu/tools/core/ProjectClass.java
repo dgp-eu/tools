@@ -267,8 +267,10 @@ public final class ProjectClass {
                 strJsonString.append(getComponentModulesDetailsIfProjectModulesArePresent(prjModel));
             }
             final Map<String, Object> projLibModules = getProjectModuleLibraries();
-            strJsonString.append(",\"Library Modules\":")
-                    .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projLibModules));
+            if (projLibModules.isEmpty()) {
+                strJsonString.append(",\"Library Modules\":")
+                        .append(BasicStructuresClass.ListAndMapSubClass.getMapIntoJsonString(projLibModules));
+            }
             final String strFeedback = "I just captured Application information...";
             LogExposureClass.LOGGER.debug(strFeedback);
             return strJsonString.append('}').toString();

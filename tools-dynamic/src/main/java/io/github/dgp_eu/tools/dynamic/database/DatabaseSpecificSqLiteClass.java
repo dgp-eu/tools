@@ -15,12 +15,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.sqlite.Function;
 
@@ -36,10 +33,23 @@ import io.github.dgp_eu.tools.dynamic.database.DatabaseOperationsClass.ResultSet
  * SQLite methods
  */
 public final class DatabaseSpecificSqLiteClass {
-    /**
-     * Internal database variable
-     */
+    /** Internal database variable */
     private static String internalDatabase;
+    /** Menu */
+    private static final SequencedMap<String, String> MAP_OPTIMIZE = new LinkedHashMap<>();
+
+    static {
+        buildOptimizeSequenceMap();
+    }
+
+    private static void buildOptimizeSequenceMap() {
+        MAP_OPTIMIZE.put("Busy Timeout", "PRAGMA busy_timeout = 3600;");
+        MAP_OPTIMIZE.put("No Journal", "PRAGMA journal_mode = OFF;");
+        MAP_OPTIMIZE.put("No Synchronous", "PRAGMA synchronous = 0;");
+        MAP_OPTIMIZE.put("Large Cache Size", "PRAGMA cache_size = 1000000;");
+        MAP_OPTIMIZE.put("Memory Operation", "PRAGMA temp_store = MEMORY;");
+        MAP_OPTIMIZE.put("Large Page Size", "PRAGMA page_size = 16384;");
+    }
 
     /**
      * Getter for internalDatabase
@@ -156,15 +166,7 @@ public final class DatabaseSpecificSqLiteClass {
      * @param objStatement Statement
      */
     public static void runSequenceSpeedOptimizationForWriting(final Statement objStatement) {
-        final SequencedMap<String, String> sequenceMap = Stream.of(
-                Map.entry("Busy Timeout", "PRAGMA busy_timeout = 3600;"),
-                Map.entry("No Journal", "PRAGMA journal_mode = OFF;"),
-                Map.entry("No Synchronous", "PRAGMA synchronous = 0;"),
-                Map.entry("Large Cache Size", "PRAGMA cache_size = 1000000;"),
-                Map.entry("Memory Operation", "PRAGMA temp_store = MEMORY;"),
-                Map.entry("Large Page Size", "PRAGMA page_size = 16384;")
-        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, _) -> e1, LinkedHashMap::new));
-        sequenceMap.forEach((strLabel, strQuery) -> {
+        MAP_OPTIMIZE.forEach((strLabel, strQuery) -> {
             final String strFeedback = String.format("Query labeled \"%s\" has following definition: \"%s\"", strLabel, strQuery);
             LogExposureClass.LOGGER.debug(strFeedback);
             DatabaseOperationsClass.executeQueryWithoutResultSet(objStatement, strLabel, strQuery);

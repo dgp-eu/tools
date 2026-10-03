@@ -96,6 +96,7 @@ class TimingClassTests {
     @Test
     void testGetFileLastModifiedTimeAsHumanReadableFormat() throws IOException {
         final Path tempFile = Files.createTempFile("test-file-", ".txt");
+        @SuppressWarnings("null")
         final String handled = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(tempFile);
         assertTrue(BasicStructuresClass.StringEvaluationSubClass.isStringActuallyLongTimestampWithMilliseconds(handled),
                 "Last Modified timestamp is not a long timestamp with milliseconds");

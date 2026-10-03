@@ -168,8 +168,7 @@ public final class TimingClass {
      * @param timeContinuous input Time
      * @return LocalDateTime
      */
-    @NonNull
-    public static LocalDateTime getLocalDateTimeFromStrings(@NonNull final String strDateIso8601, @NonNull final String timeContinuous) {
+    public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String timeContinuous) {
         return LocalDateTime.of(
                 BasicStructuresClass.convertStringIntoInteger(strDateIso8601.substring(0, 4)),
                 BasicStructuresClass.convertStringIntoInteger(strDateIso8601.substring(5, 7)),
@@ -219,8 +218,7 @@ public final class TimingClass {
      * @param strPartial prefix for feedback
      * @return String
      */
-    @NonNull
-    public static String logDuration(@NonNull final LocalDateTime startTimeStamp, @NonNull final LocalDateTime finishTimeStamp, @NonNull final String strPartial) {
+    public static String logDuration(final LocalDateTime startTimeStamp, final LocalDateTime finishTimeStamp, final String strPartial) {
         final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(startTimeStamp, ZoneId.systemDefault());
         final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
         return logDuration(zStartTimeStamp, zStopTimeStamp, strPartial);
@@ -234,8 +232,7 @@ public final class TimingClass {
      * @param strPartial prefix for feedback
      * @return String
      */
-    @NonNull
-    public static String logDuration(@NonNull final ZonedDateTime startTimeStamp, @NonNull final ZonedDateTime finishTimeStamp, @NonNull final String strPartial) {
+    public static String logDuration(final ZonedDateTime startTimeStamp, final ZonedDateTime finishTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
@@ -337,8 +334,6 @@ public final class TimingClass {
          */
         public static String computeAgingIntoHumanReadableWords(final ZonedDateTime startTimestamp, final ZonedDateTime finishTimestamp) {
             final AgingInfoRecord ageComponents = computeAgingInfoRecord(startTimestamp, finishTimestamp);
-            final String strFeedback = String.format("Age components are %s", ageComponents);
-            LogExposureClass.LOGGER.debug(strFeedback);
             return composeAgingInWordsFromListOfIntegerComponents(ageComponents, "INSTANT (less than 1 millisecond)");
         }
 
@@ -481,8 +476,7 @@ public final class TimingClass {
          * @param outTimeFormat output Time Format
          * @return String
          */
-        @NonNull
-        public static String convertDateOrTimestampFormats(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
+        public static String convertDateOrTimestampFormats(final String inDate, final DateTimeFormatter inTimeFormat, final DateTimeFormatter outTimeFormat) {
             String outDate = ""; 
             try {
                 ZonedDateTime zonedDateTime = null;

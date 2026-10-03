@@ -26,8 +26,6 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import org.jspecify.annotations.NonNull;
-
 import io.github.dgp_eu.tools.core.time.TimingClass;
 
 /**
@@ -69,8 +67,7 @@ public final class FileOperationsClass {
                 final Path dir = Path.of(strFolder);
                 Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                     @Override
-                    @NonNull
-                    public FileVisitResult visitFile(@NonNull final Path file, @NonNull final BasicFileAttributes attrs) throws IOException {
+                    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                         if (file.getFileName().toString().matches(strPattern)) {
                             Files.delete(file);
                             final String strFeedbackD = String.format("File %s has been deleted", file);
@@ -228,8 +225,7 @@ public final class FileOperationsClass {
                 final Path dir = Path.of(strFolder);
                 Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                     @Override
-                    @NonNull
-                    public FileVisitResult visitFile(@NonNull final Path file, @NonNull final BasicFileAttributes attrs) {
+                    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
                         if (file.getFileName().toString().matches(strPattern)) {
                             secureModify(file);
                         }

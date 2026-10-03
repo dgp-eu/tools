@@ -18,25 +18,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
 
+import org.jspecify.annotations.NonNull;
+
 /**
  * Undertow common class
  */
 public final class UndertowClass {
-    /**
-     * Root handle variable
-     */
+    /** Root handle variable */
     private static HttpHandler rootHandler;
-    /**
-     * Web IP variable
-     */
+    /** Web IP variable */
     private static String webIp;
-    /**
-     * Web port variable
-     */
-    private static String webPort;
-    /**
-     * Web protocol variable
-     */
+    /** Web port variable */
+    /* default */ private static String webPort = "8080";
+    /** Web protocol variable */
     private static String webProtocol;
 
     /**
@@ -60,7 +54,7 @@ public final class UndertowClass {
         UndertowSessionClass.handleTimeZoneSession();
         UndertowParametersClass.redirectPageIfNeeded(inExchange);
         final Object tzAttribute = UndertowSessionClass.getSession().getAttribute("TZ");
-        final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
+        final String timeZone = tzAttribute == null ? "UTC" : tzAttribute.toString();
         HtmlClass.TableSubClass.setOutTimeZone(timeZone);
     }
 
@@ -121,7 +115,7 @@ public final class UndertowClass {
      * setter for Root Handler
      * @param inRootHandler map with root handler
      */
-    public static void setRootHandler(final HttpHandler inRootHandler) {
+    public static void setRootHandler(@NonNull final HttpHandler inRootHandler) {
         rootHandler = inRootHandler;
     }
 

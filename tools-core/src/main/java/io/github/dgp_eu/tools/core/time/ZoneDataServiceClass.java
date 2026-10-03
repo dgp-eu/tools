@@ -11,15 +11,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
+import io.github.dgp_eu.tools.core.BasicStructuresClass;
 import io.github.dgp_eu.tools.core.FileOperationsClass;
 import io.github.dgp_eu.tools.core.LogExposureClass;
 import io.github.dgp_eu.tools.core.RegularExpressionsClass;
@@ -117,22 +116,14 @@ public final class ZoneDataServiceClass {
             }
         }
         // building final TimeZone list
-        final SequencedMap<String, String> sortedTimeZones = mapBeforeUtc.entrySet().stream()
-                .sorted(Map.Entry.<String, String>comparingByValue().reversed())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, _) -> oldValue,
-                        LinkedHashMap::new // preserve sorted order
-                ));
-        final SequencedMap<String, String> sortedAfterUtc = mapAfterUtc.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, _) -> oldValue,
-                        LinkedHashMap::new // preserve sorted order
-                ));
+        final SequencedMap<String, String> sortedTimeZones = BasicStructuresClass.ListAndMapSubClass.sortMap(
+                mapBeforeUtc,
+                false,
+                false);
+        final SequencedMap<String, String> sortedAfterUtc = BasicStructuresClass.ListAndMapSubClass.sortMap(
+                mapAfterUtc,
+                false,
+                true);
         sortedTimeZones.putAll(sortedAfterUtc);
         return sortedTimeZones;
     }

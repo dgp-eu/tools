@@ -65,11 +65,14 @@ public final class HtmlClass {
      * Building Time-Zone select as String
      * @return String w. TZ select
      */
-    public static @NonNull String buildMenuString(final SequencedMap<String, Map<String, String>> inMapMenu) {
+    public static String buildMenuString(final SequencedMap<String, Map<String, String>> inMapMenu) {
         final StringBuilder strMenuContent = new StringBuilder(1000);
         inMapMenu.forEach((strKey, mapValue) -> {
             if (!mapValue.getOrDefault(ConfigurationClass.STR_MENU, "").isEmpty()) {
-                strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(ConfigurationClass.STR_ICON), mapValue.get(ConfigurationClass.STR_MENU)));
+                strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>",
+                        strKey,
+                        mapValue.get(ConfigurationClass.STR_ICON),
+                        mapValue.get(ConfigurationClass.STR_MENU)));
             }
         });
         return strMenuContent.toString();
@@ -79,7 +82,7 @@ public final class HtmlClass {
      * Building Time-Zone select
      * @return Content
      */
-    public static @NonNull String buildTimeZoneSelect(final String inTimeZone) {
+    public static String buildTimeZoneSelect(final String inTimeZone) {
         final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
         final Properties selectProps = new Properties();
         selectProps.put(ConfigurationClass.STR_NAME, "TZ");
@@ -110,25 +113,27 @@ public final class HtmlClass {
          * Build Information Box
          * @return String
          */
-        public static @NonNull String gatherFileStatistics(final Path fileName) {
+        public static String gatherFileStatistics(final Path fileName) {
             if (Files.exists(fileName)) {
                 fileSizeBytes = fileName.toFile().length();
                 fileModifiedTs = TimingClass.LocalizationSubClass.FileSubSubClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName);
             } else {
-                final String strFeedback = "Given file " + fileName + " was not found on disk, hence will be looking for it within JAR";
+                final String strFeedback = "Given file "
+                        + fileName
+                        + " was not found on disk, hence will be looking for it within JAR";
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final String internalFile = fileName.toString().replace("\\", "/");
                 try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
-                    final String strFeedback2 = "Input Stream is: " + inStream;
-                    LogExposureClass.LOGGER.debug(strFeedback2);
-                    fileSizeBytes = inStream.transferTo(OutputStream.nullOutputStream());
-                    final URL resourceUrl = HtmlClass.class.getResource(internalFile);
-                    final String strFeedback3 = "URI is: " + resourceUrl;
-                    LogExposureClass.LOGGER.debug(strFeedback3);
-                    final long lastModified = resourceUrl.openConnection().getLastModified();
-                    final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
-                    fileModifiedTs = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
-                            TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
+                    if (inStream == null) {
+                        final String strFeedback3 = "Input Stream is null for internal file: " + internalFile;
+                        LogExposureClass.LOGGER.debug(strFeedback3);
+                    } else {
+                        final String strFeedback2 = "Input Stream is: " + inStream;
+                        LogExposureClass.LOGGER.debug(strFeedback2);
+                        fileSizeBytes = inStream.transferTo(OutputStream.nullOutputStream());
+                        final URL resourceUrl = HtmlClass.class.getResource(internalFile);
+                        fileModifiedTs = getFileModifiedTimestamp(resourceUrl, internalFile);
+                    }
                 } catch (IOException ex) {
                     LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
                 }
@@ -140,6 +145,26 @@ public final class HtmlClass {
                     String.format(Locale.US, strThousandSep, fileSizeBytes),
                     BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSizeBytes, "binary"),
                     fileModifiedTs);
+        }
+
+        private static String getFileModifiedTimestamp(final URL resourceUrl, final String internalFile) {
+            String strFileModifiedTs = fileModifiedTs;
+            if (resourceUrl == null) {
+                final String strFeedback4 = "Resource URL is null for internal file: " + internalFile;
+                LogExposureClass.LOGGER.debug(strFeedback4);
+            } else {
+                final String strFeedback3 = "URI is: " + resourceUrl;
+                LogExposureClass.LOGGER.debug(strFeedback3);
+                try {
+                    final long lastModified = resourceUrl.openConnection().getLastModified();
+                    final ZonedDateTime zonedLastModified = ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
+                    strFileModifiedTs = TimingClass.LocalizationSubClass.convertZonedTimestampFriendly(zonedLastModified,
+                            TimingClass.DATE_TIME_MS_ABRV).replaceAll(".000$", "");
+                } catch (IOException e) {
+                    LogExposureClass.exposeProjectModel(Arrays.toString(e.getStackTrace()));
+                }
+            }
+            return strFileModifiedTs;
         }
 
     }
@@ -176,7 +201,7 @@ public final class HtmlClass {
          * @param objFeatures optional HTML Table features
          * @return String
          */
-        public static @NonNull String buildSelectInput(final SequencedMap<String, String> mapValues, final @NonNull Properties objFeatures) {
+        public static String buildSelectInput(final SequencedMap<String, String> mapValues, final @NonNull Properties objFeatures) {
             final List<String> outHtml = new ArrayList<>();
             if (!objFeatures.getOrDefault(ConfigurationClass.STR_LABEL, "").toString().isEmpty()) {
                 outHtml.add(buildLabelTag(objFeatures));
@@ -281,7 +306,7 @@ public final class HtmlClass {
              * handle Tab switch
              * @param recordMap properties of the record to be transformed into HTML row
              */
-            private static void handleTabSwitch(final @NonNull SequencedMap<Object, Object> recordMap, final @NonNull TableBuildContextSubClass tblContext) {
+            private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 final Object valObj = recordMap.get(tblContext.rememberKey);
                 final String valueForTab = valObj == null ? ConfigurationClass.STR_NULL : valObj.toString();
                 final String prev = tblContext.currentTabValue == null ? "" : tblContext.currentTabValue;
@@ -304,7 +329,7 @@ public final class HtmlClass {
              * process each record
              * @param recordMap map with record content
              */
-            private static void processRecord(final @NonNull SequencedMap<Object, Object> recordMap, final @NonNull TableBuildContextSubClass tblContext) {
+            private static void processRecord(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 HeaderSubSubClass.ensureHeaderExists(recordMap, tblContext);
                 if (tblContext.rememberKey.isEmpty()) {
                     ensureHeaderAppended(tblContext);
@@ -339,7 +364,7 @@ public final class HtmlClass {
                  * @param recordMap properties of the record to be transformed into HTML row
                  * @return String
                  */
-                private static @NonNull String buildTableBodyRow(final @NonNull SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
+                private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                     final StringBuilder strTableRow = new StringBuilder(1000);
                     strTableRow.append("<tr>");
                     recordMap.forEach((strKey, objValue) -> {
@@ -382,7 +407,7 @@ public final class HtmlClass {
                  * @param inValue input value
                  * @return Map
                  */
-                private static @NonNull Map<String, String> manageCellStyleAndValue(final @NonNull Object inValue) {
+                private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
                     String cellStyle = "";
                     String strValue = inValue.toString();
                     final int strLength = strValue.length();
@@ -412,7 +437,7 @@ public final class HtmlClass {
                  * @param crtPattern matching pattern
                  * @return String
                  */
-                private static String transformSingleValueByPattern(final String inputString, final @NonNull String crtPattern) {
+                private static String transformSingleValueByPattern(final String inputString, final String crtPattern) {
                     return switch (crtPattern) {
                         case "decimal"                        -> BasicStructuresClass.StringTransformationSubClass.formatStringWithDecimalContentWithThousandDecimalSeparator(inputString);
                         case "integer"                        -> String.format(Locale.US, "%,d", BasicStructuresClass.convertStringIntoInteger(inputString));
@@ -455,7 +480,7 @@ public final class HtmlClass {
          * @param inList values stored as a list
          * @return String
          */
-        public static @NonNull String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
+        public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
             final TableBuildContextSubClass ctx = new TableBuildContextSubClass();
             if (strInTimeZone == null) {
                 setInTimeZone(System.getProperty("user.timezone"));
@@ -478,7 +503,7 @@ public final class HtmlClass {
          * @param inMap input Map
          * @return String as HTML table
          */
-        public static @NonNull String getMapIntoHtmlTable(final @NonNull Map<String, Object> inMap) {
+        public static String getMapIntoHtmlTable(final @NonNull Map<String, Object> inMap) {
             final StringBuilder sbReturn = new StringBuilder(100);
             sbReturn.append("<table>");
             inMap.forEach((crtKey, crtValue) ->
@@ -497,7 +522,7 @@ public final class HtmlClass {
          * @param objFeatures optional HTML Table features
          * @return String
          */
-        private static String getRememberKey(final @NonNull Properties objFeatures) {
+        private static String getRememberKey(final Properties objFeatures) {
             String strRememberKey = "";
             if (objFeatures.containsKey(ConfigurationClass.STR_NEW_TAB)) {
                 strRememberKey = objFeatures.get(ConfigurationClass.STR_NEW_TAB).toString();
@@ -509,7 +534,7 @@ public final class HtmlClass {
          * Setter for strInTimeZone
          * @param inTimeZone input time zone
          */
-        public static void setInTimeZone(final @NonNull String inTimeZone) {
+        public static void setInTimeZone(final String inTimeZone) {
             strInTimeZone = inTimeZone;
             TimingClass.LocalizationSubClass.setInputTimeZone(inTimeZone);
         }
@@ -518,7 +543,7 @@ public final class HtmlClass {
          * Setter for strInTimeZone
          * @param outTimeZone output time zone
          */
-        public static void setOutTimeZone(final @NonNull String outTimeZone) {
+        public static void setOutTimeZone(final String outTimeZone) {
             strOutTimeZone = outTimeZone;
             TimingClass.LocalizationSubClass.setOutputTimeZone(outTimeZone);
         }
@@ -533,7 +558,7 @@ public final class HtmlClass {
              * @param recordMap properties of the record to be transformed into HTML row
              * @return String
              */
-            private static @NonNull String buildTableHeader(final @NonNull SequencedMap<Object, Object> recordMap, final @NonNull TableBuildContextSubClass tblContext) {
+            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap, final @NonNull TableBuildContextSubClass tblContext) {
                 final StringBuilder strBuilder = new StringBuilder(100);
                 strBuilder.append("<table><thead>");
                 recordMap.forEach((strKey, _) -> {
@@ -555,7 +580,7 @@ public final class HtmlClass {
              * initiating Table Header
              * @param recordMap records to parse
              */
-            private static void ensureHeaderExists(final @NonNull SequencedMap<Object, Object> recordMap, final @NonNull TableBuildContextSubClass tblContext) {
+            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap, final TableBuildContextSubClass tblContext) {
                 if (tblContext.strTableHeader.isEmpty()) {
                     tblContext.strTableHeader = buildTableHeader(recordMap, tblContext);
                 }

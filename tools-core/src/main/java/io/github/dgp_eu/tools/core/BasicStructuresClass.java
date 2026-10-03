@@ -2,6 +2,7 @@
 package io.github.dgp_eu.tools.core;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
  * Handling basic structures: numbers, lists, maps, strings
  */
 public final class BasicStructuresClass {
+    /** null constant */
+    private static final String STR_NULL_LOWER = "null";
 
     /**
      * Safely computes percentage
@@ -38,7 +41,7 @@ public final class BasicStructuresClass {
      * @param denominator dividing number
      * @return float value
      */
-    public static @NonNull BigDecimal computePercentageSafely(final long numerator, final long denominator) {
+    public static BigDecimal computePercentageSafely(final long numerator, final long denominator) {
         BigDecimal percentageExact = new BigDecimal(numerator);
         if (denominator == 0) {
             final String strFeedback = String.format("Denominator is %s hence Percentage calculation with Numerator %s is not possible and will return same numerator... %s",
@@ -60,7 +63,7 @@ public final class BasicStructuresClass {
      * @param strNumber string to evaluate
      * @return BigDecimal
      */
-    public static @NonNull BigDecimal convertStringIntoBigDecimal(final String strNumber) {
+    public static @Nullable BigDecimal convertStringIntoBigDecimal(final String strNumber) {
         BigDecimal noToReturn = null;
         if (StringEvaluationSubClass.isStringActuallyNumeric(strNumber)) {
             noToReturn = new BigDecimal(strNumber).stripTrailingZeros();
@@ -170,7 +173,7 @@ public final class BasicStructuresClass {
          * @param inMap values as Map
          * @return List of Properties
          */
-        public static @NonNull List<Properties> convertMapOfStringsIntoListOfProperties(final String strCategory, final @NonNull Map<String, Object> inMap) {
+        public static @NonNull List<Properties> convertMapOfStringsIntoListOfProperties(@NonNull final String strCategory, @NonNull final Map<String, Object> inMap) {
             final List<Properties> resultReleases = new ArrayList<>();
             inMap.forEach((strKey, strValue) -> {
                 final Properties mProperties = new Properties();
@@ -184,13 +187,31 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * Map conversions
+         * @param inMap values as Map
+         * @return Map String String
+         */
+        public static Map<String, String> convertMapStringObjectIntoMapStringString(final Map<String, Object> inMap) {
+            return inMap
+                    .entrySet()
+                    .stream()
+                    .collect(
+                            Collectors.toMap(
+                                    entry -> entry.getKey(),
+                                    entry -> entry.getValue().toString(),
+                                    (oldValue, _) -> oldValue,
+                                    LinkedHashMap::new
+                    ));
+        }
+
+        /**
          * Build a pair of Key and Value for JSON
          * @param strKey Key to be used
          * @param objValue Value to be used
          * @return String with a pair of key and value
          */
-        public static @NonNull String getJsonKeyAndValue(final String strKey, final Object objValue) {
-            final List<String> unquotedValues = Arrays.asList("null", "true", "false");
+        public static String getJsonKeyAndValue(final String strKey, final Object objValue) {
+            final List<String> unquotedValues = Arrays.asList(STR_NULL_LOWER, "true", "false");
             final boolean needsQuotesAround = 
                 (objValue instanceof Integer)
                 || (objValue instanceof Double)
@@ -198,10 +219,7 @@ public final class BasicStructuresClass {
                 || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
                 || BasicStructuresClass.StringEvaluationSubClass.isStringActuallyNumeric(objValue.toString())
                 || BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
-            String strRaw = "\"%s\":\"%s\"";
-            if (needsQuotesAround) {
-                strRaw = "\"%s\":%s";
-            }
+            final String strRaw = needsQuotesAround ? "\"%s\":%s" : "\"%s\":\"%s\"";
             return String.format(strRaw, strKey, objValue);
         }
 
@@ -211,16 +229,11 @@ public final class BasicStructuresClass {
          * @param arrayAttrib array with attribute values
          * @return String
          */
-        public static @NonNull String getMapIntoJsonString(final @NonNull Map<String, Object> arrayAttrib) {
+        @SuppressWarnings(STR_NULL_LOWER)
+        public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
             final StringBuilder strJsonSubString = new StringBuilder(100);
-            final SequencedMap<String, Object> sortedMap = arrayAttrib.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (oldValue, _) -> oldValue,
-                            LinkedHashMap::new // preserve sorted order
-                    ));
+            final Map<String, String> arrayMapString = convertMapStringObjectIntoMapStringString(arrayAttrib);
+            final SequencedMap<String, String> sortedMap = sortMap(arrayMapString, true, true);
             sortedMap.forEach((strKey, objValue) -> {
                 if (!strJsonSubString.isEmpty()) {
                     strJsonSubString.append(',');
@@ -235,7 +248,7 @@ public final class BasicStructuresClass {
          * @param inProps input Properties
          * @return JSON string
          */
-        public static @NonNull String getPropertiesIntoJsonString(final @NonNull Properties inProps) {
+        public static String getPropertiesIntoJsonString(final Properties inProps) {
             final StringBuilder strJsonSubString = new StringBuilder(100);
             inProps.forEach((objKey, objValue) -> {
                 if (!strJsonSubString.isEmpty()) {
@@ -257,7 +270,8 @@ public final class BasicStructuresClass {
          * @param regexSep separators for words detection
          * @return LinkedHashMap of Strings with counted occurrences
          */
-        public static @NonNull SequencedMap<String, Long> getWordCounts(final @NonNull List<String> valList, final String regexSep) {
+        @SuppressWarnings(STR_NULL_LOWER)
+        public static SequencedMap<String, Long> getWordCounts(final List<String> valList, final String regexSep) {
             final Map<String, Long> wordCounts = valList.stream()
                     .flatMap(s -> Arrays.stream(s.split(regexSep)))
                     .collect(Collectors.groupingBy(
@@ -314,16 +328,36 @@ public final class BasicStructuresClass {
         /**
          * produce a Sequenced Map from simple Map
          * @param inMap input Map
-         * @return SequencedMap with sorted values
+         * @return SequencedMap with sorted values by Value
          */
-        public static @NonNull SequencedMap<String, Object> sortMapByKey(final @NonNull Map<String, Object> inMap) {
-            return inMap.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
+        @SuppressWarnings(STR_NULL_LOWER)
+        public static <K extends Comparable<? super K>, V extends Comparable<? super V>> SequencedMap<K, V> sortMap(
+                @NonNull final Map<K, V> inMap,
+                final boolean sortByKey,
+                final boolean directionAsending) {
+            final Comparator<K> keyComparator = Comparator.nullsLast(Comparator.naturalOrder());
+            final Comparator<V> valueComparator = Comparator.nullsLast(Comparator.naturalOrder());
+            Comparator<Map.Entry<K, V>> comparator = sortByKey
+                ? Map.Entry.comparingByKey(keyComparator)
+                : Map.Entry.comparingByValue(valueComparator);
+            if (!directionAsending) {
+                /* Reverse only the non-null comparison while keeping nulls last. */
+                comparator = sortByKey
+                    ? Map.Entry.comparingByKey(
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                        )
+                    : Map.Entry.comparingByValue(
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                        );
+            }
+            return inMap.entrySet()
+                    .stream()
+                    .sorted(comparator)
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,
-                            (e1, _) -> e1, // merge function (not used here)
-                            LinkedHashMap::new // preserve sorted order
+                            (oldValue, _) -> oldValue,
+                            LinkedHashMap::new
                     ));
         }
 
@@ -333,7 +367,8 @@ public final class BasicStructuresClass {
          * @param order order as List of String
          * @return SequencedMap with sorted properties
          */
-        public static @NonNull SequencedMap<Object, Object> sortProperties(final @NonNull Properties prop, final @NonNull List<String> order) {
+        @SuppressWarnings(STR_NULL_LOWER)
+        public static SequencedMap<Object, Object> sortProperties(final Properties prop, final List<String> order) {
             return prop.entrySet().stream()
                 .sorted(Comparator.comparingInt(e -> {
                     final int index = order.indexOf(e.getKey().toString());
@@ -406,7 +441,7 @@ public final class BasicStructuresClass {
          * @param arraySymbols array with Decimal units
          * @return String
          */
-        private static @NonNull String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final @NonNull String @NonNull ... arraySymbols) {
+        private static String convertHigherThatSingleUnitNumber(final long inBytes, final long[] arrayNumbers, final String ... arraySymbols) {
             String outString = "";
             final int symbolsLength = Math.toIntExact(arraySymbols.length - 1L);
             int iCounter = 1;
@@ -430,7 +465,7 @@ public final class BasicStructuresClass {
          * @param outSymbol String representing the units
          * @return string with formatted value
          */
-        private static @NonNull String formatValue(final long inValue, final long inDivider, final String outSymbol) {
+        private static String formatValue(final long inValue, final long inDivider, final String outSymbol) {
             return inValue % inDivider == 0
                     ? String.format(Locale.ROOT, "%d %s", inValue / inDivider, outSymbol)
                             : String.format(Locale.ROOT, "%.1f %s", (double) inValue / inDivider, outSymbol);
@@ -453,7 +488,7 @@ public final class BasicStructuresClass {
          * @param strVariables variables to pick
          * @return Properties
          */
-        public static @NonNull Properties getVariableFromProjectProperties(final @NonNull String propertyFileName, final @NonNull String... strVariables) {
+        public static @NonNull Properties getVariableFromProjectProperties(final String propertyFileName, final String... strVariables) {
             final Properties svProperties = new Properties();
             try(InputStream inputStream = PropertiesReaderSubClass.class.getResourceAsStream(propertyFileName)) {
                 final Properties inProperties = new Properties();
@@ -488,7 +523,7 @@ public final class BasicStructuresClass {
          * @param strOriginal Original string
          * @return String
          */
-        public static @NonNull String cleanStringFromCurlyBraces(final @NonNull String strOriginal) {
+        public static String cleanStringFromCurlyBraces(final String strOriginal) {
             final StringBuilder strBuilder = new StringBuilder();
             for (final char c : strOriginal.toCharArray()) {
                 if (c != '{' && c != '}') {
@@ -503,7 +538,7 @@ public final class BasicStructuresClass {
          * @param strObject input String
          * @return String cleaned
          */
-        public static @NonNull String cleanStringAsDatabaseObject(final @NonNull String strObject) {
+        public static String cleanStringAsDatabaseObject(final String strObject) {
             return strObject.replaceAll("[^A-Za-z0-9_/.|()]", "");
         }
 
@@ -512,7 +547,7 @@ public final class BasicStructuresClass {
          * @param strObject input String
          * @return String cleaned
          */
-        public static @NonNull String cleanStringFromUnwantedCharacters(final @NonNull String strObject) {
+        public static String cleanStringFromUnwantedCharacters(final String strObject) {
             return strObject.replaceAll("[^A-Za-z0-9 _\\-–/.():'`]", "");
         }
 
@@ -521,7 +556,7 @@ public final class BasicStructuresClass {
          * @param inString input String
          * @return String with proper escaped characters
          */
-        public static @NonNull String ensureEscapingOnEndOfLineAndTabs(final @NonNull String inString) {
+        public static String ensureEscapingOnEndOfLineAndTabs(final String inString) {
             return inString.replace("\n", "\\n").replace("\r", "\\r").replace("\t", " ");
         }
 
@@ -530,8 +565,10 @@ public final class BasicStructuresClass {
          * @param strInput initial String
          * @return String without double quotes enclosing
          */
-        public static @NonNull String stripQuotes(final @NonNull String strInput) {
-            return (strInput != null && strInput.length() >= 2 && strInput.startsWith("\"") && strInput.endsWith("\""))
+        public static String stripQuotes(final String strInput) {
+            return (strInput.length() >= 2
+                    && strInput.startsWith("\"")
+                    && strInput.endsWith("\""))
                     ? strInput.substring(1, strInput.length() - 1)
                     : strInput;
         }
@@ -599,7 +636,7 @@ public final class BasicStructuresClass {
          * @param strOriginal Original string
          * @return String
          */
-        private static @NonNull String convertSinglePromptParameterIntoNamedParameter(final @NonNull String strOriginal) {
+        private static String convertSinglePromptParameterIntoNamedParameter(final String strOriginal) {
             return ":" + StringCleaningSubClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
         }
 
@@ -629,7 +666,7 @@ public final class BasicStructuresClass {
          * @param substrings Strings to search for
          * @return boolean true if found, false otherwise
          */
-        public static boolean hasMatchingSubstring(final @NonNull String str, final @NonNull List<String> substrings) {
+        public static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
             return substrings.stream().anyMatch(str::contains);
         }
 
@@ -639,7 +676,7 @@ public final class BasicStructuresClass {
          * @param inputString string to evaluate
          * @return True if given String is actually Date
          */
-        public static boolean isStringActuallyDate(final @NonNull String inputString) {
+        public static boolean isStringActuallyDate(final String inputString) {
             return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, ConfigurationClass.STR_JUST_DATE);
         }
 
@@ -764,7 +801,7 @@ public final class BasicStructuresClass {
          * @param inString input String
          * @return String
          */
-        public static @NonNull String computeStringSignature(final @NonNull String inString) {
+        public static String computeStringSignature(final @NonNull String inString) {
             String outString = "";
             final String algorithm = "SHA-256";
             try {
@@ -786,7 +823,7 @@ public final class BasicStructuresClass {
          * @param inString Original string
          * @return String
          */
-        private static @NonNull String encloseStringWithCharacter(final @NonNull String inString, final char inChar) {
+        private static String encloseStringWithCharacter(final String inString, final char inChar) {
             final StringBuilder strBuilder = new StringBuilder();
             final String strBothEnclosed =  "^" + inChar + ".*" + inChar + "$";
             final String strStartEnclosed =  "^" + inChar + ".*[^" + inChar + "]$";
@@ -808,7 +845,7 @@ public final class BasicStructuresClass {
          * @param inString Original string
          * @return String
          */
-        public static @NonNull String encloseStringIfContainsSpace(final @NonNull String inString, final char inChar) {
+        public static String encloseStringIfContainsSpace(final @NonNull String inString, final char inChar) {
             String strReturn = inString;
             if (inString.contains(" ")) {
                 strReturn = encloseStringWithCharacter(inString, inChar);
@@ -821,7 +858,7 @@ public final class BasicStructuresClass {
          * @param strOriginal Original string
          * @return String
          */
-        public static @NonNull String formatStringWithDecimalContentWithThousandDecimalSeparator(final @NonNull String strOriginal) {
+        public static String formatStringWithDecimalContentWithThousandDecimalSeparator(final String strOriginal) {
             return String.format(Locale.US, "%,.2f", new BigDecimal(strOriginal));
         }
 
@@ -830,7 +867,7 @@ public final class BasicStructuresClass {
          * @param inProps input Properties
          * @return Properties with certain things obfuscated
          */
-        public static @NonNull Properties obfuscateProperties(final @NonNull Properties inProps) {
+        public static @NonNull Properties obfuscateProperties(final Properties inProps) {
             final Properties outProps = new Properties();
             final String strKeyToObfuscate = "password";
             inProps.forEach((strKey, strValue) -> {

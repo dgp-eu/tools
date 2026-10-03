@@ -232,6 +232,7 @@ public final class LogExposureClass {
             final ComponentBuilder<?> triggeringPolicy = BUILDER.newComponent(
                 "Policies"
             );
+            @SuppressWarnings("null")
             final ComponentBuilder<?> timeBasedPolicy = BUILDER
                 .newComponent("TimeBasedTriggeringPolicy")
                 .addAttribute("interval", 1)
