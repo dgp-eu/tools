@@ -5,14 +5,14 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.dgp-eu</groupId>
+    <groupId>io.github.pgdro</groupId>
     <artifactId>tools</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>tools</name>
     <description>Various Java classes to be re-used</description>
-    <url>https://github.com/dgp-eu/tools</url>
+    <url>https://github.com/pgdro/tools</url>
 
     <licenses>
         <license>
@@ -31,15 +31,15 @@
                 <role>Developer</role>
             </roles>
             <timezone>+2</timezone>
-            <organization>dgp-eu</organization>
-            <organizationUrl>https://github.com/dgp-eu</organizationUrl>
+            <organization>pgdro</organization>
+            <organizationUrl>https://github.com/pgdro</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/dgp-eu/tools.git</connection>
-        <developerConnection>scm:git:ssh://github.com/dgp-eu/tools.git</developerConnection>
-        <url>https://github.com/dgp-eu/tools</url>
+        <connection>scm:git:https://github.com/pgdro/tools.git</connection>
+        <developerConnection>scm:git:ssh://github.com/pgdro/tools.git</developerConnection>
+        <url>https://github.com/pgdro/tools</url>
     </scm>
 
     <modules>
@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.3.0-SNAPSHOT</revision>
+        <revision>1.3.0</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -57,7 +57,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <sonar.organization>dgp-eu</sonar.organization>
+        <sonar.organization>pgdro</sonar.organization>
         <!-- Dependency versions -->
         <jackson.version>3.2.3</jackson.version>
         <json-schema-validator.version>3.0.8</json-schema-validator.version>
