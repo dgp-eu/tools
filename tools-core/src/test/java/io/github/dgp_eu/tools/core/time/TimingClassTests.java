@@ -18,7 +18,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import io.github.dgp_eu.tools.core.BasicStructuresClass;
+import io.github.dgp.eu.tools.core.BasicStructuresClass;
+import io.github.dgp.eu.tools.core.time.TimingClass;
 
 import static org.junit.jupiter.api.Assertions.*;
 

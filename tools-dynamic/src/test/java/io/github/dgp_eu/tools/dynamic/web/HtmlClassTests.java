@@ -15,9 +15,10 @@ import java.util.SequencedMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import io.github.dgp_eu.tools.core.time.TimingClass;
-import io.github.dgp_eu.tools.core.ConfigurationClass;
-import io.github.dgp_eu.tools.core.ProjectClass;
+import io.github.dgp.eu.tools.core.ConfigurationClass;
+import io.github.dgp.eu.tools.core.ProjectClass;
+import io.github.dgp.eu.tools.core.time.TimingClass;
+import io.github.dgp.eu.tools.dynamic.web.HtmlClass;
 
 /**
  * HtmlClass tests

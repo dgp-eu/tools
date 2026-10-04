@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.10</revision>
+        <revision>1.3.0-SNAPSHOT</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -76,11 +76,13 @@
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <open-java-format.version>2.98.0.6</open-java-format.version>
         <pmd.version>7.28.0</pmd.version>
         <takari-lifecycle-plugin.version>2.3.4</takari-lifecycle-plugin.version>
         <versions-maven-plugin.version>2.22.0</versions-maven-plugin.version>
@@ -277,7 +279,38 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- Source: https://maven.apache.org/plugins/maven-javadoc-plugin/download.cgi -->
+                <!-- Source: https://maven.apache.org/plugins/maven-checkstyle-plugin/download.cgi -->
+                <!-- Source: https://github.com/apache/maven-checkstyle-plugin/ -->
+                <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-checkstyle-plugin -->
+                <!-- Description: Generates a report on violations of code style and optionally fails the build if violations are detected. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>check-format</id>
+                            <goals>
+                                <goal>checkstyle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>dev.openjavaformat</groupId>
+                            <artifactId>open-java-format</artifactId>
+                            <version>${open-java-format.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configLocation>config/checkstyle.xml</configLocation>
+                        <consoleOutput>false</consoleOutput>
+                        <failsOnError>false</failsOnError>
+                        <linkXRef>false</linkXRef>
+                    </configuration>
+                </plugin>
+                <!-- Website: https://maven.apache.org/plugins/maven-javadoc-plugin/download.cgi -->
+                <!-- Source: https://github.com/apache/maven-javadoc-plugin/ -->
                 <!-- Binaries: https://repo1.maven.org/maven2/org/apache/maven/plugins/maven-javadoc-plugin -->
                 <!-- Description: The Apache Maven Javadoc Plugin is a plugin that uses the javadoc tool for generating javadocs for the specified project. -->
                 <plugin>
@@ -483,6 +516,10 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
             </plugin>
@@ -504,7 +541,7 @@
                 </executions>
                 <configuration>
                     <rulesets>
-                        <ruleset>pmd-ruleset.xml</ruleset>
+                        <ruleset>config/pmd-ruleset.xml</ruleset>
                     </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <linkXRef>false</linkXRef>
@@ -524,11 +561,23 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
                     <rulesets>
-                        <ruleset>pmd-ruleset.xml</ruleset>
+                        <ruleset>config/pmd-ruleset.xml</ruleset>
                     </rulesets>
                 </configuration>
                 <reportSets>

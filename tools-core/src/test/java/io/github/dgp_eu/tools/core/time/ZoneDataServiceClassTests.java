@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import io.github.dgp.eu.tools.core.time.ZoneDataServiceClass;
+
 /**
  * ZoneDataServiceClass testing
  */
