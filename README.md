@@ -10,7 +10,7 @@ So, in English, it would be [Daniel](https://www.ancestry.com/first-name-meaning
 
 ## Badges
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dgp-eu_tools)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=dgp-eu_tools)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=dgp-eu_tools)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dgp-eu_tools)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pgdro_tools)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=pgdro_tools)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=pgdro_tools)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dgp-eu_tools&metric=bugs)](https://sonarcloud.io/summary/new_code?id=pgdro_tools)
