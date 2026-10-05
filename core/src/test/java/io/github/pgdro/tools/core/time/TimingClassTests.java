@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import io.github.pgdro.tools.core.BasicStructuresClass;
-import io.github.pgdro.tools.core.time.TimingClass;
 
 import static org.junit.jupiter.api.Assertions.*;
 

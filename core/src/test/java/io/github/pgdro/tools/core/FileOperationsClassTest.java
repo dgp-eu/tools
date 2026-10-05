@@ -3,9 +3,6 @@ package io.github.pgdro.tools.core;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import io.github.pgdro.tools.core.FileOperationsClass;
-import io.github.pgdro.tools.core.FileStatisticsClass;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +46,7 @@ final class FileOperationsClassTest {
         assertEquals(-3L, result, "Non-existent file should return -3");
     }
 
+    @SuppressWarnings("null")
     @Test
     @DisplayName("getFileSizeIfFileExistsAndIsReadable returns -2 for a directory input")
     void testGetFileSizeReturnsNotAFileForDirectory() throws IOException {
@@ -88,6 +86,7 @@ final class FileOperationsClassTest {
         }
     }
 
+    @SuppressWarnings("null")
     @Test
     @DisplayName("getFolderStatisticsRecursive finds files with given extension recursively")
     void testGetFolderStatisticsRecursive() throws IOException {
@@ -111,6 +110,7 @@ final class FileOperationsClassTest {
         }
     }
 
+    @SuppressWarnings("null")
     @Test
     @DisplayName("getSpecificFilesFromFolderRecursive finds files with given extension recursively")
     void testGetSpecificFilesFromFolderRecursiveFindsFilesWithExtension() throws IOException {

@@ -24,7 +24,7 @@
 
     <developers>
         <developer>
-            <id>dgp.eu</id>
+            <id>pgdro</id>
             <name>Daniel-Gheorghe Popiniuc</name>
             <email>danielpopiniuc@gmail.com</email>
             <roles>
@@ -43,12 +43,12 @@
     </scm>
 
     <modules>
-        <module>tools-core</module>
-        <module>tools-dynamic</module>
+        <module>core</module>
+        <module>dynamic</module>
     </modules>
 
     <properties>
-        <revision>1.3.0</revision>
+        <revision>2.0.0</revision>
         <!-- File encoding properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -472,7 +472,7 @@
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
-                                        <version>[3.10,)</version>
+                                        <version>[3.9,)</version>
                                     </requireMavenVersion>
                                 </rules>    
                             </configuration>

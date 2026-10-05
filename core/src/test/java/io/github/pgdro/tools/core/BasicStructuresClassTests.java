@@ -15,9 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import io.github.pgdro.tools.core.BasicStructuresClass;
-import io.github.pgdro.tools.core.ConfigurationClass;
-
 /**
  * Testing for BasicStructuresClass
  */
@@ -263,6 +260,7 @@ class BasicStructuresClassTests {
             );
         }
 
+        @SuppressWarnings("null")
         @Test
         @DisplayName("Convert map of strings into list of properties creates correct structure")
         void convertMapOfStringsIntoListOfPropertiesCreatesCorrectStructure() {
@@ -276,6 +274,7 @@ class BasicStructuresClassTests {
             );
         }
 
+        @SuppressWarnings("null")
         @Test
         @DisplayName("Convert map of strings into list of properties sorts by element name")
         void convertMapOfStringsIntoListOfPropertiesSortsByElementName() {
@@ -286,6 +285,7 @@ class BasicStructuresClassTests {
             assertEquals("apple", result.getFirst().getProperty("Element"), "Should be sorted alphabetically");
         }
 
+        @SuppressWarnings("null")
         @Test
         @DisplayName("Merge keys preserves non-merged keys")
         void mergeKeysPreservesNonMergedKeys() {

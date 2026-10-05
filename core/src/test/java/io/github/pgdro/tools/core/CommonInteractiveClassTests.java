@@ -7,8 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import io.github.pgdro.tools.core.CommonInteractiveClass;
-
 /**
  * Testing for CommonInteractiveClass
  */

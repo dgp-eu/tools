@@ -3,8 +3,6 @@ package io.github.pgdro.tools.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-
-import io.github.pgdro.tools.core.RegularExpressionsClass;
 import io.github.pgdro.tools.core.time.TimingClass;
 
 /**
