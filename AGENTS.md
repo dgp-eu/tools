@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
+- **tools** is a multi-module Maven project providing reusable Java utilities and CLI applications. It consists of:
 - **tools-core**: Shared utility library (12 classes with 23+ SubClasses) for file operations, JSON/XML, logging, timing, environment capture, regex, shelling, HTML, web server utilities
 - **tools-dynamic**: Shared utility library for database access and JSON operations and a library for web server operations using Undertow and JTE
 
@@ -12,9 +12,9 @@ All modules target **Java 26** and publish to Maven Central Repository.
 
 ```
 tools (parent POM)
-├── tools-core (io.github.dgp-eu.tools.core)
+├── core (io.github.pgdro.tools.core)
 │   └── No dependencies on other modules; contains all core utilities
-├── tools-dynamic (io.github.dgp-eu.tools.dynamic)
+├── dynamic (io.github.pgdro.tools.dynamic)
 │   └── Depends on: tools-dynamic
 ```
 
@@ -30,7 +30,7 @@ CLI apps use **picocli** for command parsing; extend AbstractApplication base cl
 ## Build & Test Workflow
 
 ```bash
-# From workspace root (C:\www\Data\GitRepositories\GitHub\dgp-eu\Java\tools)
+# From workspace root (C:\www\Data\GitRepositories\GitHub\pgdro\Java\tools)
 
 # Build all modules
 mvn clean package
@@ -58,10 +58,10 @@ mvn central-publishing:publish
 | File                                                                           | Purpose                                                                                                                              |
 |--------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `pom.xml` (root)                                                               | Parent POM; declares 11 modules & versions for Jackson, JUnit, SQLite, Picocli, Log4j, JaCoCo, and other build dependencies          |
-| `tools-core/src/main/java/io/github/dgp-eu/tools/core/*`                       | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.           |
+| `tools-core/src/main/java/io/github/pgdro/tools/core/*`                       | Core utility classes: BasicStructures, FileOperations, JsonOperations, Timing, Shelling, ProjectClass, UndertowClass, etc.           |
 | `tools-core/src/main/resources/project.properties`                             | Windows-specific configuration (System32 paths, PowerShell location)                                                                 |
-| `tools-core/src/test/java/org/dgp-eu/tools/core/FileOperationsClassTest.java`  | Example JUnit 6 tests                                                                                                                |
-| `tools-dynamic/src/main/java/org/dgp-eu/tools/dynamic/*`                       | Database functionality, JSON utility clases and Undertow + JTE wrapper classes for web server operations (utility library, no CLI)   |
+| `tools-core/src/test/java/org/pgdro/tools/core/FileOperationsClassTest.java`  | Example JUnit 6 tests                                                                                                                |
+| `tools-dynamic/src/main/java/org/pgdro/tools/dynamic/*`                       | Database functionality, JSON utility clases and Undertow + JTE wrapper classes for web server operations (utility library, no CLI)   |
 | `tools-dynamic/src/main/resources/undertow.properties`                         | Web server defaults                                                                                                                  |
 
 ## Project-Specific Conventions
@@ -115,7 +115,7 @@ This avoids creating separate files while maintaining logical grouping.
 ### Dependency Management
 - All dependency versions centralized in root `pom.xml` `<dependencyManagement>`
 - Child POMs use version-less `<dependency>` declarations
-- Critical versions: Jackson 3.2.2 (custom build), JUnit Jupiter 6.1.3, Java 26
+- Critical versions: Jackson 3.2.3 (custom build), JUnit Jupiter 6.1.3, Java 27
 
 ### Build Plugin Configuration
 - **takari-lifecycle-plugin**: Generates sources JAR automatically during package phase
@@ -147,27 +147,27 @@ List<Path> items = FileOperationsClass.RetrievingSubClass.getSubFolders(folderPa
 
 | Dependency                                                           | Version  | Used For                                             | Scope   |
 |----------------------------------------------------------------------|----------|------------------------------------------------------|---------|
-| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.2    | JSON parsing and generation (custom build)           | compile |
-| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.2    | XML serialization/deserialization (custom build)     | compile |
-| SQLite JDBC                                                          | 3.53.2.1 | Database operations (sqlite-jdbc) in tools-databases | compile |
+| Jackson Core (tools.jackson.core:jackson-databind)                   | 3.2.3    | JSON parsing and generation (custom build)           | compile |
+| Jackson DataFormat (tools.jackson.dataformat:jackson-dataformat-xml) | 3.2.3    | XML serialization/deserialization (custom build)     | compile |
+| SQLite JDBC                                                          | 3.53.4.0 | Database operations (sqlite-jdbc) in tools-databases | compile |
 | Picocli                                                              | 4.7.7    | CLI command parsing and help                         | compile |
-| Undertow Core                                                        | 2.4.2    | Lightweight web server (tools-web Java Web UI)       | compile |
+| Undertow Core                                                        | 2.4.4    | Lightweight web server (tools-web Java Web UI)       | compile |
 | JTE                                                                  | 3.2.4    | Java Template Engine (tools-web UI rendering)        | compile |
 | Log4j Core                                                           | 2.26.1   | Logging implementation via SLF4J adapter             | compile |
 | Log4j SLF4J2 Adapter                                                 | 2.26.1   | SLF4J 2.0 API binding to Log4j 2 Core                | compile |
-| Maven Model                                                          | 3.9.16   | POM file parsing (tools-core features)               | compile |
-| Plexus Interpolation                                                 | 1.29     | String interpolation utilities                       | compile |
+| Maven Model                                                          | 3.10.0   | POM file parsing (tools-core features)               | compile |
+| Plexus Interpolation                                                 | 1.30.0   | String interpolation utilities                       | compile |
 | JUnit Jupiter                                                        | 6.1.3    | Testing framework                                    | test    |
 | JaCoCo                                                               | 0.8.15   | Code coverage measurement                            | test    |
 | JSpecify                                                             | 1.0.1    | Null-safety annotations                              | compile |
-| JSON Schema Validator                                                | 3.0.6    | JSON Schema validator                                | compile |
+| JSON Schema Validator                                                | 3.0.8    | JSON Schema validator                                | compile |
 
 ## Common Workflows for Agent-Assisted Development
 
 ### Adding a New Utility to tools-core
-1. Create class in `tools-core/src/main/java/org/dgp-eu/tools/core/NewUtilityClass.java`
+1. Create class in `tools-core/src/main/java/org/pgdro/tools/core/NewUtilityClass.java`
 2. Organize methods into inner static SubClasses (e.g., `RetrievingSubClass`, `ProcessingSubClass`)
-3. Add unit tests in `tools-core/src/test/java/org/dgp-eu/tools/core/NewUtilityClassTest.java`
+3. Add unit tests in `tools-core/src/test/java/org/pgdro/tools/core/NewUtilityClassTest.java`
 4. Use `@Nullable`/`@Nonnull` annotations
 5. Run: `mvn -f tools-core/pom.xml clean verify`
 

@@ -3,13 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/tools.iml" filepath="$PROJECT_DIR$/.idea/tools.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-archiving/tools-archiving.iml" filepath="$PROJECT_DIR$/tools-archiving/tools-archiving.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-databases-demo/tools-database-demo.iml" filepath="$PROJECT_DIR$/tools-databases-demo/tools-database-demo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-environment/tools-environment.iml" filepath="$PROJECT_DIR$/tools-environment/tools-environment.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-incubator/tools-incubator.iml" filepath="$PROJECT_DIR$/tools-incubator/tools-incubator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-json_split/tools-json_split.iml" filepath="$PROJECT_DIR$/tools-json_split/tools-json_split.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-utils/tools-utils.iml" filepath="$PROJECT_DIR$/tools-utils/tools-utils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tools-web/tools-web.iml" filepath="$PROJECT_DIR$/tools-web/tools-web.iml" />
     </modules>
   </component>
 </project>

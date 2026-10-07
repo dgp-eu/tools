@@ -109,10 +109,18 @@ public final class HtmlClass {
         }
 
         /**
-         * Build Information Box
+         * Build Information Box legacy
          * @return String
          */
         public static String gatherFileStatistics(final Path fileName) {
+            return gatherFileStatistics(fileName, false);
+        }
+
+        /**
+         * Build Information Box
+         * @return String
+         */
+        public static String gatherFileStatistics(final Path fileName, final boolean fileFullPath) {
             if (Files.exists(fileName)) {
                 fileSizeBytes = fileName.toFile().length();
                 fileModifiedTs = TimingClass
@@ -144,13 +152,23 @@ public final class HtmlClass {
                     + "has a size of <span class=\"importantText\">%s bytes (%s)</span>, "
                     + "last modified time-stamp on <span class=\"importantText\">%s</span>";
             final String strThousandSep = "%,d";
+            String exposedFile = fileName.getFileName().toString();
+            if (fileFullPath) {
+                exposedFile = fileName.toString();
+            }
             return String.format(rawHtml,
-                    fileName.getFileName().toString(),
+                    exposedFile,
                     String.format(Locale.US, strThousandSep, fileSizeBytes),
                     BasicStructuresClass.NumberConversionSubClass.convertUnits(fileSizeBytes, "binary"),
                     fileModifiedTs);
         }
 
+        /**
+         * Get File Modified TS
+         * @param resourceUrl corresponding URL for input file
+         * @param internalFile input File as String
+         * @return String w. file Time-stamp
+         */
         private static String getFileModifiedTimestamp(final URL resourceUrl, final String internalFile) {
             String strFileModifiedTs = fileModifiedTs;
             if (resourceUrl == null) {
@@ -241,6 +259,10 @@ public final class HtmlClass {
             return String.join("", outHtml);
         }
 
+        /**
+         * Additional attributes logic
+         * @param objFeatures packed attributes
+         */
         private static void manageAdditionalAttributesAndDefaults(final @NonNull Properties objFeatures) {
             final String defaultValue
                     = objFeatures.getOrDefault(ConfigurationClass.STR_DEFAULT, "").toString();
