@@ -24,6 +24,11 @@ public final class UndertowSessionClass {
     /** Session variable */
     private static Session session;
 
+    // Private constructor to prevent instantiation
+    private UndertowSessionClass() {
+        // intentionally blank
+    }
+
     /**
      * Getter for session
      * @return Session
@@ -69,9 +74,13 @@ public final class UndertowSessionClass {
         session = Sessions.getOrCreateSession(inExchange);
     }
 
-    // Private constructor to prevent instantiation
-    private UndertowSessionClass() {
-        // intentionally blank
+    /**
+     * Session Attribute setter
+     * @param strAttribute attribute identifier
+     * @param strValue value to be set
+     */
+    public static void setSessionAttribute(final String strAttribute, final String strValue) {
+        session.setAttribute(strAttribute, strValue);
     }
 
 }
