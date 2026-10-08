@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +64,30 @@ public final class ZoneDataServiceClass {
     }
 
     /**
+     * Zone Friendly logic
+     * @param zoneId zone identifier
+     * @return String
+     */
+    private static String getFriendlyOffset(final String zoneId) {
+        // 1. Get the current offset for the zone
+        final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(zoneId));
+        final ZoneOffset offset = now.getOffset();
+        // 2. Get total seconds and convert to hours/minutes
+        final int totalSeconds = offset.getTotalSeconds();
+        final int absSeconds = Math.abs(totalSeconds);
+        final int hours = absSeconds / 3600;
+        final int minutes = absSeconds % 3600 / 60;
+        // 3. Determine the sign
+        final String sign = totalSeconds >= 0 ? "+" : "-";
+        // 4. Return formatted string
+        // If minutes are 0, just show the hour (e.g., UTC+5)
+        // Otherwise, show hour and minutes (e.g., UTC+05:30)
+        return (minutes == 0)
+            ? "UTC%s%02d:00".formatted(sign, hours)
+            : "UTC%s%02d:%02d".formatted(sign, hours, minutes);
+    }
+
+    /**
      * IANA zone logic
      */
     private static void loadIanaZones() {
@@ -104,7 +129,7 @@ public final class ZoneDataServiceClass {
         final Map<String, String> mapBeforeUtc = new ConcurrentHashMap<>();
         final Map<String, String> mapAfterUtc = new ConcurrentHashMap<>();
         for (final String crtTimeZone : SUPPORTED_TZ) {
-            final String friendlyTimeZone = TimingClass.getFriendlyOffset(crtTimeZone);
+            final String friendlyTimeZone = getFriendlyOffset(crtTimeZone);
             if (friendlyTimeZone.startsWith("UTC-")) {
                 mapBeforeUtc.put(crtTimeZone, friendlyTimeZone + " " + crtTimeZone);
             } else {

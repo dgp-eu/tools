@@ -147,7 +147,7 @@ public final class ShellingClass {
             strCaptureMessage = "Process execution w/o output captured completed with exit code %d";
         }
         final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
-        final String strFeedback = TimingClass.logDuration(startTimestamp,
+        final String strFeedback = TimingClass.LogSubClass.logDuration(startTimestamp,
                 finishTimeStamp,
                 String.format(strCaptureMessage, exitCode));
         LogExposureClass.LOGGER.debug(strFeedback);

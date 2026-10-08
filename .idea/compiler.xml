@@ -10,5 +10,9 @@
         <module name="dynamic" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="tools-core" target="27" />
+      <module name="tools-dynamic" target="27" />
+    </bytecodeTargetLevel>
   </component>
 </project>

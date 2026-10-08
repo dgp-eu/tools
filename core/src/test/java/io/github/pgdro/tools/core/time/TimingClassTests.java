@@ -85,6 +85,19 @@ final class TimingClassTests {
     }
 
     @Test
+    void testAgingPositiveLarger() {
+        final Instant startNow = Instant.now(CLOCK_FIXED);
+        final ZonedDateTime startDateTime = ZonedDateTime.ofInstant(startNow, CLOCK_TZ);
+        final ZonedDateTime finishDateTime = ZonedDateTime.ofInstant(startNow.plus(13, ChronoUnit.DAYS), CLOCK_TZ);
+        final String handled = TimingClass.AgingSubClass.computeAgingIntoHumanReadableWords(startDateTime, finishDateTime);
+        final String expected = "1 week 6 days";
+        final Period period = Period.between(startDateTime.toLocalDate(), finishDateTime.toLocalDate());
+        final ZonedDateTime startAfterPeriod = startDateTime.plus(period);
+        final Duration duration = Duration.between(startAfterPeriod, finishDateTime);
+        assertEquals(expected, handled, String.format(AGING_ERR, handled, expected, startDateTime, finishDateTime, period, duration));
+    }
+
+    @Test
     void testConvertTimestampFriendly() {
         TimingClass.LocalizationSubClass.setInputTimeZone("UTC");
         TimingClass.LocalizationSubClass.setOutputTimeZone("America/New_York");
@@ -133,7 +146,7 @@ final class TimingClassTests {
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
         final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT33S", "33 seconds", "00:00:33.000");
-        final String handled = TimingClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
+        final String handled = TimingClass.LogSubClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
 
@@ -143,7 +156,7 @@ final class TimingClassTests {
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(60 * 60).minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
         final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT1H33S", "1 hour 33 seconds", "01:00:33.000");
-        final String handled = TimingClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
+        final String handled = TimingClass.LogSubClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
 

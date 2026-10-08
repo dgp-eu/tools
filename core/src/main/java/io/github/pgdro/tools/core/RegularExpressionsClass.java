@@ -42,9 +42,19 @@ public final class RegularExpressionsClass {
             = "[+-]\\d{4}-(0\\d|1[0-1])-([0-2]\\d|30)\\s([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d\\.\\d{1,3}";
     /** Regular Expression for short form Age as Time-stamp with Milliseconds fixed */
     private static final String REGEXP_AGE_TS_MS9 = "^" + REGEXP_AGE_TS_MS + "$";
+    /** Regular Expression for short words Aging */
+    private static final String REGEXP_AGING_ABRV = "^(|-)(|\\d{1,6}\\sy(s|)(|\\s))"
+            + "(|(1[0-1]|[1-9])\\sM(s|)(|\\s))"
+            + "(|[1-4]\\sw(s|)(|\\s))"
+            + "(|(1\\d|2\\d|30|\\d)\\sd(s|)(|\\s))"
+            + "(|(1\\d|2[0-3]|\\d)\\s(h(s|))(|\\s))"
+            + "(|([1-5]\\d|\\d)\\s(m(s|))(|\\s))"
+            + "(|([1-5]\\d|\\d)\\s(s(s|))(|\\s))"
+            + "(|\\d{1,3}\\s(ml(s|)))$";
     /** Regular Expression for full words Aging */
     private static final String REGEXP_AGING_FULL = "^(|-)(|\\d{1,6}\\syear(s|)(|\\s))"
             + "(|(1[0-1]|[1-9])\\smonth(s|)(|\\s))"
+            + "(|[1-4]\\sweek(s|)(|\\s))"
             + "(|(1\\d|2\\d|30|\\d)\\sday(s|)(|\\s))"
             + "(|(1\\d|2[0-3]|\\d)\\s(hour(s|))(|\\s))"
             + "(|([1-5]\\d|\\d)\\s(minute(s|))(|\\s))"
@@ -371,8 +381,12 @@ public final class RegularExpressionsClass {
                         // intentionally blank
                         break;
                 }
+                final int weeks = Math.floorDivExact(days, 7);
+                if (weeks != 0) {
+                    days = days - 7 * weeks;
+                }
                 return new TimingClass.AgingInfoRecord(
-                        false, years, months, days, intHours, intMinutes, intSeconds, milli);
+                        false, years, months, weeks, days, intHours, intMinutes, intSeconds, milli);
             } else {
                 final String strFeedbackErr = String.format(
                         "Given input String %s does not seem to be an Aging Timestamp String... %s",
@@ -473,6 +487,7 @@ public final class RegularExpressionsClass {
         private static void loadRegularExpressionProperties() {
             REG_EXP_PROPS.put("byteSize", REGEXP_BYTE_SIZE);
             REG_EXP_PROPS.put("decimal", REGEXP_NO_DECIMAL);
+            REG_EXP_PROPS.put("shortAging", REGEXP_AGING_ABRV);
             REG_EXP_PROPS.put("fullAging", REGEXP_AGING_FULL);
             REG_EXP_PROPS.put("integer", REGEXP_NO_LONG);
             REG_EXP_PROPS.put("long", REGEXP_NO_LONG);

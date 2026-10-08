@@ -42,7 +42,7 @@ public final class CommonInteractiveClass {
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
         final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
-        final String strFeedbackEnd = TimingClass.logDuration(startDateTime,
+        final String strFeedbackEnd = TimingClass.LogSubClass.logDuration(startDateTime,
                 finishTimeStamp,
                 String.format("Entire operation %s completed", inOperation));
         LogExposureClass.LOGGER.info(strFeedbackEnd);

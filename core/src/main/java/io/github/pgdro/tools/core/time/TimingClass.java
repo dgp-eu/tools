@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -64,6 +63,7 @@ public final class TimingClass {
         boolean isNegative,
         Integer intYears,
         Integer intMonths,
+        Integer intWeeks,
         Integer intDays,
         Integer intHours,
         Integer intMinutes,
@@ -124,30 +124,6 @@ public final class TimingClass {
     }
 
     /**
-     * Zone Friendly logic
-     * @param zoneId zone identifier
-     * @return String
-     */
-    public static String getFriendlyOffset(final String zoneId) {
-        // 1. Get the current offset for the zone
-        final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(zoneId));
-        final ZoneOffset offset = now.getOffset();
-        // 2. Get total seconds and convert to hours/minutes
-        final int totalSeconds = offset.getTotalSeconds();
-        final int absSeconds = Math.abs(totalSeconds);
-        final int hours = absSeconds / 3600;
-        final int minutes = absSeconds % 3600 / 60;
-        // 3. Determine the sign
-        final String sign = totalSeconds >= 0 ? "+" : "-";
-        // 4. Return formatted string
-        // If minutes are 0, just show the hour (e.g., UTC+5)
-        // Otherwise, show hour and minutes (e.g., UTC+05:30)
-        return (minutes == 0)
-            ? "UTC%s%02d:00".formatted(sign, hours)
-            : "UTC%s%02d:%02d".formatted(sign, hours, minutes);
-    }
-
-    /**
      * Converts a string with ISO 8601 date as input into String w. year
      * and week string + 2 digits week #
      * @param strDateIso8601 date as yyyy-MM-dd (a.k.a. ISO 8601 format type)
@@ -184,7 +160,8 @@ public final class TimingClass {
      * @return milliseconds in the past
      */
     public static long getDaysAgoWithMillisecondsPrecision(final long intDaysLimit) {
-        return Instant.now().minusMillis(intDaysLimit * DAY_MILLISECONDS).toEpochMilli();
+        final Instant refTimeStamp = Instant.now();
+        return getDaysAgoWithMillisecondsPrecision(refTimeStamp, intDaysLimit);
     }
 
     /**
@@ -193,7 +170,7 @@ public final class TimingClass {
      * @return milliseconds in the past
      */
     public static long getDaysAgoWithMillisecondsPrecision(
-            @NonNull final Instant refTimestamp,
+            final Instant refTimestamp,
             final long intDaysLimit) {
         return refTimestamp.minusMillis(intDaysLimit * DAY_MILLISECONDS).toEpochMilli();
     }
@@ -210,41 +187,6 @@ public final class TimingClass {
                 + " ("
                 + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
                 + ")";
-    }
-
-    /**
-     * log a duration
-     * @param startTimeStamp times-tamp value seen at start
-     * @param finishTimeStamp times-tamp value seen at stop
-     * @param strPartial prefix for feedback
-     * @return String
-     */
-    public static String logDuration(
-            final LocalDateTime startTimeStamp,
-            final LocalDateTime finishTimeStamp,
-            final String strPartial) {
-        final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(startTimeStamp, ZoneId.systemDefault());
-        final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
-        return logDuration(zStartTimeStamp, zStopTimeStamp, strPartial);
-    }
-
-    /**
-     * log a duration
-     * @param startTimeStamp times-tamp value seen at start
-     * @param finishTimeStamp times-tamp value seen at stop
-     * @param strPartial prefix for feedback
-     * @return String
-     */
-    public static String logDuration(
-            final ZonedDateTime startTimeStamp,
-            final ZonedDateTime finishTimeStamp,
-            final String strPartial) {
-        final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
-        return String.format("%s within a duration of %s (which is %s | %s)",
-                strPartial,
-                objDuration.toString(),
-                AgingSubClass.computeAgingIntoHumanReadableWords(startTimeStamp, finishTimeStamp),
-                AgingSubClass.computeAgingIntoTimeClock(startTimeStamp, finishTimeStamp));
     }
 
     /**
@@ -270,6 +212,21 @@ public final class TimingClass {
                 final long value,
                 final String strPrefix,
                 final String strMeaning) {
+            appendValueWithPrefixAndSuffixIfNotZero(parts, value, strPrefix, "", strMeaning);
+        }
+
+        /**
+         * append w. prefix & suffix if value is not 0
+         * @param parts input list to alter
+         * @param value input value to evaluate
+         * @param strPrefix prefix of the value
+         */
+        private static void appendValueWithPrefixAndSuffixIfNotZero(
+                final List<String> parts,
+                final long value,
+                final String strPrefix,
+                final String strSuffix,
+                final String strMeaning) {
             String zeroString = "00";
             String nonZeroFormat = "%02d";
             if (ConfigurationClass.STR_MILLISECONDS.equalsIgnoreCase(strMeaning)) {
@@ -279,7 +236,7 @@ public final class TimingClass {
             if (value == 0) {
                 parts.add(strPrefix + zeroString);
             } else {
-                parts.add(strPrefix + String.format(nonZeroFormat, value));
+                parts.add(strPrefix + String.format(nonZeroFormat, value) + strSuffix);
             }
         }
 
@@ -289,11 +246,27 @@ public final class TimingClass {
          * @param value input value to evaluate
          * @param unit unit of the value
          */
-        private static void appendValueWithUnitsIfNotZero(
+        private static void appendValueWithUnitIfNotZero(
                 final List<String> parts,
-                final long value, final String unit) {
+                final long value,
+                final String unit) {
             if (value != 0) {
                 parts.add(value + " " + unit + (Math.abs(value) == 1 ? "" : "s"));
+            }
+        }
+
+        /**
+         * append w. units if value is not 0
+         * @param parts input list to alter
+         * @param value input value to evaluate
+         * @param unit unit of the value
+         */
+        private static void appendValueWithSimplifiedUnitIfNotZero(
+                final List<String> parts,
+                final long value,
+                final String unit) {
+            if (value != 0) {
+                parts.add(value + unit);
             }
         }
 
@@ -307,6 +280,10 @@ public final class TimingClass {
                 final AgingInfoRecord inAgeComponents,
                 final String strZeroValue) {
             final List<String> parts = new ArrayList<>();
+            appendValueWithSimplifiedUnitIfNotZero(parts, inAgeComponents.intYears, "y");
+            appendValueWithSimplifiedUnitIfNotZero(parts, inAgeComponents.intMonths, "M");
+            appendValueWithSimplifiedUnitIfNotZero(parts, inAgeComponents.intWeeks, "w");
+            appendValueWithSimplifiedUnitIfNotZero(parts, inAgeComponents.intDays, "d");
             appendValueWithPrefixIfNotZero(parts, inAgeComponents.intHours, "", "Hours");
             appendValueWithPrefixIfNotZero(parts, inAgeComponents.intMinutes, ":", "Minutes");
             appendValueWithPrefixIfNotZero(parts, inAgeComponents.intSeconds, ":", "Seconds");
@@ -327,14 +304,32 @@ public final class TimingClass {
         public static String composeAgingInWordsFromListOfIntegerComponents(
                 final AgingInfoRecord inAgeComponents,
                 final String strZeroValue) {
+            return composeAgingInWordsFromListOfIntegerComponents(inAgeComponents, strZeroValue, true);
+        }
+
+        /**
+         * composing Aging as words/abbreviations from Integer components
+         * @param inAgeComponents age components as List of Integer values
+         * @param strZeroValue return value if all parts are empty
+         * @return String with words for aging
+         */
+        public static String composeAgingInWordsFromListOfIntegerComponents(
+                final AgingInfoRecord inAgeComponents,
+                final String strZeroValue,
+                final boolean bolFullWords) {
+            List<String> allUnits = List.of("y", "M", "w", "d", "h", "m", "s", "ml");
+            if (bolFullWords) {
+                allUnits = List.of("year", "month", "week", "day", "hour", "minute", "second", "millisecond");
+            }
             final List<String> parts = new ArrayList<>();
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intYears, "year");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMonths, "month");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intDays, "day");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intHours, "hour");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMinutes, "minute");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intSeconds, "second");
-            appendValueWithUnitsIfNotZero(parts, inAgeComponents.intMilliseconds, "millisecond");
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intYears, allUnits.getFirst());
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intMonths, allUnits.get(1));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intWeeks, allUnits.get(2));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intDays, allUnits.get(3));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intHours, allUnits.get(4));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intMinutes, allUnits.get(5));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intSeconds, allUnits.get(6));
+            appendValueWithUnitIfNotZero(parts, inAgeComponents.intMilliseconds, allUnits.get(7));
             String strReturn = strZeroValue;
             if (!parts.isEmpty()) {
                 strReturn = (inAgeComponents.isNegative ? "-" : "") + String.join(" ", parts);
@@ -378,19 +373,17 @@ public final class TimingClass {
         private static AgingInfoRecord computeAgingInfoRecord(
                 final ZonedDateTime startTimestamp,
                 final ZonedDateTime finishTimestamp) {
-            final boolean isNegative             = startTimestamp.isAfter(finishTimestamp);
-            final Period period                  = Period.between(startTimestamp.toLocalDate(),
-                    finishTimestamp.toLocalDate());
-            final Duration duration              = Duration.between(startTimestamp.toInstant(),
-                    finishTimestamp.toInstant());
+            final boolean isNegative = startTimestamp.isAfter(finishTimestamp);
+            final Period period      = Period.between(startTimestamp.toLocalDate(), finishTimestamp.toLocalDate());
+            final Duration duration  = Duration.between(startTimestamp.toInstant(), finishTimestamp.toInstant());
             final String strFeedback = String.format("Period is %s and Duration is %s", period, duration);
             LogExposureClass.LOGGER.debug(strFeedback);
-            final int years  = Math.abs(period.getYears());
-            final int months = Math.abs(period.getMonths());
-            int days   = Math.abs(period.getDays());
+            final int years          = Math.abs(period.getYears());
+            final int months         = Math.abs(period.getMonths());
+            int days                 = Math.abs(period.getDays());
             final DateTimeFormatter formatterNo = DateTimeFormatter.ofPattern(TIME_NO, Locale.US);
-            final BigDecimal startTimeNumber = new BigDecimal(startTimestamp.format(formatterNo));
-            final BigDecimal finishTimeNumber = new BigDecimal(finishTimestamp.format(formatterNo));
+            final BigDecimal startTimeNumber    = new BigDecimal(startTimestamp.format(formatterNo));
+            final BigDecimal finishTimeNumber   = new BigDecimal(finishTimestamp.format(formatterNo));
             if ("P1D".equalsIgnoreCase(period.toString())
                     && startTimeNumber.compareTo(finishTimeNumber) > 0) {
                 final String strFeedback3 = String.format("Start Time as Number is %s and Finish Time as Number is %s"
@@ -399,6 +392,10 @@ public final class TimingClass {
                         finishTimeNumber);
                 LogExposureClass.LOGGER.debug(strFeedback3);
                 days = days - 1;
+            }
+            final int intWeeks             = Math.floorDivExact(days, 7);
+            if (intWeeks != 0) {
+                days = days - 7 * intWeeks;
             }
             // duration components
             final int intHours             = Math.abs(duration.toHoursPart());
@@ -422,7 +419,9 @@ public final class TimingClass {
                             firstSecond.replace("S", "")));
                 }
             }
-            return new AgingInfoRecord(isNegative, years, months, days, intHours, intMinutes, intSeconds, intMilli);
+            return new AgingInfoRecord(isNegative,
+                    years, months, intWeeks, days,
+                    intHours, intMinutes, intSeconds, intMilli);
         }
 
     }
@@ -672,6 +671,55 @@ public final class TimingClass {
          */
         private LocalizationSubClass() {
             // intentionally blank
+        }
+
+    }
+
+    /**
+     * Time Zones and associated coordinates handler
+     */
+    public static final class LogSubClass {
+
+        /**
+         * Constructor
+         */
+        private LogSubClass() {
+            // intentionally blank
+        }
+
+        /**
+         * log a duration
+         * @param startTimeStamp times-tamp value seen at start
+         * @param finishTimeStamp times-tamp value seen at stop
+         * @param strPartial prefix for feedback
+         * @return String
+         */
+        public static String logDuration(
+                final LocalDateTime startTimeStamp,
+                final LocalDateTime finishTimeStamp,
+                final String strPartial) {
+            final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(startTimeStamp, ZoneId.systemDefault());
+            final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
+            return logDuration(zStartTimeStamp, zStopTimeStamp, strPartial);
+        }
+
+        /**
+         * log a duration
+         * @param startTimeStamp times-tamp value seen at start
+         * @param finishTimeStamp times-tamp value seen at stop
+         * @param strPartial prefix for feedback
+         * @return String
+         */
+        public static String logDuration(
+                final ZonedDateTime startTimeStamp,
+                final ZonedDateTime finishTimeStamp,
+                final String strPartial) {
+            final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
+            return String.format("%s within a duration of %s (which is %s | %s)",
+                    strPartial,
+                    objDuration.toString(),
+                    AgingSubClass.computeAgingIntoHumanReadableWords(startTimeStamp, finishTimeStamp),
+                    AgingSubClass.computeAgingIntoTimeClock(startTimeStamp, finishTimeStamp));
         }
 
     }

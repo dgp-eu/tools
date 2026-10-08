@@ -109,7 +109,7 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
-            final String strFeedbackEnd = TimingClass.logDuration(
+            final String strFeedbackEnd = TimingClass.LogSubClass.logDuration(
                     startTimeStamp,
                     finishTimeStamp,
                     String.format("Finished executing SQL query %s", strPurpose));
@@ -151,7 +151,7 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedbackErr2);
             }
             final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
-            final String strFeedbackEnd = TimingClass.logDuration(
+            final String strFeedbackEnd = TimingClass.LogSubClass.logDuration(
                     startTimeStamp,
                     finishTimeStamp,
                     String.format("SQL query execution finished for %s purpose", strPurpose));
