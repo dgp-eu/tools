@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Database methods
@@ -623,7 +624,7 @@ public final class DatabaseOperationsClass {
          * @param resultSet result-set
          * @return List of Properties
          */
-        public static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
+        public static List<Properties> getResultSetColumnValues(@NonNull final ResultSet resultSet) {
             final List<Properties> listResultSet = new ArrayList<>();
             try {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();

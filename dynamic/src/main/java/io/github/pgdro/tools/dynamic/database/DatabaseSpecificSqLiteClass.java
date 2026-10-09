@@ -161,8 +161,9 @@ public final class DatabaseSpecificSqLiteClass {
                         strQueryPurpose,
                         strQuery,
                         objProperties)) {
-                assert rsCols != null;
-                listReturn = ResultSettingSubClass.getResultSetColumnValues(rsCols);
+                if (rsCols != null) {
+                    listReturn = ResultSettingSubClass.getResultSetColumnValues(rsCols);
+                }
             }
         } catch(SQLException e){
             final String strFeedback = String.format("%s connection has failed at %s: %s",
