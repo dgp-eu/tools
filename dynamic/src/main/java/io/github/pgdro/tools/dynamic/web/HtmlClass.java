@@ -318,6 +318,8 @@ public final class HtmlClass {
             private int rowCounter;
             /** Variable for Table Header */
             private String strTableHeader = "";
+            /** Variable for counter column name */
+            private String counterColumnName;
             /** Variable for counter inclusion (true/false) */
             private boolean useCounter;
 
@@ -390,7 +392,7 @@ public final class HtmlClass {
                 }
                 if (tblContext.useCounter) {
                     tblContext.rowCounter++;
-                    recordMap.put("#", String.valueOf(tblContext.rowCounter));
+                    recordMap.putFirst(tblContext.counterColumnName, String.valueOf(tblContext.rowCounter));
                 }
                 final String crtRow = RowSubSubSubClass.buildTableBodyRow(recordMap, tblContext);
                 tblContext.listTableLines.add(crtRow);
@@ -586,7 +588,8 @@ public final class HtmlClass {
             }
             ctx.strTableHeader = "";
             ctx.rememberKey = getRememberKey(objFeatures);
-            ctx.useCounter = !objFeatures.getOrDefault(ConfigurationClass.STR_COUNTER, "").toString().isEmpty();
+            ctx.counterColumnName = objFeatures.getOrDefault(ConfigurationClass.STR_COUNTER, "").toString();
+            ctx.useCounter = !ctx.counterColumnName.isEmpty();
             for (final SequencedMap<Object, Object> recordMap : inList) {
                 TableBuildContextSubClass.processRecord(recordMap, ctx);
             }
@@ -659,6 +662,11 @@ public final class HtmlClass {
                     final @NonNull TableBuildContextSubClass tblContext) {
                 final StringBuilder strBuilder = new StringBuilder(100);
                 strBuilder.append("<table><thead>");
+                if (tblContext.useCounter) {
+                    strBuilder.append("<th>")
+                            .append(tblContext.counterColumnName)
+                            .append("</th>");
+                }
                 recordMap.forEach((strKey, _) -> {
                     if (!tblContext.rememberKey.equalsIgnoreCase(strKey.toString())
                             && !ConfigurationClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
@@ -667,9 +675,6 @@ public final class HtmlClass {
                                 .append("</th>");
                     }
                 });
-                if (tblContext.useCounter) {
-                    strBuilder.append("<th>#</th>");
-                }
                 strBuilder.append("</thead><tbody>");
                 return strBuilder.toString();
             }

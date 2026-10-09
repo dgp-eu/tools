@@ -155,7 +155,7 @@ class HtmlClassTests {
         final List<SequencedMap<Object, Object>> records = List.of(rec1, rec2);
         final Properties features = new Properties();
         features.put(ConfigurationClass.STR_NEW_TAB, ConfigurationClass.STR_CATEGORY);
-        features.put(ConfigurationClass.STR_COUNTER, "1");
+        features.put(ConfigurationClass.STR_COUNTER, "#");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
         assertAll("HTML table with tabs and counter",
                 () -> assertTrue(html.contains("<table"), "Output should contain table markup"),
